@@ -340,7 +340,7 @@ class EntityManager {
         ctx.beginPath();
         const themeColor = window.gameSettings.themeColor || '#94d8c3';
         ctx.strokeStyle = themeColor;
-        ctx.globalAlpha = 0.08; 
+        ctx.globalAlpha = 0.16; 
         ctx.lineWidth = 1 / zoom; 
 
         for (let x = startX; x <= endX; x += gridSize) { ctx.moveTo(x, startY); ctx.lineTo(x, endY); }
