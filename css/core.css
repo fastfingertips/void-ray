@@ -66,7 +66,8 @@
 body {
     margin: 0; 
     overflow: hidden; 
-    background-color: #020204;
+    /* GÜNCELLEME: Tam Siyah Arkaplan */
+    background-color: #000000;
     font-family: 'Outfit', sans-serif; 
     touch-action: none;
     color: rgba(255, 255, 255, 0.9); 

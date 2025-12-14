@@ -415,7 +415,8 @@ function loop() {
             keys.Escape = false;
         }
 
-        ctx.fillStyle = "#020617"; ctx.fillRect(0,0,width,height);
+        // --- ARKA PLAN (SİYAH YAPILDI) ---
+        ctx.fillStyle = "#000000"; ctx.fillRect(0,0,width,height);
         
         // --- ARKA PLAN ÇİZİMİ ---
         if (entityManager) {

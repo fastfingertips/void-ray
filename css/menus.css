@@ -12,8 +12,9 @@
 /* --- ANA MENÜ --- */
 #main-menu {
     position: absolute; inset: 0;
+    /* GÜNCELLEME: Siyah Gradient */
     background: 
-        linear-gradient(#0a0c0e, #0a0c0e),
+        linear-gradient(#000000, #000000),
         repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(148, 216, 195, 0.03) 1px, rgba(148, 216, 195, 0.03) 2px);
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     z-index: 100; transition: opacity 0.5s ease, visibility 0.5s;
