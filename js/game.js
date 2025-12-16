@@ -1,21 +1,35 @@
 // Path: js/game.js
 
 /**
- * Void Ray - Oyun Motoru ve Durum Yönetimi
+ * Void Ray - Game Engine and State Management (ES6 Module Entry Point)
  */
+
+// --- ES6 IMPORTS ---
+import {
+    WORLD_SIZE,
+    GAME_CONFIG,
+    MESSAGES,
+    INITIAL_PLAYER_DATA,
+    DEFAULT_GAME_SETTINGS,
+    MAP_CONFIG,
+    INTRO_SEQUENCE
+} from './data.js';
+
+import Utils from './utils.js';
+import { GameRules } from './game-rules.js';
 
 // -------------------------------------------------------------------------
 // GLOBAL DEĞİŞKENLER VE OYUN DURUMU
 // -------------------------------------------------------------------------
 
-var player; 
+var player;
 var echoRay = null;
 var nexus = null;
 var repairStation = null;
 var storageCenter = null;
-var particleSystem = null; 
-var entityManager = null; 
-var audio; 
+var particleSystem = null;
+var entityManager = null;
+var audio;
 
 // KAMERA HEDEFLERİ
 window.cameraTarget = null; // Mantıksal hedef (Gemi veya Yankı)
@@ -35,7 +49,7 @@ let currentRenderOffsetY = 0;
 let playerData = JSON.parse(JSON.stringify(INITIAL_PLAYER_DATA));
 
 // ZOOM
-let currentZoom = GAME_CONFIG.CAMERA.DEFAULT_ZOOM; 
+let currentZoom = GAME_CONFIG.CAMERA.DEFAULT_ZOOM;
 let targetZoom = GAME_CONFIG.CAMERA.DEFAULT_ZOOM;
 let isPaused = false;
 let animationId = null;
@@ -45,8 +59,8 @@ let animationId = null;
 // Arka planda AIManager ile senkronize olurlar.
 
 Object.defineProperty(window, 'autopilot', {
-    get: function() { return window.AIManager ? window.AIManager.active : false; },
-    set: function(val) { 
+    get: function () { return window.AIManager ? window.AIManager.active : false; },
+    set: function (val) {
         // Eğer true atanırsa ve aktif değilse toggle et
         if (val && window.AIManager && !window.AIManager.active) window.AIManager.toggle();
         // Eğer false atanırsa ve aktifse toggle et
@@ -55,13 +69,13 @@ Object.defineProperty(window, 'autopilot', {
 });
 
 Object.defineProperty(window, 'aiMode', {
-    get: function() { return window.AIManager ? window.AIManager.mode : 'gather'; },
-    set: function(val) { if (window.AIManager) window.AIManager.mode = val; }
+    get: function () { return window.AIManager ? window.AIManager.mode : 'gather'; },
+    set: function (val) { if (window.AIManager) window.AIManager.mode = val; }
 });
 
 Object.defineProperty(window, 'manualTarget', {
-    get: function() { return window.AIManager ? window.AIManager.manualTarget : null; },
-    set: function(val) { if (window.AIManager) window.AIManager.manualTarget = val; }
+    get: function () { return window.AIManager ? window.AIManager.manualTarget : null; },
+    set: function (val) { if (window.AIManager) window.AIManager.manualTarget = val; }
 });
 
 var echoDeathLevel = 0;
@@ -70,7 +84,7 @@ var lowEnergyWarned = false;
 
 let gameStartTime = 0;
 let lastFrameTime = 0;
-window.cinematicMode = false; 
+window.cinematicMode = false;
 
 let frameCount = 0;
 let lastFpsTime = 0;
@@ -80,7 +94,7 @@ let isInSafeZone = false;
 let canvas, ctx, mmCanvas, mmCtx, bmCanvas, bmCtx;
 let width, height;
 
-var planets = [], stars = []; 
+var planets = [], stars = [];
 let collectedItems = [];
 let centralStorage = [];
 
@@ -88,71 +102,71 @@ let centralStorage = [];
 // OYUN MEKANİKLERİ VE MANTIK
 // -------------------------------------------------------------------------
 
-function spawnEcho(x, y) { 
-    echoRay = new EchoRay(x, y); 
+function spawnEcho(x, y) {
+    echoRay = new EchoRay(x, y);
     const wrapper = document.getElementById('echo-wrapper-el');
-    if(wrapper) {
-        wrapper.style.display = 'flex'; 
+    if (wrapper) {
+        wrapper.style.display = 'flex';
     }
-    showNotification({name: MESSAGES.ECHO.SPAWN, type:{color: MAP_CONFIG.colors.echo}}, ""); 
+    showNotification({ name: MESSAGES.ECHO.SPAWN, type: { color: MAP_CONFIG.colors.echo } }, "");
 }
 
-function addItemToInventory(planet) { 
+function addItemToInventory(planet) {
     // MANTIK: GameRules.isInventoryFull
     if (GameRules.isInventoryFull(collectedItems.length)) {
         if (!AIManager.active) { // AIManager kontrolü
-            showNotification({name: MESSAGES.UI.INVENTORY_FULL, type:{color:'#ef4444'}}, "");
-            if(audio) audio.playError();
+            showNotification({ name: MESSAGES.UI.INVENTORY_FULL, type: { color: '#ef4444' } }, "");
+            if (audio) audio.playError();
         }
-        return false; 
+        return false;
     }
 
-    collectedItems.push(planet); 
-    playerData.stats.totalResources++; 
-    updateInventoryCount(); 
-    if(typeof inventoryOpen !== 'undefined' && inventoryOpen) renderInventory();
-    return true; 
+    collectedItems.push(planet);
+    playerData.stats.totalResources++;
+    updateInventoryCount();
+    if (typeof inventoryOpen !== 'undefined' && inventoryOpen) renderInventory();
+    return true;
 }
 
 function setEchoMode(mode) {
-    if(!echoRay) return;
-    
+    if (!echoRay) return;
+
     if (mode !== 'return') {
         echoRay.pendingMerge = false;
     }
 
-    if (mode === 'roam' && echoRay.attached) { 
-        echoRay.attached = false; 
-        showNotification({name: MESSAGES.ECHO.DETACH, type:{color: MAP_CONFIG.colors.echo}}, ""); 
+    if (mode === 'roam' && echoRay.attached) {
+        echoRay.attached = false;
+        showNotification({ name: MESSAGES.ECHO.DETACH, type: { color: MAP_CONFIG.colors.echo } }, "");
     }
-    if (mode === 'return') echoRay.attached = false; 
-    echoRay.mode = mode; 
+    if (mode === 'return') echoRay.attached = false;
+    echoRay.mode = mode;
     updateEchoDropdownUI();
 }
 
 function echoManualMerge() {
-    if(!echoRay) return;
+    if (!echoRay) return;
     const dist = Utils.distEntity(player, echoRay);
-    
+
     // MANTIK: GameRules.canEchoMerge
     if (GameRules.canEchoMerge(dist)) {
-        if(audio) audio.playEvolve(); 
-        echoRay.attached = true; 
-        echoRay.mode = 'roam'; 
+        if (audio) audio.playEvolve();
+        echoRay.attached = true;
+        echoRay.mode = 'roam';
         echoRay.pendingMerge = false;
 
-        showNotification({name: MESSAGES.ECHO.MERGE, type:{color: MAP_CONFIG.colors.echo}}, MESSAGES.ECHO.MERGE_DESC);
+        showNotification({ name: MESSAGES.ECHO.MERGE, type: { color: MAP_CONFIG.colors.echo } }, MESSAGES.ECHO.MERGE_DESC);
         updateEchoDropdownUI();
-        
+
         if (window.cameraTarget === echoRay) {
             window.cameraTarget = player;
-            showNotification({name: MESSAGES.UI.CAMERA_RESET, type:{color:'#38bdf8'}}, MESSAGES.UI.CAMERA_RESET_DESC);
+            showNotification({ name: MESSAGES.UI.CAMERA_RESET, type: { color: '#38bdf8' } }, MESSAGES.UI.CAMERA_RESET_DESC);
             const indicator = document.getElementById('echo-vision-indicator');
-            if(indicator) indicator.classList.remove('active');
+            if (indicator) indicator.classList.remove('active');
         }
-    } else { 
-        showNotification({name: MESSAGES.ECHO.COMING, type:{color:'#fbbf24'}}, ""); 
-        setEchoMode('return'); 
+    } else {
+        showNotification({ name: MESSAGES.ECHO.COMING, type: { color: '#fbbf24' } }, "");
+        setEchoMode('return');
         echoRay.pendingMerge = true;
     }
 }
@@ -182,29 +196,29 @@ function init() {
     mmCanvas = document.getElementById('minimap-canvas');
     mmCtx = mmCanvas.getContext('2d');
     bmCanvas = document.getElementById('big-map-canvas');
-    bmCtx = bmCanvas.getContext('2d'); 
+    bmCtx = bmCanvas.getContext('2d');
 
-    player = new VoidRay(); 
-    window.cameraTarget = player; 
-    window.cameraFocus = { x: player.x, y: player.y }; 
-    lastCameraTarget = player; 
+    player = new VoidRay();
+    window.cameraTarget = player;
+    window.cameraFocus = { x: player.x, y: player.y };
+    lastCameraTarget = player;
 
-    nexus = new Nexus(); 
-    repairStation = new RepairStation(); 
-    storageCenter = new StorageCenter(); 
-    particleSystem = new ParticleSystem(); 
-    entityManager = new EntityManager(); 
+    nexus = new Nexus();
+    repairStation = new RepairStation();
+    storageCenter = new StorageCenter();
+    particleSystem = new ParticleSystem();
+    entityManager = new EntityManager();
     audio = new ZenAudio();
-    
+
     // AIManager zaten global, onu resetleyelim
     if (typeof AIManager !== 'undefined') {
         AIManager.active = false;
         AIManager.manualTarget = null;
     }
-    
-    gameStartTime = Date.now(); 
-    lastFrameTime = Date.now(); 
-    
+
+    gameStartTime = Date.now();
+    lastFrameTime = Date.now();
+
     // MANTIK: GameRules.isInSafeZone
     isInSafeZone = GameRules.isInSafeZone(player, nexus);
 
@@ -215,7 +229,7 @@ function init() {
     }
 
     entityManager.init();
-    
+
     if (typeof AchievementManager !== 'undefined') AchievementManager.init();
     if (typeof TutorialManager !== 'undefined') TutorialManager.init();
 
@@ -225,13 +239,13 @@ function init() {
         player.updateUI();
     } else {
         console.warn("SaveManager bulunamadı!");
-        player.updateUI(); 
-        updateInventoryCount(); 
+        player.updateUI();
+        updateInventoryCount();
     }
 
     isPaused = false;
     startTipsCycle();
-    
+
     // HARİTA TIKLAMA ENTEGRASYONU (AIManager ile)
     if (bmCanvas && typeof initMapListeners === 'function') {
         initMapListeners(bmCanvas, WORLD_SIZE, (worldX, worldY) => {
@@ -243,9 +257,9 @@ function init() {
         });
     }
 
-    currentZoom = GAME_CONFIG.CAMERA.INITIAL_ZOOM; 
-    targetZoom = GAME_CONFIG.CAMERA.DEFAULT_ZOOM;  
-    window.cinematicMode = true; 
+    currentZoom = GAME_CONFIG.CAMERA.INITIAL_ZOOM;
+    targetZoom = GAME_CONFIG.CAMERA.DEFAULT_ZOOM;
+    window.cinematicMode = true;
 
     if (typeof INTRO_SEQUENCE !== 'undefined') {
         INTRO_SEQUENCE.forEach(msg => {
@@ -262,14 +276,14 @@ function init() {
 }
 
 function startLoop() {
-    if(animationId) cancelAnimationFrame(animationId);
+    if (animationId) cancelAnimationFrame(animationId);
     loop();
 }
 
 // Statik çizim fonksiyonu (değişmedi)
 function drawStaticNoise(ctx, w, h, intensity) {
     ctx.save();
-    const count = 20 * intensity; 
+    const count = 20 * intensity;
     for (let i = 0; i < count; i++) {
         const y = Math.random() * h;
         const height = Math.random() * 20 + 2;
@@ -282,7 +296,7 @@ function drawStaticNoise(ctx, w, h, intensity) {
         const y = Math.random() * h;
         const size = Math.random() * 50 + 10;
         ctx.fillStyle = `rgba(200, 200, 200, ${Math.random() * 0.4 * intensity})`;
-        ctx.fillRect(x, y, size, size/4);
+        ctx.fillRect(x, y, size, size / 4);
     }
     if (intensity > 0.5) {
         ctx.fillStyle = `rgba(255, 0, 0, ${0.1 * intensity})`;
@@ -294,13 +308,13 @@ function drawStaticNoise(ctx, w, h, intensity) {
         ctx.textAlign = "center";
         ctx.shadowBlur = 5;
         ctx.shadowColor = "red";
-        ctx.fillText("⚠ SİNYAL ZAYIF ⚠", w/2, h/2 - 50);
+        ctx.fillText("⚠ SİNYAL ZAYIF ⚠", w / 2, h / 2 - 50);
     }
     ctx.restore();
 }
 
 function loop() {
-    if(!isPaused && ctx) {
+    if (!isPaused && ctx) {
         const now = Date.now();
         const dt = now - lastFrameTime;
         lastFrameTime = now;
@@ -310,23 +324,23 @@ function loop() {
             if (window.gameSettings.showFps) {
                 const fps = Math.round((frameCount * 1000) / (now - lastFpsTime));
                 const fpsEl = document.getElementById('debug-fps-val');
-                if(fpsEl) fpsEl.innerText = fps;
-                
+                if (fpsEl) fpsEl.innerText = fps;
+
                 const ms = (1000 / Math.max(1, fps)).toFixed(1);
                 const msEl = document.getElementById('debug-ms-val');
-                if(msEl) msEl.innerText = ms;
+                if (msEl) msEl.innerText = ms;
 
                 let pCount = (entityManager && entityManager.planets) ? entityManager.planets.length : 0;
                 let wCount = (entityManager && entityManager.wormholes) ? entityManager.wormholes.length : 0;
                 let partCount = particleSystem ? particleSystem.count : 0;
                 const totalObj = pCount + wCount + partCount;
                 const objEl = document.getElementById('debug-obj-val');
-                if(objEl) objEl.innerText = totalObj;
+                if (objEl) objEl.innerText = totalObj;
                 const partEl = document.getElementById('debug-part-val');
-                if(partEl) partEl.innerText = partCount;
+                if (partEl) partEl.innerText = partCount;
 
                 const memEl = document.getElementById('debug-mem-val');
-                if(memEl) {
+                if (memEl) {
                     if (performance && performance.memory) {
                         const memUsed = Math.round(performance.memory.usedJSHeapSize / 1048576);
                         memEl.innerText = memUsed + "MB";
@@ -349,11 +363,11 @@ function loop() {
         currentZoom += (targetZoom - currentZoom) * zoomSpeed;
 
         player.update(dt);
-        if(echoRay) {
-            echoRay.update(); 
+        if (echoRay) {
+            echoRay.update();
             if (echoRay.mode === 'return' && echoRay.pendingMerge) {
-                 const dist = Utils.distEntity(player, echoRay);
-                 if (dist < GAME_CONFIG.ECHO.INTERACTION_DIST - 50) echoManualMerge();
+                const dist = Utils.distEntity(player, echoRay);
+                if (dist < GAME_CONFIG.ECHO.INTERACTION_DIST - 50) echoManualMerge();
             }
         }
         nexus.update();
@@ -364,51 +378,51 @@ function loop() {
             window.cameraTarget = player;
             lastCameraTarget = player;
         }
-        
+
         if (window.cameraTarget === echoRay && !echoRay) {
             window.cameraTarget = player;
-            showNotification({name: MESSAGES.ECHO.LOST_SIGNAL, type:{color:'#ef4444'}}, MESSAGES.ECHO.LOST_SIGNAL_DESC);
+            showNotification({ name: MESSAGES.ECHO.LOST_SIGNAL, type: { color: '#ef4444' } }, MESSAGES.ECHO.LOST_SIGNAL_DESC);
             const indicator = document.getElementById('echo-vision-indicator');
-            if(indicator) indicator.classList.remove('active');
+            if (indicator) indicator.classList.remove('active');
         }
 
         const currentlySafe = GameRules.isInSafeZone(player, nexus);
-        
+
         if (currentlySafe) {
             if (!isInSafeZone) {
                 isInSafeZone = true;
-                showNotification({name: MESSAGES.UI.SAFE_ZONE_ENTER, type:{color:'#38bdf8'}}, MESSAGES.UI.SAFE_ZONE_ENTER_DESC);
-                if(audio) audio.playTheme('base');
+                showNotification({ name: MESSAGES.UI.SAFE_ZONE_ENTER, type: { color: '#38bdf8' } }, MESSAGES.UI.SAFE_ZONE_ENTER_DESC);
+                if (audio) audio.playTheme('base');
             }
         } else {
             if (isInSafeZone) {
                 isInSafeZone = false;
-                showNotification({name: MESSAGES.UI.SAFE_ZONE_EXIT, type:{color:'#fbbf24'}}, MESSAGES.UI.SAFE_ZONE_EXIT_DESC);
-                if(audio) audio.playTheme('space');
+                showNotification({ name: MESSAGES.UI.SAFE_ZONE_EXIT, type: { color: '#fbbf24' } }, MESSAGES.UI.SAFE_ZONE_EXIT_DESC);
+                if (audio) audio.playTheme('space');
             }
         }
 
-        if(AIManager.active) {
+        if (AIManager.active) {
             playerData.stats.timeAI += dt;
         }
 
-        if(typeof profileOpen !== 'undefined' && profileOpen) renderProfile();
-        if(typeof statsOpen !== 'undefined' && statsOpen) renderStats();
-        if(typeof contextOpen !== 'undefined' && contextOpen) renderContext();
-        if(typeof TutorialManager !== 'undefined') TutorialManager.update(dt);
+        if (typeof profileOpen !== 'undefined' && profileOpen) renderProfile();
+        if (typeof statsOpen !== 'undefined' && statsOpen) renderStats();
+        if (typeof contextOpen !== 'undefined' && contextOpen) renderContext();
+        if (typeof TutorialManager !== 'undefined') TutorialManager.update(dt);
         if (entityManager) entityManager.update(dt);
 
         // --- TUŞ KONTROLLERİ ---
-        if (keys.Escape) { 
+        if (keys.Escape) {
             if (typeof inventoryOpen !== 'undefined' && inventoryOpen) closeInventory();
             else if (typeof echoInvOpen !== 'undefined' && echoInvOpen) closeEchoInventory();
             else if (typeof nexusOpen !== 'undefined' && nexusOpen) exitNexus();
-            else if (typeof storageOpen !== 'undefined' && storageOpen) closeStorage(); 
+            else if (typeof storageOpen !== 'undefined' && storageOpen) closeStorage();
             else if (typeof mapOpen !== 'undefined' && mapOpen) closeMap();
             else if (typeof statsOpen !== 'undefined' && statsOpen) closeStats();
-            else if (typeof equipmentOpen !== 'undefined' && equipmentOpen) closeEquipment(); 
+            else if (typeof equipmentOpen !== 'undefined' && equipmentOpen) closeEquipment();
             else if (typeof settingsOpen !== 'undefined' && settingsOpen) closeSettings();
-            else if (typeof contextOpen !== 'undefined' && contextOpen) closeContext(); 
+            else if (typeof contextOpen !== 'undefined' && contextOpen) closeContext();
             else if (typeof profileOpen !== 'undefined' && profileOpen) closeProfile();
             else if (typeof controlsOpen !== 'undefined' && controlsOpen) closeControls();
             else togglePause();
@@ -416,21 +430,21 @@ function loop() {
         }
 
         // --- ARKA PLAN (SİYAH) ---
-        ctx.fillStyle = "#000000"; ctx.fillRect(0,0,width,height);
-        
+        ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, width, height);
+
         // --- ARKA PLAN ÇİZİMİ ---
         if (entityManager) {
             entityManager.drawStars(ctx, width, height, window.cameraFocus || window.cameraTarget);
         }
-        
-        ctx.save(); 
-        
+
+        ctx.save();
+
         let targetOffsetX = window.gameSettings.cameraOffsetX;
         let targetOffsetY = window.gameSettings.cameraOffsetY;
 
         if (window.gameSettings.adaptiveCamera) {
-            const lookAheadFactor = GAME_CONFIG.CAMERA.ADAPTIVE_FACTOR; 
-            const maxAdaptiveOffset = GAME_CONFIG.CAMERA.MAX_OFFSET; 
+            const lookAheadFactor = GAME_CONFIG.CAMERA.ADAPTIVE_FACTOR;
+            const maxAdaptiveOffset = GAME_CONFIG.CAMERA.MAX_OFFSET;
             targetOffsetX = -window.cameraTarget.vx * lookAheadFactor;
             targetOffsetY = -window.cameraTarget.vy * lookAheadFactor;
             targetOffsetX = Math.max(-maxAdaptiveOffset, Math.min(maxAdaptiveOffset, targetOffsetX));
@@ -441,9 +455,9 @@ function loop() {
         currentRenderOffsetX += (targetOffsetX - currentRenderOffsetX) * lerpVal;
         currentRenderOffsetY += (targetOffsetY - currentRenderOffsetY) * lerpVal;
 
-        ctx.translate(width/2 + currentRenderOffsetX, height/2 + currentRenderOffsetY); 
-        ctx.scale(currentZoom, currentZoom); 
-        
+        ctx.translate(width / 2 + currentRenderOffsetX, height / 2 + currentRenderOffsetY);
+        ctx.scale(currentZoom, currentZoom);
+
         if (window.cameraTarget !== lastCameraTarget) {
             isCameraTransitioning = true;
             lastCameraTarget = window.cameraTarget;
@@ -460,21 +474,21 @@ function loop() {
             if (distCam > 5000) {
                 window.cameraFocus.x = window.cameraTarget.x;
                 window.cameraFocus.y = window.cameraTarget.y;
-                isCameraTransitioning = false; 
+                isCameraTransitioning = false;
             } else if (isCameraTransitioning) {
-                const lerpSpeed = 0.08; 
+                const lerpSpeed = 0.08;
                 window.cameraFocus.x += (window.cameraTarget.x - window.cameraFocus.x) * lerpSpeed;
                 window.cameraFocus.y += (window.cameraTarget.y - window.cameraFocus.y) * lerpSpeed;
-                if (distCam < 50) isCameraTransitioning = false; 
+                if (distCam < 50) isCameraTransitioning = false;
             } else {
-                const lerpSpeed = 0.9; 
+                const lerpSpeed = 0.9;
                 window.cameraFocus.x += (window.cameraTarget.x - window.cameraFocus.x) * lerpSpeed;
                 window.cameraFocus.y += (window.cameraTarget.y - window.cameraFocus.y) * lerpSpeed;
             }
         }
 
         ctx.translate(-window.cameraFocus.x, -window.cameraFocus.y);
-        
+
         if (entityManager) {
             entityManager.drawGrid(ctx, width, height, window.cameraFocus.x, window.cameraFocus.y, currentZoom);
             entityManager.drawPlanets(ctx, player, echoRay, width, height, currentZoom);
@@ -486,9 +500,9 @@ function loop() {
         ctx.rotate(Date.now() * 0.0001);
         ctx.beginPath();
         ctx.arc(0, 0, safeR, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.1)"; 
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.1)";
         ctx.lineWidth = 20;
-        ctx.setLineDash([100, 100]); 
+        ctx.setLineDash([100, 100]);
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(0, 0, safeR - 50, 0, Math.PI * 2);
@@ -499,51 +513,51 @@ function loop() {
         ctx.restore();
 
         nexus.draw(ctx);
-        repairStation.draw(ctx); 
-        storageCenter.draw(ctx); 
-        
+        repairStation.draw(ctx);
+        storageCenter.draw(ctx);
+
         particleSystem.update();
         particleSystem.draw(ctx);
-        
+
         // --- YENİ: ETİKETLİ HALKA ÇİZİM FONKSİYONU ---
         const drawLabeledRing = (x, y, radius, color, labelText) => {
-            ctx.strokeStyle = color; 
-            ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI*2); ctx.stroke();
-            
+            ctx.strokeStyle = color;
+            ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.stroke();
+
             // Etiket Mantığı: Kameranın odak noktasına (merkeze) en yakın noktayı bul
             const cx = window.cameraFocus.x;
             const cy = window.cameraFocus.y;
-            
+
             // Merkezden halka merkezine olan açı
             const angle = Math.atan2(cy - y, cx - x);
-            
+
             // Bu açı doğrultusunda, halka yarıçapı kadar ilerle
             const lx = x + Math.cos(angle) * radius;
             const ly = y + Math.sin(angle) * radius;
-            
+
             ctx.save();
-            
+
             // Metin rengini halkanın ana rengine göre belirle (Daha opak ve net)
             let textColor = "#fff";
-            if(color.includes("16, 185, 129")) textColor = "#34d399"; // Yeşil tonu
-            else if(color.includes("245, 158, 11")) textColor = "#fbbf24"; // Turuncu tonu
-            
+            if (color.includes("16, 185, 129")) textColor = "#34d399"; // Yeşil tonu
+            else if (color.includes("245, 158, 11")) textColor = "#fbbf24"; // Turuncu tonu
+
             ctx.font = "bold 10px monospace";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            
+
             const metrics = ctx.measureText(labelText);
             const w = metrics.width + 8;
             const h = 16;
-            
+
             // Metin arka planı (Okunabilirlik için)
             ctx.fillStyle = "rgba(0,0,0,0.8)";
-            ctx.fillRect(lx - w/2, ly - h/2, w, h);
-            
+            ctx.fillRect(lx - w / 2, ly - h / 2, w, h);
+
             // Metni çiz
             ctx.fillStyle = textColor;
             ctx.fillText(labelText, lx, ly);
-            
+
             ctx.restore();
         };
 
@@ -552,35 +566,35 @@ function loop() {
         drawLabeledRing(player.x, player.y, player.scanRadius, "rgba(16, 185, 129, 0.2)", "VATOZ TARAMA");
         drawLabeledRing(player.x, player.y, player.radarRadius, "rgba(245, 158, 11, 0.15)", "VATOZ RADAR");
 
-        if(echoRay) {
+        if (echoRay) {
             drawLabeledRing(echoRay.x, echoRay.y, echoRay.scanRadius, "rgba(16, 185, 129, 0.2)", "YANKI TARAMA");
             drawLabeledRing(echoRay.x, echoRay.y, echoRay.radarRadius, "rgba(245, 158, 11, 0.15)", "YANKI RADAR");
-            
+
             if (echoRay.mode === 'return') {
                 const distToEcho = Utils.distEntity(player, echoRay);
                 let lineAlpha = 0.4;
                 if (distToEcho < player.scanRadius) lineAlpha = Math.max(0, (distToEcho / player.scanRadius) * 0.4);
-                if (lineAlpha > 0.05) { 
+                if (lineAlpha > 0.05) {
                     ctx.beginPath(); ctx.moveTo(echoRay.x, echoRay.y); ctx.lineTo(player.x, player.y);
-                    ctx.strokeStyle = MAP_CONFIG.colors.echo; ctx.lineWidth = 2; ctx.setLineDash([15, 10]); ctx.lineDashOffset = -Date.now() / 50; 
+                    ctx.strokeStyle = MAP_CONFIG.colors.echo; ctx.lineWidth = 2; ctx.setLineDash([15, 10]); ctx.lineDashOffset = -Date.now() / 50;
                     ctx.globalAlpha = lineAlpha; ctx.stroke(); ctx.globalAlpha = 1.0; ctx.setLineDash([]); ctx.lineDashOffset = 0;
                 }
             }
         }
 
-        if(echoRay) echoRay.draw(ctx);
+        if (echoRay) echoRay.draw(ctx);
         player.draw(ctx); ctx.restore();
-        
+
         if (window.cameraTarget === echoRay && echoRay && !echoRay.attached) {
             const dist = Utils.distEntity(player, echoRay);
-            const maxRange = player.radarRadius; 
+            const maxRange = player.radarRadius;
             const interference = GameRules.calculateSignalInterference(dist, maxRange);
             if (interference >= 1.0) {
                 window.cameraTarget = player;
-                showNotification({name: MESSAGES.ECHO.RANGE_WARNING, type:{color:'#ef4444'}}, MESSAGES.ECHO.LOST_SIGNAL_DESC);
-                if(audio) audio.playError();
+                showNotification({ name: MESSAGES.ECHO.RANGE_WARNING, type: { color: '#ef4444' } }, MESSAGES.ECHO.LOST_SIGNAL_DESC);
+                if (audio) audio.playError();
                 const indicator = document.getElementById('echo-vision-indicator');
-                if(indicator) indicator.classList.remove('active');
+                if (indicator) indicator.classList.remove('active');
             } else if (interference > 0) {
                 drawStaticNoise(ctx, width, height, interference);
             }
@@ -595,9 +609,9 @@ function loop() {
             let showStoragePrompt = GameRules.canInteract(player, storageCenter, 200) && !isStorageOpen;
             let showEchoMergePrompt = false;
             if (echoRay && !isMapOpen) {
-                 if (!echoRay.attached && GameRules.canInteract(player, echoRay, 300)) {
-                     showEchoMergePrompt = true;
-                 }
+                if (!echoRay.attached && GameRules.canInteract(player, echoRay, 300)) {
+                    showEchoMergePrompt = true;
+                }
             }
             let activePrompts = [];
             if (showNexusPrompt) {
@@ -613,8 +627,8 @@ function loop() {
             }
             if (echoRay && echoRay.attached) {
                 if (keys.f && document.activeElement !== document.getElementById('chat-input')) {
-                     echoRay.attached = false; echoRay.mode = 'roam'; updateEchoDropdownUI(); keys.f = false; 
-                     showNotification({name: MESSAGES.ECHO.DETACH, type:{color: MAP_CONFIG.colors.echo}}, "");
+                    echoRay.attached = false; echoRay.mode = 'roam'; updateEchoDropdownUI(); keys.f = false;
+                    showNotification({ name: MESSAGES.ECHO.DETACH, type: { color: MAP_CONFIG.colors.echo } }, "");
                 }
             }
             if (activePrompts.length > 0) {
@@ -627,46 +641,116 @@ function loop() {
         }
 
         const navOrigin = window.cameraFocus || window.cameraTarget;
-        if(echoRay && !echoRay.attached && window.gameSettings.showEchoArrow && window.cameraTarget !== echoRay) {
+        if (echoRay && !echoRay.attached && window.gameSettings.showEchoArrow && window.cameraTarget !== echoRay) {
             // YANKI etiketi KALDIRILDI
-            drawTargetIndicator(ctx, navOrigin, {width, height, zoom: currentZoom}, echoRay, MAP_CONFIG.colors.echo);
+            drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, echoRay, MAP_CONFIG.colors.echo);
         }
         if (window.cameraTarget === echoRay && echoRay && !echoRay.attached) {
-             // VATOZ etiketi KALDIRILDI
-             drawTargetIndicator(ctx, navOrigin, {width, height, zoom: currentZoom}, player, MAP_CONFIG.colors.player);
+            // VATOZ etiketi KALDIRILDI
+            drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, player, MAP_CONFIG.colors.player);
         }
-        if (window.gameSettings.showNexusArrow) drawTargetIndicator(ctx, navOrigin, {width, height, zoom: currentZoom}, nexus, MAP_CONFIG.colors.nexus);
-        if (window.gameSettings.showRepairArrow) drawTargetIndicator(ctx, navOrigin, {width, height, zoom: currentZoom}, repairStation, MAP_CONFIG.colors.repair);
-        if (window.gameSettings.showStorageArrow) drawTargetIndicator(ctx, navOrigin, {width, height, zoom: currentZoom}, storageCenter, MAP_CONFIG.colors.storage);
+        if (window.gameSettings.showNexusArrow) drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, nexus, MAP_CONFIG.colors.nexus);
+        if (window.gameSettings.showRepairArrow) drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, repairStation, MAP_CONFIG.colors.repair);
+        if (window.gameSettings.showStorageArrow) drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, storageCenter, MAP_CONFIG.colors.storage);
 
-        const entities = { 
-            player, echoRay, nexus, repairStation, storageCenter, 
+        const entities = {
+            player, echoRay, nexus, repairStation, storageCenter,
             planets: (entityManager ? entityManager.planets : []),
-            wormholes: (entityManager ? entityManager.wormholes : []) 
+            wormholes: (entityManager ? entityManager.wormholes : [])
         };
         const state = { manualTarget: AIManager.manualTarget };
         drawMiniMap(mmCtx, entities, state, navOrigin, window.cameraTarget);
-        if(typeof mapOpen !== 'undefined' && mapOpen) drawBigMap(bmCtx, bmCanvas, WORLD_SIZE, entities, state);
-    } 
+        if (typeof mapOpen !== 'undefined' && mapOpen) drawBigMap(bmCtx, bmCanvas, WORLD_SIZE, entities, state);
+    }
     animationId = requestAnimationFrame(loop);
 }
 
-function togglePause() { isPaused = true; const el=document.getElementById('pause-overlay'); if(el) el.classList.add('active'); }
-function resumeGame() { isPaused = false; const el=document.getElementById('pause-overlay'); if(el) el.classList.remove('active'); }
-function quitToMain() { 
-    const pEl = document.getElementById('pause-overlay'); if(pEl) pEl.classList.remove('active');
-    const dEl = document.getElementById('death-screen'); if(dEl) dEl.classList.remove('active');
-    const mEl = document.getElementById('main-menu'); if(mEl) mEl.classList.remove('menu-hidden');
-    isPaused = true; 
-    if(animationId) cancelAnimationFrame(animationId); 
+function togglePause() { isPaused = true; const el = document.getElementById('pause-overlay'); if (el) el.classList.add('active'); }
+function resumeGame() { isPaused = false; const el = document.getElementById('pause-overlay'); if (el) el.classList.remove('active'); }
+function quitToMain() {
+    const pEl = document.getElementById('pause-overlay'); if (pEl) pEl.classList.remove('active');
+    const dEl = document.getElementById('death-screen'); if (dEl) dEl.classList.remove('active');
+    const mEl = document.getElementById('main-menu'); if (mEl) mEl.classList.remove('menu-hidden');
+    isPaused = true;
+    if (animationId) cancelAnimationFrame(animationId);
 }
 
-function resize() { 
+function resize() {
     if (!canvas) return;
-    width = window.innerWidth; 
-    height = window.innerHeight; 
-    canvas.width = width; 
-    canvas.height = height; 
-    if(mmCanvas) { mmCanvas.width = 180; mmCanvas.height = 180; }
-    if(bmCanvas) { bmCanvas.width = window.innerWidth; bmCanvas.height = window.innerHeight; }
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    if (mmCanvas) { mmCanvas.width = 180; mmCanvas.height = 180; }
+    if (bmCanvas) { bmCanvas.width = window.innerWidth; bmCanvas.height = window.innerHeight; }
 }
+
+// -------------------------------------------------------------------------
+// WINDOW EXPORTS (for backward compatibility with non-module scripts)
+// -------------------------------------------------------------------------
+
+// Game state variables
+window.player = null;
+window.echoRay = null;
+window.nexus = null;
+window.repairStation = null;
+window.storageCenter = null;
+window.particleSystem = null;
+window.entityManager = null;
+window.audio = null;
+window.collectedItems = collectedItems;
+window.centralStorage = centralStorage;
+window.playerData = playerData;
+window.lowEnergyWarned = lowEnergyWarned;
+window.echoDeathLevel = echoDeathLevel;
+window.isInSafeZone = isInSafeZone;
+
+// Camera and zoom variables (need Object.defineProperty for read/write access)
+Object.defineProperty(window, 'targetZoom', {
+    get: function () { return targetZoom; },
+    set: function (val) { targetZoom = val; },
+    configurable: true
+});
+Object.defineProperty(window, 'currentZoom', {
+    get: function () { return currentZoom; },
+    set: function (val) { currentZoom = val; },
+    configurable: true
+});
+Object.defineProperty(window, 'isPaused', {
+    get: function () { return isPaused; },
+    set: function (val) { isPaused = val; },
+    configurable: true
+});
+
+// Constants from data.js (for legacy access)
+window.WORLD_SIZE = WORLD_SIZE;
+
+// Game functions
+window.init = init;
+window.startLoop = startLoop;
+window.spawnEcho = spawnEcho;
+window.addItemToInventory = addItemToInventory;
+window.setEchoMode = setEchoMode;
+window.echoManualMerge = echoManualMerge;
+window.cycleAIMode = cycleAIMode;
+window.togglePause = togglePause;
+window.resumeGame = resumeGame;
+window.quitToMain = quitToMain;
+
+// Update window references when game initializes
+const originalInit = init;
+window.init = function () {
+    originalInit();
+    window.player = player;
+    window.echoRay = echoRay;
+    window.nexus = nexus;
+    window.repairStation = repairStation;
+    window.storageCenter = storageCenter;
+    window.particleSystem = particleSystem;
+    window.entityManager = entityManager;
+    window.audio = audio;
+    window.canvas = canvas;
+    window.ctx = ctx;
+    window.width = width;
+    window.height = height;
+};
