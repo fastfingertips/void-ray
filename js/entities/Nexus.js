@@ -1,27 +1,24 @@
+import Utils from '../utils.js';
+
 /**
- * -------------------------------------------------------------------------
- * DEVELOPER NOTE: NEXUS (ENTITY / PHYSICAL OBJECT) MODULE
- * -------------------------------------------------------------------------
- * Bu dosya, Nexus istasyonunun "Fiziksel Varlık" (Entity) mantığını yönetir.
- * * GÜNCELLEME: Wireframe / Tech temasına uygun olarak yeniden tasarlandı.
- * * Organik şekiller yerine dönen geometrik katmanlar (Altıgen/Kare) kullanıldı.
- * -------------------------------------------------------------------------
+ * Void Ray - Nexus Entity (Main Base Station)
+ * Wireframe tech-style station with rotating hexagonal layers.
  */
 
 class Nexus {
-    constructor() { 
-        this.x = GameRules.LOCATIONS.NEXUS.x; 
-        this.y = GameRules.LOCATIONS.NEXUS.y; 
-        this.radius = 300; 
-        this.rotation = 0; 
+    constructor() {
+        this.x = GameRules.LOCATIONS.NEXUS.x;
+        this.y = GameRules.LOCATIONS.NEXUS.y;
+        this.radius = 300;
+        this.rotation = 0;
         this.corePulse = 0; // Çekirdek animasyonu için
     }
-    
+
     update() {
         this.rotation += 0.003; // Ağır ve teknik dönüş
         this.corePulse += 0.05;
     }
-    
+
     // Yardımcı: Çokgen Çizici (Wireframe estetiği için)
     drawPoly(ctx, x, y, radius, sides) {
         if (sides < 3) return;
@@ -33,16 +30,16 @@ class Nexus {
         ctx.closePath();
         ctx.stroke();
     }
-    
+
     draw(ctx) {
         // TEMA RENGİNİ AL
         let themeColor = "#38bdf8";
         let glowColor = "rgba(56, 189, 248, 0.8)";
         let dimColor = "rgba(56, 189, 248, 0.2)";
-        
+
         if (window.gameSettings && window.gameSettings.themeColor) {
             themeColor = window.gameSettings.themeColor;
-            
+
             // Renk varyasyonlarını oluştur
             if (typeof Utils !== 'undefined' && Utils.hexToRgba) {
                 glowColor = Utils.hexToRgba(themeColor, 0.8);
@@ -50,9 +47,9 @@ class Nexus {
             }
         }
 
-        ctx.save(); 
-        ctx.translate(this.x, this.y); 
-        
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
         // 1. EN DIŞ SABİT ÇEMBER (Radar/Sınır Çizgisi)
         // İnce, kesikli çizgi - Wireframe estetiği
         ctx.strokeStyle = dimColor;
@@ -66,34 +63,34 @@ class Nexus {
         // 2. DIŞ DÖNEN ALTIGEN KATMANI (Ana İstasyon Gövdesi)
         ctx.save();
         ctx.rotate(this.rotation);
-        
+
         ctx.strokeStyle = themeColor;
         ctx.lineWidth = 2;
         ctx.shadowBlur = 10;
         ctx.shadowColor = themeColor;
-        
+
         // Ana Altıgen
         this.drawPoly(ctx, 0, 0, 180, 6);
-        
+
         // İç Detay Altıgeni (Daha ince)
         ctx.strokeStyle = dimColor;
         ctx.lineWidth = 1;
         ctx.shadowBlur = 0;
         this.drawPoly(ctx, 0, 0, 160, 6);
-        
+
         // Köşe Bağlantıları (Tech Lines)
-        for(let i=0; i<6; i++) {
+        for (let i = 0; i < 6; i++) {
             ctx.save();
-            ctx.rotate((Math.PI/3) * i);
+            ctx.rotate((Math.PI / 3) * i);
             ctx.strokeStyle = glowColor;
             ctx.lineWidth = 2;
-            
+
             // İç-Dış bağlantı çizgileri
             ctx.beginPath();
-            ctx.moveTo(160, 0); 
-            ctx.lineTo(180, 0); 
+            ctx.moveTo(160, 0);
+            ctx.lineTo(180, 0);
             ctx.stroke();
-            
+
             // Dışa uzanan iskele/panel (Dolu dikdörtgen yerine boş)
             ctx.fillStyle = dimColor;
             ctx.fillRect(180, -4, 15, 8);
@@ -104,52 +101,52 @@ class Nexus {
         // 3. İÇ TERS DÖNEN KARE KATMANI (Enerji Reaktörü)
         ctx.save();
         ctx.rotate(-this.rotation * 1.5); // Ters yöne ve biraz daha hızlı döner
-        
+
         ctx.strokeStyle = glowColor;
         ctx.lineWidth = 3;
         ctx.shadowBlur = 15;
         ctx.shadowColor = themeColor;
-        
+
         // Ana Kare (Elmas duruşu)
         this.drawPoly(ctx, 0, 0, 100, 4);
-        
+
         // Kare Köşelerine Noktalar
         ctx.fillStyle = themeColor;
-        for(let i=0; i<4; i++) {
+        for (let i = 0; i < 4; i++) {
             ctx.beginPath();
-            ctx.arc(100 * Math.cos(i*Math.PI/2), 100 * Math.sin(i*Math.PI/2), 3, 0, Math.PI*2);
+            ctx.arc(100 * Math.cos(i * Math.PI / 2), 100 * Math.sin(i * Math.PI / 2), 3, 0, Math.PI * 2);
             ctx.fill();
         }
-        
+
         ctx.restore();
 
         // 4. MERKEZ ÇEKİRDEK (Pulsating Core)
         const pulseScale = 1 + Math.sin(this.corePulse) * 0.05;
-        
+
         ctx.save();
         ctx.scale(pulseScale, pulseScale);
-        
+
         // Çekirdek Arka Planı (Siyah, arkadaki çizgileri maskelemek için)
         ctx.fillStyle = "#000";
         ctx.beginPath();
         ctx.arc(0, 0, 40, 0, Math.PI * 2);
         ctx.fill();
-        
+
         // Çekirdek Çerçevesi (Teknik Daire)
         ctx.strokeStyle = themeColor;
         ctx.lineWidth = 4;
         ctx.shadowBlur = 30;
         ctx.shadowColor = themeColor;
         ctx.stroke();
-        
+
         // İç Işık Kaynağı
         ctx.fillStyle = "#e0f2fe"; // Merkez her zaman parlak beyaz/mavi
         ctx.beginPath();
         ctx.arc(0, 0, 15, 0, Math.PI * 2);
         ctx.fill();
-        
+
         ctx.restore();
-        
+
         // 5. DEKORATİF ÇAPRAZ ÇİZGİLER (HUD Hissiyatı)
         ctx.strokeStyle = dimColor;
         ctx.lineWidth = 1;
@@ -166,3 +163,6 @@ class Nexus {
         ctx.restore();
     }
 }
+
+// Export for global access
+window.Nexus = Nexus;

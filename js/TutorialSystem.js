@@ -1,6 +1,8 @@
+import Utils from './utils.js';
+
 /**
- * Void Ray - Rehber ve Alıştırma Sistemi (Tutorial System)
- * Oyuncuya oyunun temellerini öğretmek için adım adım görevler sunar.
+ * Void Ray - Tutorial System
+ * Step-by-step guide to teach game basics.
  */
 
 const TUTORIAL_STEPS = [
@@ -69,7 +71,7 @@ class TutorialSystem {
         this.uiContainer = null;
         this.uiText = null;
         this.uiIcon = null;
-        
+
         // Durumlar: 'idle', 'active', 'success', 'waiting_next'
         this.state = 'idle';
         this.timer = 0;
@@ -79,7 +81,7 @@ class TutorialSystem {
         this.uiContainer = document.getElementById('tutorial-box');
         this.uiText = document.getElementById('tutorial-text');
         this.uiIcon = document.getElementById('tutorial-icon');
-        
+
         console.log("Tutorial System başlatıldı.");
     }
 
@@ -134,37 +136,37 @@ class TutorialSystem {
     startStep(step) {
         this.activeStep = step;
         this.state = 'active';
-        
+
         this.uiText.innerHTML = step.text;
         this.uiIcon.innerHTML = "!";
-        
+
         this.uiContainer.classList.remove('success');
         this.uiContainer.classList.add('visible');
-        
+
         // Yeni görev sesi
-        if (typeof audio !== 'undefined' && audio) audio.playChime({id: 'common'});
+        if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'common' });
     }
 
     completeStep() {
         this.completedSteps.add(this.activeStep.id);
         this.state = 'success';
         this.timer = 3000; // 3 saniye ekranda kalsın
-        
+
         this.uiContainer.classList.add('success');
         this.uiIcon.innerHTML = "✔";
-        
+
         // Eğer SaveManager varsa anlık kaydet
         if (typeof SaveManager !== 'undefined') SaveManager.save(true);
-        
+
         // Başarım sesi
-        if (typeof audio !== 'undefined' && audio) audio.playChime({id: 'rare'});
+        if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'rare' });
     }
-    
+
     reset() {
         this.completedSteps.clear();
         this.state = 'idle';
         this.activeStep = null;
-        if(this.uiContainer) this.uiContainer.classList.remove('visible');
+        if (this.uiContainer) this.uiContainer.classList.remove('visible');
     }
 }
 

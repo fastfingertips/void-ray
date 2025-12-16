@@ -1,46 +1,48 @@
 <!-- Path: index.html -->
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rüya Bahçesi: Void Ray</title>
-    
+
     <!-- STİL KÜTÜPHANELERİ -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
-    
+
     <!-- MODÜLER CSS BAĞLANTILARI -->
     <link rel="stylesheet" href="css/core.css">
     <link rel="stylesheet" href="css/buttons.css">
-    <link rel="stylesheet" href="css/tabs.css"> 
+    <link rel="stylesheet" href="css/tabs.css">
     <link rel="stylesheet" href="css/menus.css">
     <link rel="stylesheet" href="css/hud.css">
     <link rel="stylesheet" href="css/panels.css">
     <link rel="stylesheet" href="css/stats.css">
     <link rel="stylesheet" href="css/inventory.css">
-    <link rel="stylesheet" href="css/equipment.css"> 
+    <link rel="stylesheet" href="css/equipment.css">
     <link rel="stylesheet" href="css/chat.css">
     <link rel="stylesheet" href="css/profile.css">
     <link rel="stylesheet" href="css/world.css">
-    <link rel="stylesheet" href="css/boot.css"> 
+    <link rel="stylesheet" href="css/boot.css">
 </head>
+
 <body>
-    
+
     <!-- PARÇALARIN YÜKLENECEĞİ ALANLAR -->
     <div id="ui-core"></div>
-    <div id="ui-menus"></div> 
+    <div id="ui-menus"></div>
     <div id="ui-hud"></div>
     <div id="ui-panels"></div>
-    <div id="ui-windows"></div> 
-    <div id="ui-settings"></div> 
+    <div id="ui-windows"></div>
+    <div id="ui-settings"></div>
 
     <!-- OYUN CANVAS -->
     <canvas id="gameCanvas"></canvas>
 
     <!-- JS YÜKLEYİCİ VE BAŞLATICILAR -->
     <script>
-        window.onUILoaded = function() {
+        window.onUILoaded = function () {
             console.log("UI Loaded. Initializing systems...");
 
             // 1. Arka Plan Hazırlıkları
@@ -48,7 +50,7 @@
             if (typeof initChatSystem === 'function') initChatSystem();
             if (typeof initSettings === 'function') initSettings();
             if (typeof checkMobile === 'function') checkMobile();
-            
+
             // UI Event Listeners
             if (typeof initUIListeners === 'function') initUIListeners();
 
@@ -61,16 +63,16 @@
                 boot.start();
             } else {
                 const controls = document.getElementById('menu-controls-wrapper');
-                if(controls) {
+                if (controls) {
                     controls.classList.remove('menu-controls-hidden');
                     controls.classList.add('menu-controls-visible');
                 }
                 const bootContainer = document.getElementById('integrated-boot-container');
-                if(bootContainer) bootContainer.style.display = 'none';
+                if (bootContainer) bootContainer.style.display = 'none';
             }
         };
     </script>
-    
+
     <!-- SCRIPTS -->
     <script src="js/EventBus.js"></script>
     <script src="js/boot.js"></script>
@@ -80,17 +82,31 @@
     <script src="js/data.js"></script>
     <script src="js/audio.js"></script>
     <script src="js/game-rules.js"></script>
-    <script src="js/utils.js"></script> 
-    
+
+    <!-- ES6 MODÜLLER (utils.js'i import eden dosyalar) -->
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/TutorialSystem.js"></script>
+    <script type="module" src="js/maps.js"></script>
+    <script type="module" src="js/entities/Nexus.js"></script>
+    <script type="module" src="js/entities/RepairStation.js"></script>
+    <script type="module" src="js/entities/VoidRay.js"></script>
+    <script type="module" src="js/entities/EchoRay.js"></script>
+    <script type="module" src="js/entities/Wormhole.js"></script>
+    <script type="module" src="js/EntityManager.js"></script>
+
+    <!-- VARLIKLAR (Utils kullanmayan) -->
+    <script src="js/entities/StorageCenter.js"></script>
+    <script src="js/entities/Planet.js"></script>
+    <script src="js/entities/Particle.js"></script>
+
     <!-- PERFORMANS VE YÖNETİCİLER -->
-    <script src="js/ObjectPool.js"></script> 
+    <script src="js/ObjectPool.js"></script>
     <script src="js/SpatialHash.js"></script>
-    
+
     <script src="js/managers/save_manager.js"></script>
     <script src="js/managers/achievement_manager.js"></script>
-    <script src="js/managers/ai_manager.js"></script> <!-- EKLENDİ -->
-    <script src="js/TutorialSystem.js"></script>
-    
+    <script src="js/managers/ai_manager.js"></script>
+
     <!-- UI ve PENCERELER -->
     <script src="js/ui.js"></script>
     <script src="js/windows/inventory.js"></script>
@@ -99,7 +115,7 @@
     <script src="js/console.js"></script>
     <script src="js/windows/chat.js"></script>
     <script src="js/notifications.js"></script>
-    
+
     <script src="js/windows/settings.js"></script>
     <script src="js/windows/storage.js"></script>
     <script src="js/windows/nexus.js"></script>
@@ -108,22 +124,11 @@
     <script src="js/windows/context.js"></script>
     <script src="js/windows/achievements.js"></script>
     <script src="js/windows/profile.js"></script>
-    
-    <!-- VARLIKLAR -->
-    <script src="js/entities/Nexus.js"></script>
-    <script src="js/entities/StorageCenter.js"></script>
-    <script src="js/entities/RepairStation.js"></script>
-    <script src="js/entities/VoidRay.js"></script>
-    <script src="js/entities/EchoRay.js"></script>
-    <script src="js/entities/Planet.js"></script>
-    <script src="js/entities/Particle.js"></script>
-    <script src="js/entities/Wormhole.js"></script> 
-    
+
     <!-- SİSTEMLER -->
-    <script src="js/EntityManager.js"></script>
     <script src="js/ParticleSystem.js"></script>
-    <script src="js/maps.js"></script>
     <script src="js/controls.js"></script>
     <script src="js/game.js"></script>
 </body>
+
 </html>

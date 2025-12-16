@@ -1,7 +1,8 @@
+import Utils from '../utils.js';
+
 /**
- * Void Ray - Varlık Sınıfı: SOLUCAN DELİĞİ (WORMHOLE)
- * * Uzay-zaman dokusunda yırtıklar oluşturan spiral yapılar.
- * * Oyuncu içine girdiğinde rastgele bir konuma ışınlar.
+ * Void Ray - Wormhole Entity
+ * Spiral structures that teleport the player to random locations.
  */
 class Wormhole {
     constructor(x, y) {
@@ -18,15 +19,15 @@ class Wormhole {
 
         this.radius = GAME_CONFIG.WORMHOLE.RADIUS;
         this.angle = 0;
-        
+
         // Animasyon için rastgelelik
         this.spinSpeed = GAME_CONFIG.WORMHOLE.SPIN_SPEED * (Math.random() > 0.5 ? 1 : -1);
         this.pulsePhase = Math.random() * Math.PI * 2;
-        
+
         // İç içe spiraller için
         this.spirals = [
             { offset: 0, speed: 1.0, color: GAME_CONFIG.WORMHOLE.COLOR_CORE },
-            { offset: Math.PI/3, speed: 0.7, color: GAME_CONFIG.WORMHOLE.COLOR_OUTER },
+            { offset: Math.PI / 3, speed: 0.7, color: GAME_CONFIG.WORMHOLE.COLOR_OUTER },
             { offset: Math.PI, speed: 0.5, color: "rgba(255,255,255,0.2)" }
         ];
     }
@@ -47,20 +48,20 @@ class Wormhole {
         if (window.gameSettings && window.gameSettings.developerMode && window.gameSettings.showGravityFields) {
             // Config'den çekim yarıçapını al (Varsayılan 3500)
             const gravityRadius = GAME_CONFIG.WORMHOLE.GRAVITY_RADIUS || 3500;
-            
+
             ctx.beginPath();
             ctx.arc(0, 0, gravityRadius, 0, Math.PI * 2);
             ctx.strokeStyle = "rgba(139, 92, 246, 0.3)"; // Violet/Mor (Wormhole teması)
             ctx.lineWidth = 1;
             ctx.setLineDash([10, 10]); // Kesikli çizgi
             ctx.stroke();
-            
+
             // Çekim alanı değeri ve etiketi
             ctx.fillStyle = "rgba(139, 92, 246, 0.8)";
             ctx.font = "10px monospace";
             ctx.textAlign = "center";
             ctx.fillText(`W-GRAVITY: ${gravityRadius}`, 0, gravityRadius + 15);
-            
+
             ctx.setLineDash([]); // Çizgi stilini sıfırla
         }
 
@@ -71,7 +72,7 @@ class Wormhole {
             ctx.fillStyle = GAME_CONFIG.WORMHOLE.COLOR_CORE;
             ctx.globalAlpha = 0.5;
             ctx.fill();
-            
+
             // Dönen halka efekti
             ctx.rotate(this.angle);
             ctx.beginPath();
@@ -79,13 +80,13 @@ class Wormhole {
             ctx.strokeStyle = GAME_CONFIG.WORMHOLE.COLOR_OUTER;
             ctx.lineWidth = 2;
             ctx.stroke();
-            
+
             ctx.restore();
             return;
         }
 
         // 2. TAM GÖRÜNÜM (Detaylı Spiral)
-        
+
         // Pulsating (Nefes alma) efekti
         const scale = 1 + Math.sin(this.pulsePhase) * 0.05;
         ctx.scale(scale, scale);
@@ -98,13 +99,13 @@ class Wormhole {
         this.spirals.forEach(spiral => {
             ctx.save();
             ctx.rotate(this.angle * spiral.speed + spiral.offset);
-            
+
             ctx.beginPath();
             // Spiral matematiği: r = a + b * theta
             const laps = 3;
             const points = 50;
             const maxAngle = Math.PI * 2 * laps;
-            
+
             for (let i = 0; i <= points; i++) {
                 const theta = (i / points) * maxAngle;
                 const r = (i / points) * this.radius; // Yarıçap giderek artar
@@ -113,7 +114,7 @@ class Wormhole {
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
-            
+
             ctx.strokeStyle = spiral.color;
             // Merkeze yaklaştıkça kalınlaşan çizgi efekti
             ctx.lineWidth = 4;
@@ -128,7 +129,7 @@ class Wormhole {
         ctx.fillStyle = "#000";
         ctx.shadowBlur = 0; // Merkez gölge yapmaz, yutar
         ctx.fill();
-        
+
         // Merkez etrafındaki ince beyaz halka (Photon sphere)
         ctx.beginPath();
         ctx.arc(0, 0, this.radius * 0.22, 0, Math.PI * 2);
@@ -141,3 +142,6 @@ class Wormhole {
         ctx.restore();
     }
 }
+
+// Export for global access
+window.Wormhole = Wormhole;
