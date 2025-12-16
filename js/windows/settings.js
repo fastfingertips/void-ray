@@ -22,7 +22,7 @@ if (typeof window.gameSettings.starBrightness === 'undefined') window.gameSettin
 
 // --- YENİ: KAMERA TOOLTIP YARDIMCISI ---
 // HTML tarafından çağrılır. Eğer adaptif mod açıksa uyarı verir, değilse normal açıklamayı gösterir.
-window.showCamTooltip = function(e, defaultText) {
+window.showCamTooltip = function (e, defaultText) {
     if (window.gameSettings.adaptiveCamera) {
         // Kullanıcıyı bilgilendiren özel mesaj
         showInfoTooltip(e, "ADAPTİF MOD AÇIK: Manuel kamera ayarları devre dışı bırakıldı. Kamera hıza göre otomatik konumlanır.");
@@ -33,10 +33,10 @@ window.showCamTooltip = function(e, defaultText) {
 
 function initSettings() {
     console.log("Ayarlar paneli başlatılıyor...");
-    
+
     // --- BAŞLANGIÇ TEMASINI UYGULA ---
     const startColor = window.gameSettings.themeColor || '#94d8c3';
-    setGameTheme(startColor, true); 
+    setGameTheme(startColor, true);
 
     const btnSettings = document.getElementById('btn-settings');
     if (btnSettings) {
@@ -51,17 +51,17 @@ function initSettings() {
     const storageToggle = document.getElementById('toggle-storage-arrow');
     const echoToggle = document.getElementById('toggle-echo-arrow');
     const hudHoverToggle = document.getElementById('toggle-hud-hover');
-    
+
     const shipBarsToggle = document.getElementById('toggle-ship-bars');
-    const consoleToggle = document.getElementById('toggle-console'); 
-    
+    const consoleToggle = document.getElementById('toggle-console');
+
     const adaptiveCamToggle = document.getElementById('toggle-adaptive-cam');
     const smoothCamToggle = document.getElementById('toggle-smooth-cam');
-    
+
     const crtToggle = document.getElementById('toggle-crt');
     const crtIntensityWrapper = document.getElementById('crt-intensity-wrapper');
     const gridToggle = document.getElementById('toggle-grid');
-    
+
     const devModeToggle = document.getElementById('toggle-dev-mode');
     const gravityToggle = document.getElementById('toggle-gravity-debug');
     const hitboxToggle = document.getElementById('toggle-hitboxes');
@@ -70,7 +70,7 @@ function initSettings() {
     const fpsToggle = document.getElementById('toggle-fps-counter');
     const godModeToggle = document.getElementById('toggle-god-mode');
     const hidePlayerToggle = document.getElementById('toggle-hide-player');
-    
+
     // --- KAMERA KONTROLLERİ DURUM GÜNCELLEME ---
     const updateCamControlsState = () => {
         const manualCamControls = document.getElementById('manual-camera-controls');
@@ -84,16 +84,16 @@ function initSettings() {
                 manualCamControls.style.opacity = '0.5'; // Tamamen gizleme, sönük yap
                 // ÖNEMLİ: pointer-events: none YAPMIYORUZ. Yoksa tooltip çalışmaz.
                 // Sadece inputları disable ediyoruz.
-                
-                if(camXInput) camXInput.disabled = true;
-                if(camYInput) camYInput.disabled = true;
+
+                if (camXInput) camXInput.disabled = true;
+                if (camYInput) camYInput.disabled = true;
             } else {
                 // Aktif Durum
                 manualCamControls.classList.remove('disabled-area');
                 manualCamControls.style.opacity = '1';
-                
-                if(camXInput) camXInput.disabled = false;
-                if(camYInput) camYInput.disabled = false;
+
+                if (camXInput) camXInput.disabled = false;
+                if (camYInput) camYInput.disabled = false;
             }
         }
     };
@@ -103,7 +103,7 @@ function initSettings() {
 
     // --- OPAK KONTROLÜ İÇİN YAPI ---
     const hudSelectors = ['.hud-icon-group', '#xp-container', '#speedometer', '#minimap-wrapper', '#btn-settings', '#merge-prompt', '#echo-vision-indicator'];
-    
+
     const windowDefinitions = [
         { id: '#chat-panel', targetClass: null },
         { id: '#settings-panel', targetClass: null },
@@ -127,7 +127,7 @@ function initSettings() {
 
         hudSelectors.forEach(sel => {
             const el = document.querySelector(sel);
-            if(el) {
+            if (el) {
                 hudElements.push(el);
                 el.style.transition = 'opacity 0.3s ease';
             }
@@ -179,7 +179,7 @@ function initSettings() {
                 const isOpen = trigger.classList.contains('open') || trigger.classList.contains('active');
                 if (!isOpen) {
                     el.style.opacity = '';
-                    return; 
+                    return;
                 }
             }
 
@@ -194,10 +194,10 @@ function initSettings() {
             };
             el.onmouseleave = () => {
                 if (isWindow) {
-                     const isOpen = trigger.classList.contains('open') || trigger.classList.contains('active');
-                     if(isOpen) el.style.opacity = baseOpacity;
+                    const isOpen = trigger.classList.contains('open') || trigger.classList.contains('active');
+                    if (isOpen) el.style.opacity = baseOpacity;
                 } else {
-                     el.style.opacity = baseOpacity;
+                    el.style.opacity = baseOpacity;
                 }
             };
         });
@@ -208,11 +208,11 @@ function initSettings() {
     themeOpts.forEach(opt => {
         opt.addEventListener('click', (e) => {
             const color = e.target.getAttribute('data-color');
-            setGameTheme(color); 
+            setGameTheme(color);
             const picker = document.getElementById('custom-theme-picker');
             if (picker) picker.value = color;
         });
-        
+
         if (opt.getAttribute('data-color') === startColor) {
             opt.style.borderColor = '#fff';
             opt.style.transform = 'scale(1.2)';
@@ -250,17 +250,32 @@ function initSettings() {
 
     if (shipBarsToggle) shipBarsToggle.addEventListener('change', (e) => window.gameSettings.showShipBars = e.target.checked);
 
+    // --- SİNEMATİK MOD TOGGLE ---
+    const autoHideToggle = document.getElementById('toggle-auto-hide-hud');
+    if (autoHideToggle) {
+        autoHideToggle.addEventListener('change', (e) => {
+            window.gameSettings.autoHideHUD = e.target.checked;
+            if (e.target.checked) {
+                if (typeof initAutoHideHUD === 'function') initAutoHideHUD();
+                showNotification({ name: "SİNEMATİK MOD AKTİF", type: { color: '#67e8f9' } }, "AI modunda boşta kalınca HUD gizlenecek.");
+            } else {
+                if (typeof stopAutoHideHUD === 'function') stopAutoHideHUD();
+                showNotification({ name: "SİNEMATİK MOD KAPALI", type: { color: '#fff' } }, "");
+            }
+        });
+    }
+
     if (consoleToggle) {
         consoleToggle.addEventListener('change', (e) => {
             window.gameSettings.enableConsole = e.target.checked;
-            if(e.target.checked) showNotification({name: "KONSOL AKTİF", type:{color:'#fbbf24'}}, "Komutları kullanabilirsiniz.");
+            if (e.target.checked) showNotification({ name: "KONSOL AKTİF", type: { color: '#fbbf24' } }, "Komutları kullanabilirsiniz.");
         });
     }
 
     const updateCRT = () => {
         const overlay = document.getElementById('crt-overlay');
         if (!overlay) return;
-        
+
         if (window.gameSettings.enableCRT) {
             overlay.classList.add('active');
             overlay.style.opacity = window.gameSettings.crtIntensity / 100;
@@ -295,7 +310,7 @@ function initSettings() {
     }
 
     if (smoothCamToggle) smoothCamToggle.addEventListener('change', (e) => window.gameSettings.smoothCameraTransitions = e.target.checked);
-    
+
     if (devModeToggle) {
         devModeToggle.addEventListener('change', (e) => {
             window.gameSettings.developerMode = e.target.checked;
@@ -303,7 +318,7 @@ function initSettings() {
             if (devTabBtn) {
                 if (window.gameSettings.developerMode) {
                     devTabBtn.style.display = 'block';
-                    showNotification({name: "GELİŞTİRİCİ MODU AKTİF", type:{color:'#ef4444'}}, "");
+                    showNotification({ name: "GELİŞTİRİCİ MODU AKTİF", type: { color: '#ef4444' } }, "");
                 } else {
                     devTabBtn.style.display = 'none';
                     if (devTabBtn.classList.contains('active')) {
@@ -316,17 +331,17 @@ function initSettings() {
                     window.gameSettings.showFps = false;
                     window.gameSettings.godMode = false;
                     window.gameSettings.hidePlayer = false;
-                    
-                    if(gravityToggle) gravityToggle.checked = false;
-                    if(hitboxToggle) hitboxToggle.checked = false;
-                    if(vectorToggle) vectorToggle.checked = false;
-                    if(targetVectorToggle) targetVectorToggle.checked = false;
-                    if(fpsToggle) fpsToggle.checked = false;
-                    if(godModeToggle) godModeToggle.checked = false;
-                    if(hidePlayerToggle) hidePlayerToggle.checked = false;
-                    
+
+                    if (gravityToggle) gravityToggle.checked = false;
+                    if (hitboxToggle) hitboxToggle.checked = false;
+                    if (vectorToggle) vectorToggle.checked = false;
+                    if (targetVectorToggle) targetVectorToggle.checked = false;
+                    if (fpsToggle) fpsToggle.checked = false;
+                    if (godModeToggle) godModeToggle.checked = false;
+                    if (hidePlayerToggle) hidePlayerToggle.checked = false;
+
                     document.getElementById('debug-fps-panel').style.display = 'none';
-                    showNotification({name: "GELİŞTİRİCİ MODU KAPALI", type:{color:'#fff'}}, "");
+                    showNotification({ name: "GELİŞTİRİCİ MODU KAPALI", type: { color: '#fff' } }, "");
                 }
             }
         });
@@ -347,8 +362,8 @@ function initSettings() {
     if (godModeToggle) {
         godModeToggle.addEventListener('change', (e) => {
             window.gameSettings.godMode = e.target.checked;
-            if(window.gameSettings.godMode) showNotification({name: "ÖLÜMSÜZLÜK AKTİF", type:{color:'#10b981'}}, "");
-            else showNotification({name: "ÖLÜMSÜZLÜK KAPALI", type:{color:'#ef4444'}}, "");
+            if (window.gameSettings.godMode) showNotification({ name: "ÖLÜMSÜZLÜK AKTİF", type: { color: '#10b981' } }, "");
+            else showNotification({ name: "ÖLÜMSÜZLÜK KAPALI", type: { color: '#ef4444' } }, "");
         });
     }
 
@@ -356,7 +371,7 @@ function initSettings() {
 
     // --- AKILLI SLIDER YÖNETİMİ ---
     const smartSliders = document.querySelectorAll('.smart-slider');
-    
+
     smartSliders.forEach(slider => {
         slider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
@@ -366,52 +381,52 @@ function initSettings() {
                 const opacity = val / 100;
                 window.gameSettings.hudOpacity = opacity;
                 const disp = document.getElementById('val-hud-opacity');
-                if(disp) disp.innerText = val + '%';
-                
+                if (disp) disp.innerText = val + '%';
+
                 cacheElements();
                 applyHoverLogic(hudElements, opacity);
-            } 
-            else if (id === 'vol-window-opacity') { 
+            }
+            else if (id === 'vol-window-opacity') {
                 const opacity = val / 100;
                 window.gameSettings.windowOpacity = opacity;
                 const disp = document.getElementById('val-window-opacity');
-                if(disp) disp.innerText = val + '%';
-                
+                if (disp) disp.innerText = val + '%';
+
                 cacheElements();
                 applyHoverLogic(windowTrackers, opacity, true);
             }
             else if (id === 'cam-offset-x') {
                 window.gameSettings.cameraOffsetX = val;
                 const disp = document.getElementById('val-cam-x');
-                if(disp) disp.innerText = Math.round(val);
+                if (disp) disp.innerText = Math.round(val);
             }
             else if (id === 'cam-offset-y') {
                 window.gameSettings.cameraOffsetY = val;
                 const disp = document.getElementById('val-cam-y');
-                if(disp) disp.innerText = Math.round(val);
+                if (disp) disp.innerText = Math.round(val);
             }
             else if (id === 'vol-music') {
                 const disp = document.getElementById('val-m');
-                if(disp) disp.innerText = val + '%';
+                if (disp) disp.innerText = val + '%';
                 if (typeof audio !== 'undefined' && audio.updateMusicVolume) {
                     audio.updateMusicVolume(val / 100);
                 }
             }
             else if (id === 'vol-sfx') {
                 const disp = document.getElementById('val-s');
-                if(disp) disp.innerText = val + '%';
+                if (disp) disp.innerText = val + '%';
                 window.volSFX = val / 100;
             }
             else if (id === 'vol-crt-intensity') {
                 window.gameSettings.crtIntensity = val;
                 const disp = document.getElementById('val-crt-intensity');
-                if(disp) disp.innerText = val + '%';
+                if (disp) disp.innerText = val + '%';
                 updateCRT();
             }
             else if (id === 'vol-star-bright') {
                 window.gameSettings.starBrightness = val;
                 const disp = document.getElementById('val-star-bright');
-                if(disp) disp.innerText = val + '%';
+                if (disp) disp.innerText = val + '%';
             }
         });
 
@@ -419,7 +434,7 @@ function initSettings() {
             const defaultVal = slider.getAttribute('data-default');
             if (defaultVal !== null) {
                 slider.value = defaultVal;
-                slider.dispatchEvent(new Event('input')); 
+                slider.dispatchEvent(new Event('input'));
             }
         });
 
@@ -428,14 +443,14 @@ function initSettings() {
             const delta = Math.sign(e.deltaY) * -1;
             let step = 5;
             if (slider.id.includes('cam')) step = 10;
-            
+
             let currentVal = parseFloat(slider.value);
             let newVal = currentVal + (delta * step);
-            
+
             const min = parseFloat(slider.min);
             const max = parseFloat(slider.max);
             newVal = Math.max(min, Math.min(max, newVal));
-            
+
             slider.value = newVal;
             slider.dispatchEvent(new Event('input'));
         }, { passive: false });
@@ -444,14 +459,14 @@ function initSettings() {
 
 function setGameTheme(colorHex, silent = false) {
     if (!colorHex) return;
-    
+
     // 1. Global Ayarları Güncelle
     window.gameSettings.themeColor = colorHex;
 
     // 2. CSS Değişkenlerini Güncelle
     document.documentElement.style.setProperty('--hud-color', colorHex);
     document.documentElement.style.setProperty('--ray-color', colorHex);
-    
+
     if (typeof Utils !== 'undefined' && Utils.hexToRgba) {
         const dimColor = Utils.hexToRgba(colorHex, 0.3);
         document.documentElement.style.setProperty('--hud-color-dim', dimColor);
@@ -461,7 +476,7 @@ function setGameTheme(colorHex, silent = false) {
     if (typeof Utils !== 'undefined' && Utils.hexToHSL) {
         const hsl = Utils.hexToHSL(colorHex);
         window.gameSettings.themeHue = hsl.h;
-        window.gameSettings.themeSat = hsl.s; 
+        window.gameSettings.themeSat = hsl.s;
     }
 
     // 4. UI Güncellemesi
@@ -474,9 +489,9 @@ function setGameTheme(colorHex, silent = false) {
             el.style.boxShadow = isActive ? `0 0 10px ${colorHex}` : 'none';
         });
     }
-    
+
     if (!silent) {
-        showNotification({name: "TEMA GÜNCELLENDİ", type:{color: colorHex}}, "");
+        showNotification({ name: "TEMA GÜNCELLENDİ", type: { color: colorHex } }, "");
     }
 }
 
@@ -496,7 +511,7 @@ function toggleSettings() {
 function openSettings() {
     settingsOpen = true;
     const panel = document.getElementById('settings-panel');
-    if(panel) {
+    if (panel) {
         panel.classList.add('open');
         if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-settings', true);
     }
@@ -505,7 +520,7 @@ function openSettings() {
 function closeSettings() {
     settingsOpen = false;
     const panel = document.getElementById('settings-panel');
-    if(panel) {
+    if (panel) {
         panel.classList.remove('open');
         if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-settings', false);
     }
@@ -514,36 +529,36 @@ function closeSettings() {
 function switchSettingsTab(tabName) {
     document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.settings-content').forEach(c => c.classList.remove('active'));
-    
+
     const btnId = 'tab-btn-' + tabName;
     const contentId = 'set-tab-' + tabName;
-    
+
     const btn = document.getElementById(btnId);
     const content = document.getElementById(contentId);
-    
+
     if (btn) btn.classList.add('active');
     if (content) content.classList.add('active');
 }
 
 // --- KAYIT YÖNETİMİ BUTON AKSİYONLARI ---
 
-window.actionExportSave = function() {
+window.actionExportSave = function () {
     if (typeof SaveManager === 'undefined') return;
     SaveManager.exportSave();
 };
 
-window.actionImportSave = function() {
+window.actionImportSave = function () {
     if (typeof SaveManager === 'undefined') return;
     const code = prompt("Kayıt kodunu buraya yapıştırın:");
     if (code) {
         const result = SaveManager.importSave(code);
         if (result && result.startsWith("HATA")) {
-            showNotification({name: "İÇE AKTARMA HATASI", type:{color:'#ef4444'}}, "Geçersiz kod.");
+            showNotification({ name: "İÇE AKTARMA HATASI", type: { color: '#ef4444' } }, "Geçersiz kod.");
         }
     }
 };
 
-window.actionResetSave = function() {
+window.actionResetSave = function () {
     if (typeof SaveManager === 'undefined') return;
     if (confirm("DİKKAT: Tüm ilerlemeniz kalıcı olarak silinecek. Onaylıyor musunuz?")) {
         SaveManager.resetSave();
@@ -552,21 +567,21 @@ window.actionResetSave = function() {
 };
 
 // --- GELİŞTİRİCİ FONKSİYONLAR ---
-window.devAddResources = function() {
-    if(typeof playerData !== 'undefined') {
+window.devAddResources = function () {
+    if (typeof playerData !== 'undefined') {
         playerData.stardust += 1000;
         playerData.stats.totalStardust += 1000;
-        if(typeof audio !== 'undefined' && audio) audio.playCash();
-        if(typeof player !== 'undefined' && player.updateUI) player.updateUI();
-        if(typeof updateInventoryCount === 'function') updateInventoryCount();
-        if(typeof renderMarket === 'function') renderMarket();
-        if(typeof renderUpgrades === 'function') renderUpgrades();
-        showNotification({name: "DEV: +1000 KRİSTAL EKLENDİ", type:{color:'#fbbf24'}}, "");
+        if (typeof audio !== 'undefined' && audio) audio.playCash();
+        if (typeof player !== 'undefined' && player.updateUI) player.updateUI();
+        if (typeof updateInventoryCount === 'function') updateInventoryCount();
+        if (typeof renderMarket === 'function') renderMarket();
+        if (typeof renderUpgrades === 'function') renderUpgrades();
+        showNotification({ name: "DEV: +1000 KRİSTAL EKLENDİ", type: { color: '#fbbf24' } }, "");
     }
 };
 
-window.devLevelUp = function() {
-    if(typeof player !== 'undefined') {
+window.devLevelUp = function () {
+    if (typeof player !== 'undefined') {
         player.gainXp(player.maxXp);
     }
 };

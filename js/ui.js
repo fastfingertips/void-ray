@@ -4,23 +4,132 @@
  */
 
 let isHudVisible = true;
-let windowGlobalZ = 5000; 
+let windowGlobalZ = 5000;
+
+// --- SİNEMATİK MOD: OTOMATİK HUD GİZLEME ---
+let lastActivityTime = Date.now();
+let hudAutoHidden = false;
+let autoHideCheckInterval = null;
+
+/**
+ * Kullanıcı aktivitesini günceller (fare/klavye)
+ */
+function resetActivityTimer() {
+    lastActivityTime = Date.now();
+
+    // Eğer HUD otomatik gizlenmişse, geri getir
+    if (hudAutoHidden && isHudVisible === false) {
+        showHUDFromAutoHide();
+    }
+}
+
+/**
+ * Otomatik gizleme sonrası HUD'ı geri getirir
+ */
+function showHUDFromAutoHide() {
+    if (!hudAutoHidden) return;
+
+    hudAutoHidden = false;
+    isHudVisible = true;
+
+    const hudContainer = document.getElementById('ui-hud');
+    const panelsContainer = document.getElementById('ui-panels');
+
+    if (hudContainer) hudContainer.classList.remove('hidden-ui');
+    if (panelsContainer) panelsContainer.classList.remove('hidden-ui');
+}
+
+/**
+ * HUD'ı sinematik mod için gizler
+ */
+function hideHUDForCinematic() {
+    if (hudAutoHidden) return;
+
+    hudAutoHidden = true;
+    isHudVisible = false;
+
+    const hudContainer = document.getElementById('ui-hud');
+    const panelsContainer = document.getElementById('ui-panels');
+
+    if (hudContainer) hudContainer.classList.add('hidden-ui');
+    if (panelsContainer) panelsContainer.classList.add('hidden-ui');
+
+    hideTooltip();
+}
+
+/**
+ * Otomatik gizleme kontrolünü yapar
+ */
+function checkAutoHide() {
+    if (!window.gameSettings || !window.gameSettings.autoHideHUD) return;
+
+    // AI modu aktif mi?
+    const isAIActive = typeof AIManager !== 'undefined' && AIManager.active;
+
+    // Ne kadar süre geçti?
+    const idleTime = Date.now() - lastActivityTime;
+    const delay = window.gameSettings.autoHideDelay || 5000;
+
+    // AI aktif VE yeterince boşta kaldıysa gizle
+    if (isAIActive && idleTime >= delay && !hudAutoHidden) {
+        hideHUDForCinematic();
+    }
+}
+
+/**
+ * Otomatik HUD gizleme sistemini başlatır
+ */
+window.initAutoHideHUD = function () {
+    // Mevcut interval'ı temizle
+    if (autoHideCheckInterval) {
+        clearInterval(autoHideCheckInterval);
+        autoHideCheckInterval = null;
+    }
+
+    // Event listener'ları ekle (bir kez)
+    if (!window._autoHideListenersAdded) {
+        document.addEventListener('mousemove', resetActivityTimer);
+        document.addEventListener('keydown', resetActivityTimer);
+        document.addEventListener('mousedown', resetActivityTimer);
+        document.addEventListener('wheel', resetActivityTimer);
+        window._autoHideListenersAdded = true;
+    }
+
+    // Periyodik kontrol başlat
+    autoHideCheckInterval = setInterval(checkAutoHide, 1000);
+};
+
+/**
+ * Otomatik HUD gizleme sistemini durdurur
+ */
+window.stopAutoHideHUD = function () {
+    if (autoHideCheckInterval) {
+        clearInterval(autoHideCheckInterval);
+        autoHideCheckInterval = null;
+    }
+
+    // Eğer gizliyse geri getir
+    if (hudAutoHidden) {
+        showHUDFromAutoHide();
+    }
+};
+// --- SİNEMATİK MOD SONU ---
 
 // --- YENİ: KONTROLLER PENCERESİ YÖNETİMİ ---
 let controlsOpen = false;
 
-window.toggleControls = function() {
-    if(controlsOpen) closeControls();
+window.toggleControls = function () {
+    if (controlsOpen) closeControls();
     else openControls();
 }
 
-window.openControls = function() {
+window.openControls = function () {
     controlsOpen = true;
     document.getElementById('controls-overlay').classList.add('open');
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-controls-icon', true);
 }
 
-window.closeControls = function() {
+window.closeControls = function () {
     controlsOpen = false;
     document.getElementById('controls-overlay').classList.remove('open');
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-controls-icon', false);
@@ -34,9 +143,9 @@ document.body.appendChild(globalTooltip);
 function generateItemTooltipHTML(item) {
     const name = item.name || "Bilinmeyen";
     const typeColor = item.type ? item.type.color : '#fff';
-    
+
     let html = `<div style="min-width: 180px;">`;
-    
+
     html += `<div style="border-bottom: 1px solid ${typeColor}; padding-bottom: 4px; margin-bottom: 6px;">
         <span class="tooltip-title" style="color:${typeColor}; font-size:0.8rem;">${name}</span>
     </div>`;
@@ -51,22 +160,22 @@ function generateItemTooltipHTML(item) {
             </div>`;
         });
         html += `</div>`;
-    } 
+    }
     else if (item.type && item.type.xp) {
         html += `<span class="tooltip-xp" style="font-size:0.75rem;">${item.type.xp} XP</span>`;
     }
-    
+
     if (item.desc) {
         html += `<div class="tooltip-desc" style="margin-top:8px; font-size:0.6rem; color:#94a3b8; font-style:italic; line-height:1.2;">${item.desc}</div>`;
     }
-    
+
     html += `</div>`;
     return html;
 }
 
 function showTooltip(e, item) {
     if (!isHudVisible) return;
-    
+
     let html = generateItemTooltipHTML(item);
 
     if (item.category === 'equipment' && typeof playerData !== 'undefined' && playerData.equipment) {
@@ -100,7 +209,7 @@ function showTooltip(e, item) {
     moveTooltip(e);
 }
 
-window.showInfoTooltip = function(e, text) {
+window.showInfoTooltip = function (e, text) {
     if (!isHudVisible) return;
     globalTooltip.innerHTML = `<span class="tooltip-desc" style="color:#e2e8f0; font-size:0.75rem; letter-spacing:0.5px;">${text}</span>`;
     globalTooltip.style.display = 'block';
@@ -119,18 +228,18 @@ function moveTooltip(e) {
     globalTooltip.style.top = Math.max(0, y) + 'px';
 }
 
-window.hideTooltip = function() { globalTooltip.style.display = 'none'; };
+window.hideTooltip = function () { globalTooltip.style.display = 'none'; };
 
-window.initUIListeners = function() {
+window.initUIListeners = function () {
     console.log("UI Olay Dinleyicileri başlatılıyor...");
     window.eventBus.on('player:levelup', (data) => {
-        showNotification({name: `EVRİM GEÇİRİLDİ: SEVİYE ${data.level}`, type: {color: '#fff'}}, "");
-        if(typeof audio !== 'undefined' && audio) audio.playEvolve();
+        showNotification({ name: `EVRİM GEÇİRİLDİ: SEVİYE ${data.level}`, type: { color: '#fff' } }, "");
+        if (typeof audio !== 'undefined' && audio) audio.playEvolve();
     });
     setTimeout(initDraggableWindows, 100);
 };
 
-window.bringWindowToFront = function(el) {
+window.bringWindowToFront = function (el) {
     if (el.style.display === 'none' || el.offsetParent === null) return;
     windowGlobalZ++;
     el.style.zIndex = windowGlobalZ;
@@ -140,7 +249,7 @@ window.bringWindowToFront = function(el) {
     }
 };
 
-window.setHudButtonActive = function(id, isActive) {
+window.setHudButtonActive = function (id, isActive) {
     const btn = document.getElementById(id);
     if (btn) {
         if (isActive) btn.classList.add('active');
@@ -148,25 +257,25 @@ window.setHudButtonActive = function(id, isActive) {
     }
 };
 
-window.toggleHUD = function() {
+window.toggleHUD = function () {
     isHudVisible = !isHudVisible;
     const hudContainer = document.getElementById('ui-hud');
     const panelsContainer = document.getElementById('ui-panels');
-    
+
     if (hudContainer) hudContainer.classList.toggle('hidden-ui', !isHudVisible);
     if (panelsContainer) panelsContainer.classList.toggle('hidden-ui', !isHudVisible);
-    
+
     if (!isHudVisible) hideTooltip();
-    else showNotification({name: "ARAYÜZ AKTİF", type:{color:'#fff'}}, "");
+    else showNotification({ name: "ARAYÜZ AKTİF", type: { color: '#fff' } }, "");
 }
 
 function formatTime(ms) {
-    if(!ms) ms = 0;
+    if (!ms) ms = 0;
     const totalSeconds = Math.floor(ms / 1000);
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
 function startTipsCycle() {
@@ -220,21 +329,21 @@ function updateAIButton() {
     const modeBtn = document.getElementById('ai-mode-btn');
     aiToggle.classList.remove('warn-blink');
 
-    if(!autopilot) {
-            aiToggle.classList.remove('active'); 
-            modeBtn.classList.remove('visible');
-            return;
+    if (!autopilot) {
+        aiToggle.classList.remove('active');
+        modeBtn.classList.remove('visible');
+        return;
     }
-    aiToggle.classList.add('active'); 
+    aiToggle.classList.add('active');
     modeBtn.classList.add('visible');
 
-    if (aiMode === 'travel') { 
-        btn.innerText = 'SEYİR'; btn.style.color = '#ef4444'; btn.style.borderColor = '#ef4444'; 
-    } else if (aiMode === 'base') { 
-        btn.innerText = 'ÜS'; btn.style.color = '#fbbf24'; btn.style.borderColor = '#fbbf24'; 
-    } else if (aiMode === 'deposit') { 
-        btn.innerText = 'DEPO'; btn.style.color = '#a855f7'; btn.style.borderColor = '#a855f7'; 
-    } else { 
+    if (aiMode === 'travel') {
+        btn.innerText = 'SEYİR'; btn.style.color = '#ef4444'; btn.style.borderColor = '#ef4444';
+    } else if (aiMode === 'base') {
+        btn.innerText = 'ÜS'; btn.style.color = '#fbbf24'; btn.style.borderColor = '#fbbf24';
+    } else if (aiMode === 'deposit') {
+        btn.innerText = 'DEPO'; btn.style.color = '#a855f7'; btn.style.borderColor = '#a855f7';
+    } else {
         if (typeof player !== 'undefined' && player.scoutTarget) {
             btn.innerText = 'KEŞİF'; btn.style.color = '#67e8f9'; btn.style.borderColor = '#67e8f9';
         } else {
@@ -243,20 +352,20 @@ function updateAIButton() {
     }
 }
 
-window.checkMobile = function() {
+window.checkMobile = function () {
     const warning = document.getElementById('mobile-warning');
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 800;
     if (warning) warning.style.display = isMobile ? 'flex' : 'none';
 }
-window.closeMobileWarning = function() {
+window.closeMobileWarning = function () {
     const warning = document.getElementById('mobile-warning');
     if (warning) warning.style.display = 'none';
 }
 
-window.initMainMenu = function() {
+window.initMainMenu = function () {
     const btnContinue = document.getElementById('btn-continue');
     const btnStart = document.getElementById('btn-start');
-    
+
     if (btnContinue) {
         const newBtn = btnContinue.cloneNode(true);
         btnContinue.parentNode.replaceChild(newBtn, btnContinue);
@@ -276,11 +385,11 @@ window.initMainMenu = function() {
                 startGameSession(true);
             });
         }
-        
+
         if (cleanBtnStart) {
             cleanBtnStart.innerText = "YENİ YAŞAM DÖNGÜSÜ";
             cleanBtnStart.addEventListener('click', () => {
-                if(confirm("Mevcut ilerleme silinecek. Emin misin?")) {
+                if (confirm("Mevcut ilerleme silinecek. Emin misin?")) {
                     SaveManager.resetSave();
                     startGameSession(false);
                 }
@@ -299,7 +408,7 @@ window.initMainMenu = function() {
     // --- GITHUB SON GÜNCELLEME KONTROLÜ (DİNAMİK) ---
     const repoOwner = 'tugracoskun';
     const repoName = 'void-ray';
-    
+
     fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?per_page=1`)
         .then(response => {
             if (!response.ok) throw new Error("Network response was not ok");
@@ -311,7 +420,7 @@ window.initMainMenu = function() {
                 const sha = data[0].sha.substring(0, 7); // Kısa SHA (Versiyon kodu)
                 const date = new Date(commit.committer.date);
                 const dateStr = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
-                
+
                 // Mesajın sadece ilk satırını al
                 let message = commit.message.split('\n')[0];
                 // Kısaltma işlemini CSS'e bıraktık, JS'de tam metni tutuyoruz.
@@ -321,41 +430,41 @@ window.initMainMenu = function() {
                 const dateEl = document.getElementById('update-date');
                 const msgEl = document.getElementById('commit-msg');
                 const shaEl = document.getElementById('commit-sha');
-                
+
                 if (container && dateEl) {
                     dateEl.innerText = dateStr;
-                    
-                    if(msgEl) {
+
+                    if (msgEl) {
                         msgEl.innerText = message;
                         msgEl.title = message; // Hover için tam metni ekle
                     }
-                    if(shaEl) shaEl.innerText = `v.${sha}`; // Versiyon formatı
-                    
+                    if (shaEl) shaEl.innerText = `v.${sha}`; // Versiyon formatı
+
                     container.style.display = 'flex';
-                    if(separator) separator.style.display = 'block';
+                    if (separator) separator.style.display = 'block';
                 }
             }
         })
         .catch(error => console.log("Github update fetch error:", error));
 }
 
-window.startGameSession = function(loadSave) {
+window.startGameSession = function (loadSave) {
     const mainMenu = document.getElementById('main-menu');
-    if(mainMenu) mainMenu.classList.add('menu-hidden'); 
-    
+    if (mainMenu) mainMenu.classList.add('menu-hidden');
+
     const hud = document.getElementById('ui-hud');
     const panels = document.getElementById('ui-panels');
-    if(hud) hud.classList.add('active');
-    if(panels) panels.classList.add('active');
-    
+    if (hud) hud.classList.add('active');
+    if (panels) panels.classList.add('active');
+
     const controlsWrapper = document.getElementById('menu-controls-wrapper');
     if (controlsWrapper) {
         controlsWrapper.classList.remove('menu-controls-visible');
         controlsWrapper.classList.add('menu-controls-hidden');
     }
 
-    if(typeof init === 'function') init(); 
-    
+    if (typeof init === 'function') init();
+
     if (loadSave && typeof SaveManager !== 'undefined') {
         SaveManager.load();
         SaveManager.init();
@@ -363,19 +472,19 @@ window.startGameSession = function(loadSave) {
         SaveManager.init();
     }
 
-    if(audio) audio.init(); 
-    if(typeof startLoop === 'function') startLoop(); 
+    if (audio) audio.init();
+    if (typeof startLoop === 'function') startLoop();
 }
 
-window.makeElementDraggable = function(el, handle) {
+window.makeElementDraggable = function (el, handle) {
     if (!el || !handle) return;
     handle.style.cursor = 'move';
-    handle.style.userSelect = 'none'; 
+    handle.style.userSelect = 'none';
 
     let isDragging = false;
     let startX, startY, startLeft, startTop;
 
-    el.addEventListener('mousedown', function(e) {
+    el.addEventListener('mousedown', function (e) {
         bringWindowToFront(el);
     }, { capture: true });
 
@@ -394,7 +503,7 @@ window.makeElementDraggable = function(el, handle) {
         if (computedStyle.position !== 'absolute' && computedStyle.position !== 'fixed') {
             el.style.position = 'absolute';
         }
-        
+
         const offsetParent = el.offsetParent || document.body;
         const offsetParentRect = offsetParent.getBoundingClientRect();
         startLeft = rect.left - offsetParentRect.left;
@@ -403,7 +512,7 @@ window.makeElementDraggable = function(el, handle) {
         el.style.left = startLeft + 'px';
         el.style.top = startTop + 'px';
         el.style.margin = '0';
-        el.style.bottom = 'auto'; 
+        el.style.bottom = 'auto';
         el.style.right = 'auto';
         el.style.transform = 'none';
 
@@ -443,46 +552,46 @@ window.makeElementDraggable = function(el, handle) {
     }
 };
 
-window.initDraggableWindows = function() {
+window.initDraggableWindows = function () {
     const screenW = window.innerWidth;
     const screenH = window.innerHeight;
     const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
 
     const windows = [
         { container: '#chat-panel', handle: '.chat-header' },
-        { 
-            container: '#inventory-overlay .inv-window', 
-            handle: '.inv-header', 
-            getPos: (w, h, elW, elH) => ({ x: w - elW - 20, y: (h - elH) / 2 }) 
+        {
+            container: '#inventory-overlay .inv-window',
+            handle: '.inv-header',
+            getPos: (w, h, elW, elH) => ({ x: w - elW - 20, y: (h - elH) / 2 })
         },
-        { 
-            container: '#equipment-overlay .equipment-window', 
-            handle: '.equip-header', 
+        {
+            container: '#equipment-overlay .equipment-window',
+            handle: '.equip-header',
             getPos: (w, h, elW, elH) => ({ x: (w - elW) / 2, y: (h - elH) / 2 })
         },
-        { 
-            container: '#stats-overlay .stats-window', 
-            handle: '.stats-header', 
+        {
+            container: '#stats-overlay .stats-window',
+            handle: '.stats-header',
             getPos: (w, h, elW, elH) => ({ x: w - elW - 20, y: 100 })
-        }, 
-        { 
-            container: '#profile-overlay .profile-window', 
-            handle: '.profile-rpg-header', 
+        },
+        {
+            container: '#profile-overlay .profile-window',
+            handle: '.profile-rpg-header',
             getPos: (w, h, elW, elH) => ({ x: 60, y: 100 })
         },
-        { 
-            container: '#context-overlay .context-window', 
-            handle: '.context-header', 
+        {
+            container: '#context-overlay .context-window',
+            handle: '.context-header',
             getPos: (w, h, elW, elH) => ({ x: 60, y: h - elH - 150 })
         },
-        { 
-            container: '#settings-panel', 
+        {
+            container: '#settings-panel',
             handle: '#settings-header',
             getPos: (w, h, elW, elH) => ({ x: w - elW - 20, y: 70 })
         },
         // YENİ: KONTROLLER PENCERESİ (MERKEZLİ)
-        { 
-            container: '#controls-overlay .controls-window', 
+        {
+            container: '#controls-overlay .controls-window',
             handle: '.controls-header',
             getPos: (w, h, elW, elH) => ({ x: (w - elW) / 2, y: (h - elH) / 2 })
         },
@@ -496,13 +605,13 @@ window.initDraggableWindows = function() {
     windows.forEach(win => {
         const containerEl = document.querySelector(win.container);
         const handleEl = containerEl ? (containerEl.querySelector(win.handle) || document.querySelector(win.handle)) : null;
-        
+
         if (containerEl) {
             if (win.getPos) {
                 let elW = containerEl.offsetWidth;
                 let elH = containerEl.offsetHeight;
-                if (elW === 0) elW = 300; 
-                if (elH === 0) elH = 400; 
+                if (elW === 0) elW = 300;
+                if (elH === 0) elH = 400;
 
                 const pos = win.getPos(screenW, screenH, elW, elH);
                 const safeX = clamp(pos.x, 10, screenW - elW - 10);
@@ -512,7 +621,7 @@ window.initDraggableWindows = function() {
                 containerEl.style.left = safeX + 'px';
                 containerEl.style.top = safeY + 'px';
                 containerEl.style.margin = '0';
-                containerEl.style.transform = 'none'; 
+                containerEl.style.transform = 'none';
                 containerEl.style.bottom = 'auto';
                 containerEl.style.right = 'auto';
             }

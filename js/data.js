@@ -257,6 +257,7 @@ const MAP_CONFIG = {
 const DEFAULT_GAME_SETTINGS = {
     showNexusArrow: true, showRepairArrow: false, showStorageArrow: false, showEchoArrow: true, 
     hudOpacity: 1.0, windowOpacity: 1.0, hudHoverEffect: false, showShipBars: false,
+    autoHideHUD: false, autoHideDelay: 5000, // Sinematik Mod: AI/Boşta HUD gizleme
     cameraOffsetX: 0, cameraOffsetY: 0, adaptiveCamera: false, smoothCameraTransitions: true,
     developerMode: false, enableConsole: false, showGravityFields: false, showHitboxes: false,
     showVectors: false, showTargetVectors: false, showFps: false, godMode: false, hidePlayer: false,
