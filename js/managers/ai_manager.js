@@ -1,17 +1,15 @@
 /**
- * Void Ray - Yapay Zeka Yöneticisi (AI Manager)
- * * Oto-pilot mantığını, hedef seçimini ve navigasyonu yönetir.
- * * Gemiyi bir "sanal pilot" gibi kontrol eder.
+ * Void Ray - AI Manager (ES6 Module)
+ * Autopilot logic, target selection and navigation.
  */
 
-// Sınıf adını 'AIPilotSystem' yaptık, böylece global 'AIManager' değişkeniyle çakışmayacak.
-class AIPilotSystem {
+export class AIPilotSystem {
     constructor() {
         this.active = false;      // Oto-pilot açık mı?
         this.mode = 'gather';     // Modlar: 'gather', 'base', 'deposit', 'travel'
         this.manualTarget = null; // Haritadan seçilen hedef
         this.scoutTarget = null;  // Rastgele keşif hedefi
-        
+
         // Hedefleme için geçici değişkenler
         this.debugTarget = null;  // Çizim için (Target Vectors)
     }
@@ -25,11 +23,11 @@ class AIPilotSystem {
             this.manualTarget = null;
             this.scoutTarget = null;
             this.mode = 'gather';
-            if(typeof addChatMessage === 'function') addChatMessage("Otopilot: Devre dışı. Manuel kontrol aktif.", "system", "genel");
+            if (typeof addChatMessage === 'function') addChatMessage("Otopilot: Devre dışı. Manuel kontrol aktif.", "system", "genel");
         } else {
-            if(typeof addChatMessage === 'function') addChatMessage("Otopilot: Devreye alındı.", "info", "genel");
+            if (typeof addChatMessage === 'function') addChatMessage("Otopilot: Devreye alındı.", "info", "genel");
         }
-        
+
         // UI güncellemesi için global fonksiyonu tetikle
         if (typeof updateAIButton === 'function') updateAIButton();
     }
@@ -40,15 +38,15 @@ class AIPilotSystem {
     setMode(newMode) {
         this.mode = newMode;
         if (!this.active) this.toggle(); // Mod değişirse otomatik aç
-        
+
         let msg = "";
-        switch(newMode) {
+        switch (newMode) {
             case 'base': msg = "Üsse dönüş rotası hesaplanıyor."; break;
             case 'deposit': msg = "Otomatik aktarım protokolü."; break;
             case 'travel': msg = "Seyir moduna geçildi."; break;
             case 'gather': msg = "Toplama protokolü aktif."; break;
         }
-        if(typeof addChatMessage === 'function') addChatMessage(`Otopilot: ${msg}`, "info", "genel");
+        if (typeof addChatMessage === 'function') addChatMessage(`Otopilot: ${msg}`, "info", "genel");
         if (typeof updateAIButton === 'function') updateAIButton();
     }
 
@@ -58,7 +56,7 @@ class AIPilotSystem {
     setManualTarget(x, y) {
         this.manualTarget = { x, y };
         this.setMode('travel');
-        if(typeof showNotification === 'function') showNotification({name: "ROTA OLUŞTURULDU", type:{color:'#fff'}}, "");
+        if (typeof showNotification === 'function') showNotification({ name: "ROTA OLUŞTURULDU", type: { color: '#fff' } }, "");
     }
 
     /**
@@ -79,7 +77,7 @@ class AIPilotSystem {
         const cap = GameRules.getPlayerCapacity();
         if (collectedItems.length >= cap && this.mode !== 'deposit' && this.mode !== 'base') {
             this.setMode('deposit');
-            if(typeof showNotification === 'function') showNotification({name: "DEPO DOLU: OTOMATİK AKTARIM", type:{color:'#a855f7'}}, "");
+            if (typeof showNotification === 'function') showNotification({ name: "DEPO DOLU: OTOMATİK AKTARIM", type: { color: '#a855f7' } }, "");
         }
 
         // 2. Hedef Belirleme Mantığı
@@ -91,7 +89,7 @@ class AIPilotSystem {
             targetX = nexus.x; targetY = nexus.y;
             if (Utils.distEntity(player, nexus) < 400) doThrust = false;
             this.scoutTarget = null;
-        } 
+        }
         else if (this.mode === 'deposit') {
             // Hedef: Depo Merkezi
             targetX = storageCenter.x; targetY = storageCenter.y;
@@ -102,7 +100,7 @@ class AIPilotSystem {
                     depositToStorage(collectedItems, "VATOZ");
                 }
                 this.setMode('gather');
-                if(typeof showNotification === 'function') showNotification({name: "OTOMATİK AKTARIM TAMAMLANDI", type:{color:'#10b981'}}, "");
+                if (typeof showNotification === 'function') showNotification({ name: "OTOMATİK AKTARIM TAMAMLANDI", type: { color: '#10b981' } }, "");
             }
             this.scoutTarget = null;
         }
@@ -112,16 +110,16 @@ class AIPilotSystem {
             if (Utils.dist(player.x, player.y, targetX, targetY) < 200) {
                 doThrust = false;
                 this.toggle(); // Hedefe varınca kapat
-                if(typeof showNotification === 'function') showNotification({name: "HEDEFE ULAŞILDI", type:{color:'#fff'}}, "");
+                if (typeof showNotification === 'function') showNotification({ name: "HEDEFE ULAŞILDI", type: { color: '#fff' } }, "");
             }
-        } 
+        }
         else {
             // Hedef: Kaynak Toplama (Gather)
             this.mode = 'gather'; // Emin olmak için set et
-            
+
             // En yakın kaynağı bul
             const nearest = this.findNearestResource(player);
-            
+
             if (nearest) {
                 targetX = nearest.x; targetY = nearest.y;
                 this.scoutTarget = null;
@@ -138,10 +136,10 @@ class AIPilotSystem {
         // 3. Fiziksel Kontrol (Gemiyi Hedefe Yönlendir)
         if (targetX !== undefined) {
             this.debugTarget = { x: targetX, y: targetY }; // Gizmos çizimi için
-            
+
             // Açı hesapla
             const targetAngle = Math.atan2(targetY - player.y, targetX - player.x);
-            
+
             // Yumuşak dönüş
             let diff = targetAngle - player.angle;
             while (diff < -Math.PI) diff += Math.PI * 2;
@@ -154,7 +152,7 @@ class AIPilotSystem {
                 // player.getStatBonus fonksiyonu VoidRay.js içinde tanımlı
                 const thrustBonus = (typeof player.getStatBonus === 'function') ? player.getStatBonus('thrust') : 0;
                 const accel = (keys[" "] ? 0.6 : 0.2) + (thrustBonus / 200);
-                
+
                 if (Math.abs(diff) < 1.0) {
                     player.vx += Math.cos(player.angle) * accel;
                     player.vy += Math.sin(player.angle) * accel;
@@ -188,14 +186,14 @@ class AIPilotSystem {
         const scanRange = player.radarRadius;
 
         // Grid sisteminden adayları çek
-        const candidates = (entityManager && entityManager.grid) 
-            ? entityManager.grid.query(player.x, player.y, scanRange) 
+        const candidates = (entityManager && entityManager.grid)
+            ? entityManager.grid.query(player.x, player.y, scanRange)
             : planets;
 
         for (let p of candidates) {
             if (!p.collected && p.type.id !== 'toxic') {
                 const distToMe = (p.x - player.x) ** 2 + (p.y - player.y) ** 2;
-                
+
                 if (distToMe < scanRange ** 2) {
                     // Eğer Yankı (Echo) bu kaynağa daha yakınsa, ona bırak
                     let echoIsCloser = false;

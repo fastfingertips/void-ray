@@ -1,8 +1,9 @@
 /**
- * Void Ray - Spatial Hash (Uzamsal Bölümleme)
- * * Dünyayı ızgaralara bölerek çarpışma ve sorgu performansını O(n^2)'den O(k)'ya düşürür.
+ * Void Ray - Spatial Hash (ES6 Module)
+ * Grid-based spatial partitioning for O(k) collision detection.
  */
-class SpatialHash {
+
+export class SpatialHash {
     /**
      * @param {number} cellSize - Her bir hücrenin boyutu (Örn: 2000 birim)
      */

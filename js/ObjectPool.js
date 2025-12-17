@@ -1,10 +1,9 @@
 /**
- * Void Ray - Object Pool (Nesne Havuzu)
- * * Sık oluşturulan/yok edilen nesneler için bellek optimizasyonu.
- * * Garbage Collection yükünü azaltır.
+ * Void Ray - Object Pool (ES6 Module)
+ * Memory optimization for frequently created/destroyed objects.
  */
 
-class ObjectPool {
+export class ObjectPool {
     /**
      * @param {Function} factory - Yeni nesne üreten fonksiyon
      * @param {number} initialSize - Başlangıç havuz boyutu
@@ -15,7 +14,7 @@ class ObjectPool {
         this.maxSize = maxSize;
         this.available = []; // Kullanıma hazır nesneler
         this.inUse = new Set(); // Aktif kullanımda olan nesneler
-        
+
         // İstatistikler (Debugging için)
         this.stats = {
             created: 0,
@@ -23,22 +22,22 @@ class ObjectPool {
             released: 0,
             expanded: 0
         };
-        
+
         // Başlangıç havuzunu oluştur
         for (let i = 0; i < initialSize; i++) {
             this.available.push(this.factory());
             this.stats.created++;
         }
-        
+
         console.log(`ObjectPool oluşturuldu: ${initialSize} başlangıç nesnesi`);
     }
-    
+
     /**
      * Havuzdan bir nesne al (veya yeni oluştur)
      */
     acquire() {
         let obj;
-        
+
         if (this.available.length > 0) {
             // Mevcut havuzdan al
             obj = this.available.pop();
@@ -49,29 +48,29 @@ class ObjectPool {
             this.stats.created++;
             this.stats.expanded++;
         }
-        
+
         this.inUse.add(obj);
         return obj;
     }
-    
+
     /**
      * Nesneyi havuza geri koy
      */
     release(obj) {
         if (!obj) return;
-        
+
         // Aktif listeden çıkar
         if (!this.inUse.delete(obj)) {
             // Havuzdan alınmamış olsa bile listeye eklemek yerine uyarı verebiliriz
             // veya sessizce yok sayabiliriz. Performans için kontrolü basit tutuyoruz.
             return;
         }
-        
+
         // Reset metodunu çağır (varsa)
         if (typeof obj.reset === 'function') {
             obj.reset();
         }
-        
+
         // Havuza geri koy (maksimum boyut kontrolü)
         if (this.maxSize === 0 || this.available.length < this.maxSize) {
             this.available.push(obj);
@@ -79,14 +78,14 @@ class ObjectPool {
         }
         // Maksimum boyut aşıldıysa nesneyi garbage collector'a bırak
     }
-    
+
     /**
      * Toplu geri alma (Batch release)
      */
     releaseAll(objects) {
         objects.forEach(obj => this.release(obj));
     }
-    
+
     /**
      * Havuzu temizle
      */
@@ -95,7 +94,7 @@ class ObjectPool {
         this.inUse.clear();
         console.log('ObjectPool temizlendi.');
     }
-    
+
     /**
      * Havuz bilgilerini al
      */
