@@ -1,16 +1,12 @@
 /**
- * Void Ray - Bildirim ve Geri Bildirim Sistemi (Notification System)
- * * Oyun içi metin bildirimleri, görsel efektler ve başarı popup'larını yönetir.
- * * Merkezi UI geri bildirim katmanıdır.
+ * Void Ray - Notification System (ES6 Module)
+ * In-game notifications, visual effects and achievement popups.
  */
 
 /**
- * 1. METİN BİLDİRİMLERİ
- * Chat paneline ve ekrana bilgi mesajı gönderir.
- * @param {Object} planet - Gezegen/Nesne objesi veya {name: "Mesaj"} formatında obje
- * @param {string} suffix - Mesajın sonuna eklenecek ek metin
+ * Text Notifications - Sends info messages to chat panel
  */
-function showNotification(planet, suffix) {
+export function showNotification(planet, suffix) {
     let msg = "";
     let type = "loot";
     const name = planet.name || "";
@@ -26,8 +22,8 @@ function showNotification(planet, suffix) {
         msg = `Sistem: ${name}`;
         type = "info";
     } else if (name.includes("ENERJİ") || name.includes("TARDİGRAD")) {
-         msg = `${name} ${suffix}`;
-         type = "info";
+        msg = `${name} ${suffix}`;
+        type = "info";
     } else if (name.includes("ZEHİR") || name.includes("TEHLİKE") || name.includes("YANKI ZEHİRLENDİ") || name.includes("DOLU") || name.includes("YETERSİZ") || name.includes("BAĞLANTI") || name.includes("BOŞ") || name.includes("ERİŞİM") || name.includes("HATA") || name.includes("SİNYAL KAYBI")) {
         msg = `UYARI: ${name} ${suffix}`;
         type = "alert";
@@ -44,7 +40,7 @@ function showNotification(planet, suffix) {
         msg = `${name} ${suffix}`;
         type = "info";
     }
-    
+
     // Chat Sistemine İlet
     if (typeof addChatMessage === 'function') {
         addChatMessage(msg, type, 'bilgi');
@@ -58,20 +54,20 @@ function showNotification(planet, suffix) {
 /**
  * Ekranı yeşil renkte titreştirir (Zehir hasarı).
  */
-function showToxicEffect() { 
-    const el = document.getElementById('toxic-overlay'); 
-    if(el) { 
-        el.classList.add('active'); 
-        setTimeout(() => el.classList.remove('active'), 1500); 
+export function showToxicEffect() {
+    const el = document.getElementById('toxic-overlay');
+    if (el) {
+        el.classList.add('active');
+        setTimeout(() => el.classList.remove('active'), 1500);
     }
 }
 
 /**
  * Ekranı kırmızı renkte titreştirir (Fiziksel hasar).
  */
-function showDamageEffect() {
+export function showDamageEffect() {
     const dmgOverlay = document.getElementById('damage-overlay');
-    if(dmgOverlay) {
+    if (dmgOverlay) {
         dmgOverlay.classList.add('active');
         setTimeout(() => dmgOverlay.classList.remove('active'), 200);
     }
@@ -81,7 +77,7 @@ function showDamageEffect() {
  * Ekranı bozar (Glitch) ve titretir. (Solucan Deliği Geçişi)
  * YENİ
  */
-function triggerWormholeEffect() {
+export function triggerWormholeEffect() {
     const el = document.getElementById('glitch-overlay');
     if (el) {
         el.classList.add('active');
@@ -95,7 +91,7 @@ function triggerWormholeEffect() {
  * Sağ taraftan kayarak gelen başarım bildirimini gösterir.
  * @param {Object} ach - Başarım objesi {title, desc}
  */
-function showAchievementPopup(ach) {
+export function showAchievementPopup(ach) {
     const container = document.getElementById('ui-core');
     if (!container) return;
 
@@ -110,7 +106,7 @@ function showAchievementPopup(ach) {
             <div class="ach-desc">${ach.desc}</div>
         </div>
     `;
-    
+
     container.appendChild(popup);
 
     // Animasyonu tetiklemek için bir kare bekle

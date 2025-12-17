@@ -1,8 +1,9 @@
 /**
- * Void Ray - Parçacık Yönetim Sistemi
- * * Object Pool entegrasyonu yapıldı.
+ * Void Ray - Particle Management System (ES6 Module)
+ * Object Pool integrated for performance.
  */
-class ParticleSystem {
+
+export class ParticleSystem {
     constructor() {
         // Ekranda aktif olan parçacıkların listesi
         this.activeParticles = [];
@@ -14,7 +15,7 @@ class ParticleSystem {
         // DİKKAT: ObjectPool sınıfının yüklendiğinden emin olunmalı.
         if (typeof ObjectPool === 'undefined') {
             console.error("CRITICAL: ObjectPool sınıfı bulunamadı! js/ObjectPool.js yüklendi mi?");
-            this.pool = { acquire: () => new Particle(), release: () => {} }; // Fallback
+            this.pool = { acquire: () => new Particle(), release: () => { } }; // Fallback
         } else {
             this.pool = new ObjectPool(() => new Particle(), 50, 1000);
         }
@@ -27,16 +28,16 @@ class ParticleSystem {
         for (let i = 0; i < count; i++) {
             // 1. Havuzdan bir tane al (yoksa yeni üretir)
             const p = this.pool.acquire();
-            
+
             // 2. Parçacığı verilen koordinat ve renkle başlat (Eğer spawn metodu varsa)
             if (p.spawn) p.spawn(x, y, color);
             else {
                 // Fallback (Eski Particle sınıfı varsa)
                 p.x = x; p.y = y; p.color = color;
-                p.vx = (Math.random()-0.5)*3; p.vy = (Math.random()-0.5)*3;
-                p.life = 1.0; p.radius = Math.random()*5+3; p.growth = 0.15;
+                p.vx = (Math.random() - 0.5) * 3; p.vy = (Math.random() - 0.5) * 3;
+                p.life = 1.0; p.radius = Math.random() * 5 + 3; p.growth = 0.15;
             }
-            
+
             // 3. Aktif listeye ekle (Update döngüsü için)
             this.activeParticles.push(p);
         }
@@ -51,11 +52,11 @@ class ParticleSystem {
         for (let i = this.activeParticles.length - 1; i >= 0; i--) {
             const p = this.activeParticles[i];
             p.update();
-            
+
             if (p.life <= 0) {
                 // 1. Havuza geri ver (reset metodu otomatik çağrılır)
                 this.pool.release(p);
-                
+
                 // 2. Aktif listeden çıkar
                 this.activeParticles.splice(i, 1);
             }
@@ -88,4 +89,9 @@ class ParticleSystem {
         }
         this.activeParticles = [];
     }
+}
+
+// Window export for backward compatibility
+if (typeof window !== 'undefined') {
+    window.ParticleSystem = ParticleSystem;
 }

@@ -1,12 +1,9 @@
 /**
- * Void Ray - Konsol ve Komut Sistemi
- * * Sohbet penceresi üzerinden oyunun yönetilmesini sağlar.
- * * "/" ile başlayan komutları işler.
- * * Bazı komutlar sadece Geliştirici Modu (Dev Mode) açıkken çalışır.
- * * TÜM komutlar için Ayarlar > Konsolu Aktif Et seçeneğinin açık olması gerekir.
+ * Void Ray - Console and Command System (ES6 Module)
+ * Manages game via chat window commands starting with "/".
  */
 
-const ConsoleSystem = {
+export const ConsoleSystem = {
     commands: {
         'help': {
             desc: 'Komut listesini gösterir.',
@@ -18,10 +15,10 @@ const ConsoleSystem = {
                     const info = ConsoleSystem.commands[cmd];
                     const isDev = info.devOnly;
                     const isDevActive = window.gameSettings && window.gameSettings.developerMode;
-                    
-                    let color = "#fbbf24"; 
-                    if (isDev && !isDevActive) color = "#475569"; 
-                    
+
+                    let color = "#fbbf24";
+                    if (isDev && !isDevActive) color = "#475569";
+
                     msg += `<span style="color:${color}">/${cmd}</span>: <span style="color:#94a3b8">${info.desc}</span>${isDev ? " <span style='font-size:0.6em; color:#ef4444'>[DEV]</span>" : ""}<br>`;
                 });
                 addChatMessage(msg, 'system', 'bilgi');
@@ -36,11 +33,11 @@ const ConsoleSystem = {
                 window.gameSettings.godMode = !window.gameSettings.godMode;
                 const state = window.gameSettings.godMode ? "AKTİF" : "PASİF";
                 const color = window.gameSettings.godMode ? "#10b981" : "#ef4444";
-                
+
                 const toggle = document.getElementById('toggle-god-mode');
                 if (toggle) toggle.checked = window.gameSettings.godMode;
 
-                showNotification({name: `GOD MODE: ${state}`, type:{color: color}}, "");
+                showNotification({ name: `GOD MODE: ${state}`, type: { color: color } }, "");
                 addChatMessage(`Sistem: Ölümsüzlük modu ${state}`, 'system', 'genel');
             }
         },
@@ -52,8 +49,8 @@ const ConsoleSystem = {
                 if (player) {
                     player.health = player.maxHealth;
                     player.energy = player.maxEnergy;
-                    showNotification({name: "SİSTEMLER ONARILDI", type:{color:'#10b981'}}, "");
-                    Utils.playSound('playChime', {id: 'rare'});
+                    showNotification({ name: "SİSTEMLER ONARILDI", type: { color: '#10b981' } }, "");
+                    Utils.playSound('playChime', { id: 'rare' });
                 }
             }
         },
@@ -63,21 +60,21 @@ const ConsoleSystem = {
             devOnly: true,
             action: (args) => {
                 if (args.length < 2) return ConsoleSystem.showUsage('tp');
-                
+
                 const x = parseFloat(args[0]);
                 const y = parseFloat(args[1]);
-                
+
                 if (isNaN(x) || isNaN(y)) return ConsoleSystem.showUsage('tp');
-                
+
                 if (player) {
                     player.x = x;
                     player.y = y;
                     player.vx = 0;
                     player.vy = 0;
-                    if(player.tail) player.tail.forEach(t => { t.x = x; t.y = y; });
+                    if (player.tail) player.tail.forEach(t => { t.x = x; t.y = y; });
                     if (window.cameraFocus) { window.cameraFocus.x = x; window.cameraFocus.y = y; }
-                    
-                    showNotification({name: "IŞINLANMA BAŞARILI", type:{color:'#a855f7'}}, `[${Math.floor(x)}:${Math.floor(y)}]`);
+
+                    showNotification({ name: "IŞINLANMA BAŞARILI", type: { color: '#a855f7' } }, `[${Math.floor(x)}:${Math.floor(y)}]`);
                 }
             }
         },
@@ -87,19 +84,19 @@ const ConsoleSystem = {
             devOnly: true,
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('give');
-                
+
                 let count = 1;
                 const lastArg = args[args.length - 1];
                 if (!isNaN(parseInt(lastArg))) {
                     count = parseInt(lastArg);
-                    args.pop(); 
+                    args.pop();
                 }
-                
+
                 const itemNameSearch = args.join(" ").toLowerCase();
-                
+
                 let foundType = null;
                 let foundName = "";
-                
+
                 for (const [rarityKey, items] of Object.entries(LOOT_DB)) {
                     for (const item of items) {
                         if (item.toLowerCase() === itemNameSearch) {
@@ -110,16 +107,16 @@ const ConsoleSystem = {
                     }
                     if (foundType) break;
                 }
-                
+
                 if (!foundType) return ConsoleSystem.error("Eşya bulunamadı. Tam ismini yazmayı deneyin.");
-                
-                for(let i=0; i<count; i++) {
+
+                for (let i = 0; i < count; i++) {
                     const fakePlanet = { name: foundName, type: foundType };
                     collectedItems.push(fakePlanet);
                 }
-                
+
                 updateInventoryCount();
-                if(inventoryOpen) renderInventory();
+                if (inventoryOpen) renderInventory();
                 addChatMessage(`Konsol: ${count} adet ${foundName} verildi.`, 'loot', 'genel');
             }
         },
@@ -162,7 +159,7 @@ const ConsoleSystem = {
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('stardust');
                 const amount = parseInt(args[0]);
-                
+
                 if (isNaN(amount)) return ConsoleSystem.showUsage('stardust');
 
                 playerData.stardust += amount;
@@ -182,39 +179,39 @@ const ConsoleSystem = {
                     const dist = 500;
                     const wx = player.x + Math.cos(player.angle) * dist;
                     const wy = player.y + Math.sin(player.angle) * dist;
-                    
+
                     if (typeof Wormhole !== 'undefined') {
                         const w = new Wormhole(wx, wy);
                         entityManager.wormholes.push(w);
                         addChatMessage("Konsol: Solucan deliği oluşturuldu.", 'info', 'genel');
-                        showNotification({name: "YAPAY ANOMALİ", type:{color:'#8b5cf6'}}, "Oluşturuldu");
+                        showNotification({ name: "YAPAY ANOMALİ", type: { color: '#8b5cf6' } }, "Oluşturuldu");
                     } else {
                         ConsoleSystem.error("Wormhole sınıfı bulunamadı.");
                     }
                 } else if (args[0] === 'list') {
                     const count = entityManager.wormholes.length;
                     addChatMessage(`Konsol: Haritada ${count} solucan deliği var.`, 'info', 'bilgi');
-                    
+
                     let nearest = null, minDist = Infinity;
                     entityManager.wormholes.forEach(w => {
                         const d = Utils.distEntity(player, w);
-                        if(d < minDist) { minDist = d; nearest = w; }
+                        if (d < minDist) { minDist = d; nearest = w; }
                     });
-                    
-                    if(nearest) {
+
+                    if (nearest) {
                         addChatMessage(`En yakın: [${Math.floor(nearest.x)}:${Math.floor(nearest.y)}] (${Math.floor(minDist)}m)`, 'info', 'bilgi');
-                        
+
                         // GLOBAL DEĞİŞKENLERİ GÜNCELLE
-                        window.manualTarget = {x: nearest.x, y: nearest.y};
+                        window.manualTarget = { x: nearest.x, y: nearest.y };
                         window.autopilot = true;
                         window.aiMode = 'travel';
-                        
+
                         // UI GÜNCELLE
                         const aiToggle = document.getElementById('btn-ai-toggle');
-                        if(aiToggle) aiToggle.classList.add('active');
-                        
+                        if (aiToggle) aiToggle.classList.add('active');
+
                         if (typeof updateAIButton === 'function') updateAIButton();
-                        showNotification({name: "ROTA OLUŞTURULDU", type:{color:'#fff'}}, "Solucan Deliğine Gidiliyor...");
+                        showNotification({ name: "ROTA OLUŞTURULDU", type: { color: '#fff' } }, "Solucan Deliğine Gidiliyor...");
                     } else {
                         addChatMessage("Konsol: Hiç solucan deliği bulunamadı. '/wormhole spawn' ile oluşturun.", 'alert', 'genel');
                     }
@@ -247,7 +244,7 @@ const ConsoleSystem = {
         'save': {
             desc: 'Oyunu zorla kaydeder.',
             usage: '/save',
-            devOnly: false, 
+            devOnly: false,
             action: () => {
                 if (typeof SaveManager !== 'undefined') {
                     SaveManager.save();
@@ -258,7 +255,7 @@ const ConsoleSystem = {
         'ui': {
             desc: 'Arayüzü gizler/gösterir.',
             usage: '/ui',
-            devOnly: false, 
+            devOnly: false,
             action: () => {
                 if (typeof toggleHUD === 'function') toggleHUD();
             }
@@ -277,7 +274,7 @@ const ConsoleSystem = {
         }
     },
 
-    execute: function(inputString) {
+    execute: function (inputString) {
         if (!window.gameSettings || !window.gameSettings.enableConsole) {
             this.error("Konsol devre dışı. Ayarlar > Oyun menüsünden 'Konsolu Aktif Et' seçeneğini açın.");
             return;
@@ -311,11 +308,11 @@ const ConsoleSystem = {
         }
     },
 
-    error: function(msg) {
+    error: function (msg) {
         addChatMessage(`HATA: ${msg}`, 'alert', 'genel');
     },
 
-    showUsage: function(cmdKey) {
+    showUsage: function (cmdKey) {
         const cmd = this.commands[cmdKey];
         if (cmd && cmd.usage) {
             addChatMessage(`KULLANIM: <span style="color:#fbbf24">${cmd.usage}</span>`, 'alert', 'genel');
