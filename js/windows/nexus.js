@@ -84,7 +84,7 @@ function renderMarket() {
         if (item.type.value > 0) {
             const totalVal = item.count * item.type.value;
             const div = document.createElement('div'); div.className = 'market-card';
-            div.innerHTML = `<div class="text-2xl" style="color:${item.type.color}">●</div><div class="font-bold text-white">${item.name}</div><div class="text-sm text-gray-400">x${item.count}</div><div class="text-white font-mono text-lg opacity-80">${totalVal} <span class="text-xs">KRİSTAL</span></div><button class="sell-btn" onclick="sellItem('${item.name}', ${item.type.value}, ${item.count})">SAT</button>`;
+            div.innerHTML = `<div class="text-2xl" style="color:${item.type.color}">●</div><div class="font-bold text-white">${item.name}</div><div class="text-sm text-gray-400">x${item.count}</div><div class="text-white font-mono text-lg opacity-80">${totalVal} <span class="text-xs">KRİSTAL</span></div><button class="sell-btn" data-name="${item.name}" data-value="${item.type.value}" data-count="${item.count}">SAT</button>`;
             grid.appendChild(div);
         }
     });
@@ -126,7 +126,7 @@ function renderUpgrades() {
                 <p>${data.desc}</p>
                 <div class="upg-level">${pips}</div>
             </div>
-            <button class="${btnClass}" ${isDisabled ? 'disabled' : ''} onclick="buyUpgrade('${key}')">
+            <button class="${btnClass}" ${isDisabled ? 'disabled' : ''} data-upgrade-key="${key}">
                 ${btnText} ${(!isMax && btnText !== 'YANKI YOK' && btnText !== 'BAĞLI DEĞİL') ? `<span class="cost-text">${cost} ◆</span>` : ''}
             </button>
         </div>`;

@@ -63,10 +63,21 @@ function initStatsDOM(windowEl) {
                 <div class="stats-main-title">VERİ GÜNLÜĞÜ</div>
                 <div class="stats-sub-title">UÇUŞ KAYITLARI VE METRİKLER</div>
             </div>
-            <div class="ui-close-btn" onclick="closeStats()">✕</div>
+            <div class="ui-close-btn" id="btn-close-stats-dynamic">✕</div>
         </div>
         
-        <div class="stats-wireframe-content">
+        <div class="stats-wireframe-content">`;
+
+    // Event Listener Ekle
+    const closeBtn = windowEl.querySelector('#btn-close-stats-dynamic');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            if (typeof closeStats === 'function') closeStats();
+        });
+    }
+
+    windowEl.innerHTML += `
+            <!-- GRUP 1: ZAMAN VE KEŞİF -->
             <!-- GRUP 1: ZAMAN VE KEŞİF -->
             <div class="stats-group">
                 <div class="stats-group-title">ZAMAN & KEŞİF</div>

@@ -630,6 +630,34 @@ export function initControls() {
             if (typeof quitToMain === 'function') quitToMain();
         });
     }
+
+    // --- NEXUS DELEGATION ---
+    const marketGrid = document.getElementById('market-grid');
+    if (marketGrid) {
+        marketGrid.addEventListener('click', (e) => {
+            const btn = e.target.closest('.sell-btn');
+            if (btn) {
+                const name = btn.getAttribute('data-name');
+                const value = parseInt(btn.getAttribute('data-value'));
+                const count = parseInt(btn.getAttribute('data-count'));
+                if (typeof sellItem === 'function') sellItem(name, value, count);
+            }
+        });
+    }
+
+    const handleUpgradeClick = (e) => {
+        const btn = e.target.closest('button[data-upgrade-key]');
+        if (btn && !btn.disabled) {
+            const key = btn.getAttribute('data-upgrade-key');
+            if (typeof buyUpgrade === 'function') buyUpgrade(key);
+        }
+    };
+
+    const upgPlayerList = document.getElementById('upg-player-list');
+    if (upgPlayerList) upgPlayerList.addEventListener('click', handleUpgradeClick);
+
+    const upgEchoList = document.getElementById('upg-echo-list');
+    if (upgEchoList) upgEchoList.addEventListener('click', handleUpgradeClick);
 }
 
 // Window exports for backward compatibility

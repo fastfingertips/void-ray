@@ -51,7 +51,7 @@ function renderInventory() {
         invHeader.innerHTML = `
             <div class="inv-header-top">
                 <div class="inv-title-main">KARGO</div>
-                <div class="ui-close-btn" onclick="closeInventory()">✕</div>
+                <div class="ui-close-btn" id="btn-dyn-close-inv">✕</div>
             </div>
             <div class="inv-info-row">
                 <div class="inv-cap-text"><span style="color:${capColor}; font-weight:bold;">${count}</span> / ${totalCapacity}</div>
@@ -60,7 +60,17 @@ function renderInventory() {
                     <span class="inv-currency-val">${playerData.stardust}</span>
                 </div>
             </div>
-        `;
+            `;
+
+        // Listener ekle - timeout DOM render için
+        setTimeout(() => {
+            const closeBtn = invHeader.querySelector('#btn-dyn-close-inv');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    if (typeof closeInventory === 'function') closeInventory();
+                });
+            }
+        }, 0);
     }
 
     // --- GRID OLUŞTURMA ---
@@ -91,9 +101,18 @@ function renderInventory() {
     let footerHTML = '';
     for (let p = 1; p <= TOTAL_PAGES; p++) {
         const isActive = p === currentInvPage ? 'active' : '';
-        footerHTML += `<div class="inv-page-btn ${isActive}" onclick="switchInventoryPage(${p})">${p}</div>`;
+        footerHTML += `< div class="inv-page-btn ${isActive}" data - page="${p}" > ${p}</div > `;
     }
     footer.innerHTML = footerHTML;
+
+    // Listener ekle
+    const pageBtns = footer.querySelectorAll('.inv-page-btn');
+    pageBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = parseInt(btn.getAttribute('data-page'));
+            if (typeof switchInventoryPage === 'function') switchInventoryPage(page);
+        });
+    });
 }
 
 function closeInventory() {
