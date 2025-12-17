@@ -319,6 +319,29 @@ export function initControls() {
             if (typeof exitNexus === 'function') exitNexus();
         });
     }
+
+    // --- NEXUS TAB LISTENERS ---
+    const nexusTabMarket = document.getElementById('nexus-tab-market');
+    if (nexusTabMarket) {
+        nexusTabMarket.addEventListener('click', () => {
+            if (typeof switchNexusTab === 'function') switchNexusTab('market');
+        });
+    }
+
+    const nexusTabUpgrades = document.getElementById('nexus-tab-upgrades');
+    if (nexusTabUpgrades) {
+        nexusTabUpgrades.addEventListener('click', () => {
+            if (typeof switchNexusTab === 'function') switchNexusTab('upgrades');
+        });
+    }
+
+    // --- ACTION BUTTON LISTENERS ---
+    const btnSellAll = document.getElementById('btn-sell-all');
+    if (btnSellAll) {
+        btnSellAll.addEventListener('click', () => {
+            if (typeof sellAll === 'function') sellAll();
+        });
+    }
 }
 
 // Window exports for backward compatibility

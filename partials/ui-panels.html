@@ -314,15 +314,15 @@
                 <span class="text-xs text-gray-400 tracking-widest">TİCARET VE GELİŞTİRME İSTASYONU</span>
             </div>
             <div class="nexus-tabs">
-                <div class="nexus-tab active" onclick="switchNexusTab('market')">PAZAR</div>
-                <div class="nexus-tab" onclick="switchNexusTab('upgrades')">HANGAR</div>
+                <div class="nexus-tab active" id="nexus-tab-market">PAZAR</div>
+                <div class="nexus-tab" id="nexus-tab-upgrades">HANGAR</div>
             </div>
             <div class="ui-close-btn" id="btn-close-nexus">✕</div>
         </div>
         <div id="tab-market" class="nexus-content active">
             <div class="flex justify-between items-center mb-6">
                 <p class="text-gray-400">Elde edilen materyalleri Yıldız Tozu karşılığında takas et.</p>
-                <button onclick="sellAll()"
+                <button id="btn-sell-all"
                     class="bg-white/10 text-white border border-white/20 px-6 py-2 rounded-sm hover:bg-white hover:text-black transition text-sm tracking-widest">TÜMÜNÜ
                     SAT</button>
             </div>
