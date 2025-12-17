@@ -222,3 +222,14 @@ window.sellAll = function () {
         showNotification({ name: `${total} KRİSTAL KAZANILDI`, type: { color: '#fbbf24' } }, "");
     }
 };
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.nexusOpen = nexusOpen;
+    window.isNearNexus = isNearNexus;
+    window.enterNexus = enterNexus;
+    window.exitNexus = exitNexus;
+    window.switchNexusTab = switchNexusTab;
+    window.renderMarket = renderMarket;
+    window.renderUpgrades = renderUpgrades;
+}

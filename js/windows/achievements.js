@@ -23,3 +23,10 @@ function renderAchievementsList() {
         renderAchievements();
     }
 }
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.openAchievements = openAchievements;
+    window.closeAchievements = closeAchievements;
+    window.renderAchievementsList = renderAchievementsList;
+}

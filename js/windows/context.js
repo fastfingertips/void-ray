@@ -154,3 +154,10 @@ function renderContext() {
     }
     if (ctxEl.energyState) ctxEl.energyState.innerText = stateText;
 }
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.contextOpen = contextOpen;
+    window.initContextSystem = initContextSystem;
+    window.renderContext = renderContext;
+}

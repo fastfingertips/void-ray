@@ -214,17 +214,6 @@ export function initControls() {
         });
     }
 
-    // ENVANTER KAPATMA BUTONU
-    const btnCloseInv = document.getElementById('btn-close-inv');
-    if (btnCloseInv) {
-        btnCloseInv.addEventListener('click', () => {
-            inventoryOpen = false;
-            const el = document.getElementById('inventory-overlay');
-            if (el) el.classList.remove('open');
-            if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-inv-icon', false);
-        });
-    }
-
     // OTO-PİLOT BUTONU
     const btnAi = document.getElementById('btn-ai-toggle');
     if (btnAi) {
@@ -270,6 +259,64 @@ export function initControls() {
             } else {
                 console.error("Profile functions not found! check profile.js");
             }
+        });
+    }
+
+    // --- CLOSE BUTTON LISTENERS (Replacing HTML onclick) ---
+
+    // Map close button
+    const btnCloseMap = document.getElementById('btn-close-map');
+    if (btnCloseMap) {
+        btnCloseMap.addEventListener('click', () => {
+            if (typeof closeMap === 'function') closeMap();
+        });
+    }
+
+    // Context close button
+    const btnCloseContext = document.getElementById('btn-close-context');
+    if (btnCloseContext) {
+        btnCloseContext.addEventListener('click', () => {
+            if (typeof closeContext === 'function') closeContext();
+        });
+    }
+
+    // Achievements close button
+    const btnCloseAchievements = document.getElementById('btn-close-achievements');
+    if (btnCloseAchievements) {
+        btnCloseAchievements.addEventListener('click', () => {
+            if (typeof closeAchievements === 'function') closeAchievements();
+        });
+    }
+
+    // Storage close button
+    const btnCloseStorage = document.getElementById('btn-close-storage');
+    if (btnCloseStorage) {
+        btnCloseStorage.addEventListener('click', () => {
+            if (typeof closeStorage === 'function') closeStorage();
+        });
+    }
+
+    // Inventory close button (already has id="btn-close-inv")
+    const btnCloseInv = document.getElementById('btn-close-inv');
+    if (btnCloseInv) {
+        btnCloseInv.addEventListener('click', () => {
+            if (typeof closeInventory === 'function') closeInventory();
+        });
+    }
+
+    // Echo Inventory close button
+    const btnCloseEchoInv = document.getElementById('btn-close-echo-inv');
+    if (btnCloseEchoInv) {
+        btnCloseEchoInv.addEventListener('click', () => {
+            if (typeof closeEchoInventory === 'function') closeEchoInventory();
+        });
+    }
+
+    // Nexus close button
+    const btnCloseNexus = document.getElementById('btn-close-nexus');
+    if (btnCloseNexus) {
+        btnCloseNexus.addEventListener('click', () => {
+            if (typeof exitNexus === 'function') exitNexus();
         });
     }
 }

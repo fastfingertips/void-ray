@@ -3,57 +3,125 @@
     <div class="big-map-layout">
         <div class="big-map-container">
             <canvas id="big-map-canvas"></canvas>
-            
+
             <!-- KOORDİNAT GÖSTERGESİ -->
-            <div id="big-map-coords" class="absolute bottom-4 left-4 text-xs font-mono bg-black/50 px-3 py-1 rounded border backdrop-blur-sm pointer-events-none" style="color: var(--hud-color); border-color: var(--hud-color-dim);">
+            <div id="big-map-coords"
+                class="absolute bottom-4 left-4 text-xs font-mono bg-black/50 px-3 py-1 rounded border backdrop-blur-sm pointer-events-none"
+                style="color: var(--hud-color); border-color: var(--hud-color-dim);">
                 0 : 0
             </div>
 
             <div class="absolute bottom-4 right-4 flex gap-2">
                 <!-- TAKİP MODU BUTONU -->
-                <button id="btn-map-track" onclick="toggleMapTracking()" class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95" title="Oyuncuyu Takip Et">
+                <button id="btn-map-track" onclick="toggleMapTracking()"
+                    class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
+                    title="Oyuncuyu Takip Et">
                     ◎
                 </button>
 
                 <!-- HEDEF VEKTÖRLERİ GÖSTER BUTONU -->
-                <button id="btn-map-targets" onclick="toggleMapTargets()" class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95" title="Hedef Vektörleri">
+                <button id="btn-map-targets" onclick="toggleMapTargets()"
+                    class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
+                    title="Hedef Vektörleri">
                     ⇢
                 </button>
 
                 <!-- MERKEZE ODAKLA BUTONU -->
-                <button onclick="centerMapOnPlayer()" class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95" title="Merkeze Odakla">
+                <button onclick="centerMapOnPlayer()"
+                    class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
+                    title="Merkeze Odakla">
                     ⌖
                 </button>
             </div>
-            
+
             <div class="radar-info-wrapper">
                 <div class="radar-info-icon">?</div>
                 <div class="radar-info-tooltip">
-                    <h4 class="text-white font-bold mb-2 border-b border-white/20 pb-1 tracking-widest text-sm">RADAR SİSTEMİ</h4>
-                    <div class="radar-legend-item"><div class="r-dot scan"></div><div><span class="r-title text-emerald-400">TARAMA ALANI</span><p class="r-desc">Tam Görüş. Kaynakların içeriği net tespit edilir.</p></div></div>
-                    <div class="radar-legend-item"><div class="r-dot radar"></div><div><span class="r-title text-amber-400">RADAR ALANI</span><p class="r-desc">Kısmi Görüş. Nesneler sinyal olarak görünür.</p></div></div>
-                    <div class="radar-legend-item"><div class="r-dot unknown"></div><div><span class="r-title text-gray-400">BİLİNMEYEN BÖLGE</span><p class="r-desc">Kapsama alanı dışı.</p></div></div>
-                    <h4 class="text-white font-bold mb-2 mt-4 border-b border-white/20 pb-1 tracking-widest text-sm">HARİTA KONTROLLERİ</h4>
-                    <div class="radar-legend-item"><div class="r-dot" style="background:transparent; border:1px solid rgba(255,255,255,0.5);"></div><div><span class="r-title text-white">OTO-PİLOT</span><p class="r-desc">Noktaya tıklayarak rota oluşturun.</p></div></div>
-                    <div class="radar-legend-item"><div class="r-dot" style="background:transparent; border:1px solid rgba(255,255,255,0.5); border-radius:50%;"></div><div><span class="r-title text-white">YAKINLAŞTIRMA</span><p class="r-desc">Fare tekerleği ile zoom yapın.</p></div></div>
-                    <div class="radar-legend-item"><div class="r-dot" style="background:transparent; border:1px solid rgba(255,255,255,0.5); border-radius:0;"></div><div><span class="r-title text-white">GEZİNME</span><p class="r-desc">Sol tık basılı tutarak kaydırın.</p></div></div>
+                    <h4 class="text-white font-bold mb-2 border-b border-white/20 pb-1 tracking-widest text-sm">RADAR
+                        SİSTEMİ</h4>
+                    <div class="radar-legend-item">
+                        <div class="r-dot scan"></div>
+                        <div><span class="r-title text-emerald-400">TARAMA ALANI</span>
+                            <p class="r-desc">Tam Görüş. Kaynakların içeriği net tespit edilir.</p>
+                        </div>
+                    </div>
+                    <div class="radar-legend-item">
+                        <div class="r-dot radar"></div>
+                        <div><span class="r-title text-amber-400">RADAR ALANI</span>
+                            <p class="r-desc">Kısmi Görüş. Nesneler sinyal olarak görünür.</p>
+                        </div>
+                    </div>
+                    <div class="radar-legend-item">
+                        <div class="r-dot unknown"></div>
+                        <div><span class="r-title text-gray-400">BİLİNMEYEN BÖLGE</span>
+                            <p class="r-desc">Kapsama alanı dışı.</p>
+                        </div>
+                    </div>
+                    <h4 class="text-white font-bold mb-2 mt-4 border-b border-white/20 pb-1 tracking-widest text-sm">
+                        HARİTA KONTROLLERİ</h4>
+                    <div class="radar-legend-item">
+                        <div class="r-dot" style="background:transparent; border:1px solid rgba(255,255,255,0.5);">
+                        </div>
+                        <div><span class="r-title text-white">OTO-PİLOT</span>
+                            <p class="r-desc">Noktaya tıklayarak rota oluşturun.</p>
+                        </div>
+                    </div>
+                    <div class="radar-legend-item">
+                        <div class="r-dot"
+                            style="background:transparent; border:1px solid rgba(255,255,255,0.5); border-radius:50%;">
+                        </div>
+                        <div><span class="r-title text-white">YAKINLAŞTIRMA</span>
+                            <p class="r-desc">Fare tekerleği ile zoom yapın.</p>
+                        </div>
+                    </div>
+                    <div class="radar-legend-item">
+                        <div class="r-dot"
+                            style="background:transparent; border:1px solid rgba(255,255,255,0.5); border-radius:0;">
+                        </div>
+                        <div><span class="r-title text-white">GEZİNME</span>
+                            <p class="r-desc">Sol tık basılı tutarak kaydırın.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="ui-close-btn" style="position: absolute; top: 1rem; right: 1rem; color: white;" onclick="closeMap()">✕</div>
+            <div class="ui-close-btn" style="position: absolute; top: 1rem; right: 1rem; color: white;"
+                id="btn-close-map">✕</div>
         </div>
         <div class="big-map-info-overlay">
             <h3 class="text-white font-light tracking-widest text-lg mb-4 border-b border-white/10 pb-2">LEJANT</h3>
-            <div class="legend-item"><div class="l-dot" style="background:var(--hud-color); border:2px solid var(--hud-color);"></div> SİZ</div>
-            <div class="legend-item"><div class="l-dot" style="background:#fff; border:2px solid #fff;"></div> NEXUS</div>
-            <div class="legend-item"><div class="l-dot" style="background:var(--color-success);"></div> TAMİR İSTASYONU</div>
-            <div class="legend-item"><div class="l-dot" style="background:var(--color-storage);"></div> DEPO MERKEZİ</div>
-            <div class="legend-item"><div class="l-dot" style="background:var(--echo-color);"></div> YANKI</div>
-            <div class="legend-item"><div class="l-dot" style="border:2px solid #8b5cf6;"></div> SOLUCAN DELİĞİ</div>
-            <div class="legend-item"><div class="l-dot" style="background:rgba(255,255,255,0.5);"></div> Kaynak</div>
-            <div class="legend-item"><div class="l-dot" style="background:var(--toxic-color);"></div> Zehirli Bölge</div>
-            <div class="legend-item"><div class="l-dot" style="background:var(--tardigrad-color);"></div> Tardigrad</div>
-            <div class="legend-item"><div class="l-dot" style="background:var(--color-storage);"></div> Kayıp Kargo</div>
-            <div class="legend-item"><div class="l-dot" style="border:1px dashed var(--color-danger);"></div> Hedef</div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--hud-color); border:2px solid var(--hud-color);"></div> SİZ
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:#fff; border:2px solid #fff;"></div> NEXUS
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--color-success);"></div> TAMİR İSTASYONU
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--color-storage);"></div> DEPO MERKEZİ
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--echo-color);"></div> YANKI
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="border:2px solid #8b5cf6;"></div> SOLUCAN DELİĞİ
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:rgba(255,255,255,0.5);"></div> Kaynak
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--toxic-color);"></div> Zehirli Bölge
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--tardigrad-color);"></div> Tardigrad
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="background:var(--color-storage);"></div> Kayıp Kargo
+            </div>
+            <div class="legend-item">
+                <div class="l-dot" style="border:1px dashed var(--color-danger);"></div> Hedef
+            </div>
         </div>
     </div>
 </div>
@@ -63,7 +131,7 @@
     <div class="context-window compact">
         <div class="context-header">
             <h2 class="text-sm font-bold tracking-widest" style="color: var(--hud-color);">BAĞLAMLAR</h2>
-            <div class="ui-close-btn" onclick="closeContext()">✕</div>
+            <div class="ui-close-btn" id="btn-close-context">✕</div>
         </div>
         <div class="context-content">
             <div class="ctx-grid">
@@ -100,7 +168,8 @@
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="ctx-lbl text-red-300">ÇEVRESEL DURUM</div>
-                            <div id="ctx-env-detail" class="text-[0.6rem] text-gray-500 italic mt-0.5">Analiz ediliyor...</div>
+                            <div id="ctx-env-detail" class="text-[0.6rem] text-gray-500 italic mt-0.5">Analiz
+                                ediliyor...</div>
                         </div>
                         <div id="ctx-env-status" class="ctx-val text-sm">BİLİNMİYOR</div>
                     </div>
@@ -123,7 +192,7 @@
                 <h2 class="text-2xl font-light tracking-widest text-white">BAŞARIMLAR</h2>
                 <div id="ach-progress-text" class="text-xs text-gray-400 tracking-widest mt-1">0 / 0 TAMAMLANDI</div>
             </div>
-            <div class="ui-close-btn" onclick="closeAchievements()">✕</div>
+            <div class="ui-close-btn" id="btn-close-achievements">✕</div>
         </div>
         <div class="stats-content">
             <div id="achievements-list" class="space-y-2 p-2"></div>
@@ -132,34 +201,42 @@
 </div>
 
 <div id="storage-overlay" class="overlay-base">
-    <div class="nexus-window" style="height: 800px;"> 
+    <div class="nexus-window" style="height: 800px;">
         <div class="nexus-header">
             <div>
                 <h1 class="nexus-logo-text" style="font-size: 3rem;">MERKEZ DEPO</h1>
                 <span class="text-xs text-gray-400 tracking-widest">SINIRSIZ SAKLAMA ALANI</span>
             </div>
-            <div class="ui-close-btn" onclick="closeStorage()">✕</div>
+            <div class="ui-close-btn" id="btn-close-storage">✕</div>
         </div>
         <div class="nexus-content active" style="display:flex; gap:20px; height:100%; overflow:hidden;">
-            <div class="storage-col" style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
+            <div class="storage-col"
+                style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <h3 class="tracking-widest" style="color: var(--hud-color);">GEMİ KARGOSU</h3>
                     <span id="storage-ship-cap" class="text-xs text-gray-400">0 / 150</span>
                 </div>
                 <div id="storage-ship-list" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="depositAllToStorage()" class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition" style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ DEPOLA</button>
+                    <button onclick="depositAllToStorage()"
+                        class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
+                        style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ DEPOLA</button>
                 </div>
             </div>
-            <div class="flex flex-col justify-center items-center text-gray-500"><div class="text-2xl">⇄</div></div>
-            <div class="storage-col" style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
+            <div class="flex flex-col justify-center items-center text-gray-500">
+                <div class="text-2xl">⇄</div>
+            </div>
+            <div class="storage-col"
+                style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <h3 class="tracking-widest" style="color: var(--color-storage);">MERKEZ DEPO</h3>
                     <span id="storage-center-count" class="text-xs text-gray-400">0 EŞYA</span>
                 </div>
                 <div id="storage-center-list" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="withdrawAllFromStorage()" class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition" style="color: var(--color-storage); border-color: rgba(168, 85, 247, 0.3);">TÜMÜNÜ AL</button>
+                    <button onclick="withdrawAllFromStorage()"
+                        class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
+                        style="color: var(--color-storage); border-color: rgba(168, 85, 247, 0.3);">TÜMÜNÜ AL</button>
                 </div>
             </div>
         </div>
@@ -174,10 +251,11 @@
                     <div>
                         <h2 class="text-2xl font-light tracking-[0.2em] text-white">ENVANTER</h2>
                         <div class="inv-currency">
-                            <span style="color: var(--ray-color);">◆</span> <span id="stardust-amount" class="text-white font-bold">0</span>
+                            <span style="color: var(--ray-color);">◆</span> <span id="stardust-amount"
+                                class="text-white font-bold">0</span>
                         </div>
                     </div>
-                    <div class="ui-close-btn" id="btn-close-inv" onclick="closeInventory()">✕</div>
+                    <div class="ui-close-btn" id="btn-close-inv">✕</div>
                 </div>
                 <div class="inv-table-container" id="inv-grid-content"></div>
             </div>
@@ -192,28 +270,36 @@
                 <h1 class="nexus-logo-text" style="color:var(--echo-color); font-size: 2.5rem;">YANKI ARAYÜZÜ</h1>
                 <span class="text-xs text-cyan-400 tracking-widest">SENKRONİZE DEPO YÖNETİMİ</span>
             </div>
-            <div class="ui-close-btn" style="color: var(--echo-color);" onclick="closeEchoInventory()">✕</div>
+            <div class="ui-close-btn" style="color: var(--echo-color);" id="btn-close-echo-inv">✕</div>
         </div>
         <div class="nexus-content active" style="display:flex; gap:20px; height:100%; overflow:hidden;">
-            <div class="storage-col" style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
+            <div class="storage-col"
+                style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <h3 class="tracking-widest" style="color: var(--hud-color);">GEMİ KARGOSU</h3>
                     <span id="echo-player-cap" class="text-xs text-gray-400">0 / 150</span>
                 </div>
                 <div id="echo-player-grid" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="transferAllToEcho()" class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition" style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ AKTAR</button>
+                    <button onclick="transferAllToEcho()"
+                        class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
+                        style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ AKTAR</button>
                 </div>
             </div>
-            <div class="flex flex-col justify-center items-center text-cyan-500"><div class="text-2xl">⇄</div></div>
-            <div class="storage-col" style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
+            <div class="flex flex-col justify-center items-center text-cyan-500">
+                <div class="text-2xl">⇄</div>
+            </div>
+            <div class="storage-col"
+                style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <h3 class="tracking-widest" style="color: var(--echo-color);">YANKI DEPOSU</h3>
                     <span id="echo-storage-cap" class="text-xs text-gray-400">0 / 0</span>
                 </div>
                 <div id="echo-storage-grid" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="transferAllToPlayer()" class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition" style="color: var(--echo-color); border-color: rgba(103, 232, 249, 0.3);">TÜMÜNÜ AL</button>
+                    <button onclick="transferAllToPlayer()"
+                        class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
+                        style="color: var(--echo-color); border-color: rgba(103, 232, 249, 0.3);">TÜMÜNÜ AL</button>
                 </div>
             </div>
         </div>
@@ -231,20 +317,28 @@
                 <div class="nexus-tab active" onclick="switchNexusTab('market')">PAZAR</div>
                 <div class="nexus-tab" onclick="switchNexusTab('upgrades')">HANGAR</div>
             </div>
-            <div class="ui-close-btn" onclick="exitNexus()">✕</div>
+            <div class="ui-close-btn" id="btn-close-nexus">✕</div>
         </div>
         <div id="tab-market" class="nexus-content active">
             <div class="flex justify-between items-center mb-6">
                 <p class="text-gray-400">Elde edilen materyalleri Yıldız Tozu karşılığında takas et.</p>
-                <button onclick="sellAll()" class="bg-white/10 text-white border border-white/20 px-6 py-2 rounded-sm hover:bg-white hover:text-black transition text-sm tracking-widest">TÜMÜNÜ SAT</button>
+                <button onclick="sellAll()"
+                    class="bg-white/10 text-white border border-white/20 px-6 py-2 rounded-sm hover:bg-white hover:text-black transition text-sm tracking-widest">TÜMÜNÜ
+                    SAT</button>
             </div>
             <div id="market-grid" class="market-grid"></div>
         </div>
         <div id="tab-upgrades" class="nexus-content">
             <div class="upgrade-grid">
                 <!-- nexus.js içinde dinamik oluşturuluyor, orada da style="color: var(--hud-color)" yapılacak -->
-                <div><div class="upgrade-col-title" style="color: var(--hud-color);">VOID RAY (SİZ)</div><div id="upg-player-list"></div></div>
-                <div><div class="upgrade-col-title" style="color: var(--echo-color);">ECHO RAY (YANKI)</div><div id="upg-echo-list"></div></div>
+                <div>
+                    <div class="upgrade-col-title" style="color: var(--hud-color);">VOID RAY (SİZ)</div>
+                    <div id="upg-player-list"></div>
+                </div>
+                <div>
+                    <div class="upgrade-col-title" style="color: var(--echo-color);">ECHO RAY (YANKI)</div>
+                    <div id="upg-echo-list"></div>
+                </div>
             </div>
         </div>
     </div>
