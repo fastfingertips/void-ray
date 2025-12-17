@@ -463,6 +463,86 @@ export function initControls() {
             if (typeof switchChatTab === 'function') switchChatTab('bilgi');
         });
     }
+
+    // --- SETTINGS BUTTON LISTENERS ---
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    if (btnCloseSettings) {
+        btnCloseSettings.addEventListener('click', () => {
+            if (typeof closeSettings === 'function') closeSettings();
+        });
+    }
+
+    // Settings Tabs
+    const tabSettingsGame = document.getElementById('tab-btn-game');
+    if (tabSettingsGame) {
+        tabSettingsGame.addEventListener('click', () => {
+            if (typeof switchSettingsTab === 'function') switchSettingsTab('game');
+        });
+    }
+
+    const tabSettingsView = document.getElementById('tab-btn-view');
+    if (tabSettingsView) {
+        tabSettingsView.addEventListener('click', () => {
+            if (typeof switchSettingsTab === 'function') switchSettingsTab('view');
+        });
+    }
+
+    const tabSettingsAudio = document.getElementById('tab-btn-audio');
+    if (tabSettingsAudio) {
+        tabSettingsAudio.addEventListener('click', () => {
+            if (typeof switchSettingsTab === 'function') switchSettingsTab('audio');
+        });
+    }
+
+    const tabSettingsSave = document.getElementById('tab-btn-save');
+    if (tabSettingsSave) {
+        tabSettingsSave.addEventListener('click', () => {
+            if (typeof switchSettingsTab === 'function') switchSettingsTab('save');
+        });
+    }
+
+    const tabSettingsDev = document.getElementById('tab-btn-dev');
+    if (tabSettingsDev) {
+        tabSettingsDev.addEventListener('click', () => {
+            if (typeof switchSettingsTab === 'function') switchSettingsTab('dev');
+        });
+    }
+
+    // Settings Actions
+    const btnActionExport = document.getElementById('btn-action-export');
+    if (btnActionExport) {
+        btnActionExport.addEventListener('click', () => {
+            if (typeof actionExportSave === 'function') actionExportSave();
+        });
+    }
+
+    const btnActionImport = document.getElementById('btn-action-import');
+    if (btnActionImport) {
+        btnActionImport.addEventListener('click', () => {
+            if (typeof actionImportSave === 'function') actionImportSave();
+        });
+    }
+
+    const btnActionReset = document.getElementById('btn-action-reset');
+    if (btnActionReset) {
+        btnActionReset.addEventListener('click', () => {
+            if (typeof actionResetSave === 'function') actionResetSave();
+        });
+    }
+
+    const btnDevAddResources = document.getElementById('btn-dev-add-resources');
+    if (btnDevAddResources) {
+        btnDevAddResources.addEventListener('click', () => {
+            if (typeof devAddResources === 'function') devAddResources();
+        });
+    }
+
+    const btnDevLevelUp = document.getElementById('btn-dev-levelup');
+    if (btnDevLevelUp) {
+        btnDevLevelUp.addEventListener('click', () => {
+            if (typeof devLevelUp === 'function') devLevelUp();
+        });
+    }
 }
 
 // Window exports for backward compatibility
