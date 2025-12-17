@@ -28,40 +28,55 @@
     <!-- HUD İKONLARI -->
     <div class="hud-icon-group">
         <!-- PROFİL BUTONU -->
-        <div id="btn-profile-icon" class="hud-btn" title="Profil (P)" onmouseenter="showInfoTooltip(event, 'PROFİL (P): Evrim seviyesi ve pilot verileri.')" onmouseleave="hideTooltip()">
+        <div id="btn-profile-icon" class="hud-btn" title="Profil (P)"
+            onmouseenter="showInfoTooltip(event, 'PROFİL (P): Evrim seviyesi ve pilot verileri.')"
+            onmouseleave="hideTooltip()">
             ⏣
         </div>
 
         <!-- EKİPMAN BUTONU (YENİ - EMOJI DÜZELTİLDİ) -->
-        <div id="btn-equip-icon" class="hud-btn" title="Ekipman" onclick="toggleEquipment()" onmouseenter="showInfoTooltip(event, 'EKİPMAN: Gemi parçaları ve yükseltmeler.')" onmouseleave="hideTooltip()">
+        <div id="btn-equip-icon" class="hud-btn" title="Ekipman"
+            onmouseenter="showInfoTooltip(event, 'EKİPMAN: Gemi parçaları ve yükseltmeler.')"
+            onmouseleave="hideTooltip()">
             ⛨
         </div>
 
-        <div id="btn-inv-icon" class="hud-btn" title="Envanter (I)" onmouseenter="showInfoTooltip(event, 'ENVANTER (I): Toplanan kaynakları ve kargoyu gösterir.')" onmouseleave="hideTooltip()">
+        <div id="btn-inv-icon" class="hud-btn" title="Envanter (I)"
+            onmouseenter="showInfoTooltip(event, 'ENVANTER (I): Toplanan kaynakları ve kargoyu gösterir.')"
+            onmouseleave="hideTooltip()">
             ❖ <span id="inv-total-badge" class="hud-badge" style="display:none;">0</span>
         </div>
-        
-        <div id="btn-stats-icon" class="hud-btn" title="İstatistikler" onmouseenter="showInfoTooltip(event, 'İSTATİSTİKLER: Oyun verilerini ve sayaçları gösterir.')" onmouseleave="hideTooltip()">
+
+        <div id="btn-stats-icon" class="hud-btn" title="İstatistikler"
+            onmouseenter="showInfoTooltip(event, 'İSTATİSTİKLER: Oyun verilerini ve sayaçları gösterir.')"
+            onmouseleave="hideTooltip()">
             ≣
         </div>
 
         <!-- CHAT BUTONU -->
-        <div id="btn-chat-mode" class="hud-btn" title="İletişim Modu" onclick="cycleChatMode()" onmouseenter="showInfoTooltip(event, 'İLETİŞİM MODU: Aktif / Yarım')" onmouseleave="hideTooltip()">
+        <div id="btn-chat-mode" class="hud-btn" title="İletişim Modu"
+            onmouseenter="showInfoTooltip(event, 'İLETİŞİM MODU: Aktif / Yarım')" onmouseleave="hideTooltip()">
             ✉
         </div>
-        
+
         <!-- BAĞLAMLAR BUTONU -->
-        <div id="btn-context-icon" class="hud-btn" title="Bağlamlar" onclick="toggleContext()" onmouseenter="showInfoTooltip(event, 'BAĞLAMLAR: Oyun mekaniklerinin mantıksal dökümü.')" onmouseleave="hideTooltip()">
+        <div id="btn-context-icon" class="hud-btn" title="Bağlamlar"
+            onmouseenter="showInfoTooltip(event, 'BAĞLAMLAR: Oyun mekaniklerinin mantıksal dökümü.')"
+            onmouseleave="hideTooltip()">
             ?
         </div>
 
         <!-- KONTROLLER BUTONU (YENİ) -->
-        <div id="btn-controls-icon" class="hud-btn" title="Kontroller" onclick="toggleControls()" onmouseenter="showInfoTooltip(event, 'KONTROLLER: Tuş takımı şemasını gösterir.')" onmouseleave="hideTooltip()">
+        <div id="btn-controls-icon" class="hud-btn" title="Kontroller"
+            onmouseenter="showInfoTooltip(event, 'KONTROLLER: Tuş takımı şemasını gösterir.')"
+            onmouseleave="hideTooltip()">
             ⌨
         </div>
-        
+
         <div id="echo-wrapper-el" class="echo-wrapper">
-            <div id="btn-echo-icon" class="hud-btn" onmouseenter="showInfoTooltip(event, 'YANKI KONTROL: Yardımcı dron modunu değiştirir.')" onmouseleave="hideTooltip()">
+            <div id="btn-echo-icon" class="hud-btn"
+                onmouseenter="showInfoTooltip(event, 'YANKI KONTROL: Yardımcı dron modunu değiştirir.')"
+                onmouseleave="hideTooltip()">
                 ◎ <span id="echo-total-badge" class="hud-badge" style="display:none;">0</span>
             </div>
             <div class="echo-dropdown">
@@ -72,16 +87,18 @@
                         <span id="echo-rate-disp" class="echo-p-rate">Toplama Hızı: Normal</span>
                     </div>
                 </div>
-                <div id="menu-roam" class="echo-menu-item active-mode" onclick="setEchoMode('roam')">◈ SERBEST</div>
-                <div id="menu-return" class="echo-menu-item" onclick="setEchoMode('return')">↪ ÇAĞIR</div>
-                <div id="menu-merge" class="echo-menu-item" onclick="echoManualMerge()">☌ BİRLEŞ</div>
-                <div class="echo-menu-item" onclick="openEchoInventory()">❖ ENVANTER</div>
+                <div id="menu-roam" class="echo-menu-item active-mode">◈ SERBEST</div>
+                <div id="menu-return" class="echo-menu-item">↪ ÇAĞIR</div>
+                <div id="menu-merge" class="echo-menu-item">☌ BİRLEŞ</div>
+                <div id="menu-echo-inv" class="echo-menu-item">❖ ENVANTER</div>
             </div>
         </div>
-        
+
         <div class="ai-controls">
-            <div id="btn-ai-toggle" class="hud-btn" title="Oto-Pilot (Q)" onmouseenter="showInfoTooltip(event, 'OTO-PİLOT (Q): Otomatik toplama ve navigasyonu açar/kapatır.')" onmouseleave="hideTooltip()">◈</div>
-            <div id="ai-mode-btn" class="ai-mode-switch" onclick="cycleAIMode()">TOPLA</div>
+            <div id="btn-ai-toggle" class="hud-btn" title="Oto-Pilot (Q)"
+                onmouseenter="showInfoTooltip(event, 'OTO-PİLOT (Q): Otomatik toplama ve navigasyonu açar/kapatır.')"
+                onmouseleave="hideTooltip()">◈</div>
+            <div id="ai-mode-btn" class="ai-mode-switch">TOPLA</div>
         </div>
     </div>
 
@@ -92,10 +109,16 @@
     </div>
 
     <!-- MİNİ HARİTA VE BARLAR -->
-    <div id="minimap-wrapper" onmouseenter="showInfoTooltip(event, 'RADAR: Yakındaki kaynakları ve tehditleri gösterir.')" onmouseleave="hideTooltip()">
+    <div id="minimap-wrapper"
+        onmouseenter="showInfoTooltip(event, 'RADAR: Yakındaki kaynakları ve tehditleri gösterir.')"
+        onmouseleave="hideTooltip()">
         <div id="minimap-container"><canvas id="minimap-canvas"></canvas></div>
-        <div id="energy-bar-container" title="Enerji"><div id="energy-bar-fill"></div></div>
-        <div id="health-bar-container" title="Gövde Dayanıklılığı"><div id="health-bar-fill"></div></div>
+        <div id="energy-bar-container" title="Enerji">
+            <div id="energy-bar-fill"></div>
+        </div>
+        <div id="health-bar-container" title="Gövde Dayanıklılığı">
+            <div id="health-bar-fill"></div>
+        </div>
         <div class="coords" id="coords">0000 : 0000</div>
     </div>
 

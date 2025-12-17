@@ -543,6 +543,71 @@ export function initControls() {
             if (typeof devLevelUp === 'function') devLevelUp();
         });
     }
+
+    // --- HUD BUTTON LISTENERS ---
+    const btnEquipIcon = document.getElementById('btn-equip-icon');
+    if (btnEquipIcon) {
+        btnEquipIcon.addEventListener('click', () => {
+            if (typeof toggleEquipment === 'function') toggleEquipment();
+        });
+    }
+
+    const btnChatMode = document.getElementById('btn-chat-mode');
+    if (btnChatMode) {
+        btnChatMode.addEventListener('click', () => {
+            if (typeof cycleChatMode === 'function') cycleChatMode();
+        });
+    }
+
+    const btnContextIcon = document.getElementById('btn-context-icon');
+    if (btnContextIcon) {
+        btnContextIcon.addEventListener('click', () => {
+            if (typeof toggleContext === 'function') toggleContext();
+        });
+    }
+
+    const btnControlsIcon = document.getElementById('btn-controls-icon');
+    if (btnControlsIcon) {
+        btnControlsIcon.addEventListener('click', () => {
+            if (typeof toggleControls === 'function') toggleControls();
+        });
+    }
+
+    const aiModeBtn = document.getElementById('ai-mode-btn');
+    if (aiModeBtn) {
+        aiModeBtn.addEventListener('click', () => {
+            if (typeof cycleAIMode === 'function') cycleAIMode();
+        });
+    }
+
+    // --- ECHO MENU LISTENERS ---
+    const menuRoam = document.getElementById('menu-roam');
+    if (menuRoam) {
+        menuRoam.addEventListener('click', () => {
+            if (typeof setEchoMode === 'function') setEchoMode('roam');
+        });
+    }
+
+    const menuReturn = document.getElementById('menu-return');
+    if (menuReturn) {
+        menuReturn.addEventListener('click', () => {
+            if (typeof setEchoMode === 'function') setEchoMode('return');
+        });
+    }
+
+    const menuMerge = document.getElementById('menu-merge');
+    if (menuMerge) {
+        menuMerge.addEventListener('click', () => {
+            if (typeof echoManualMerge === 'function') echoManualMerge();
+        });
+    }
+
+    const menuEchoInv = document.getElementById('menu-echo-inv');
+    if (menuEchoInv) {
+        menuEchoInv.addEventListener('click', () => {
+            if (typeof openEchoInventory === 'function') openEchoInventory();
+        });
+    }
 }
 
 // Window exports for backward compatibility
