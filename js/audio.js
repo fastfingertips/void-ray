@@ -1,34 +1,37 @@
-// --- SES YÖNETİMİ ---
-// Müzik varsayılan olarak %20 (0.2)
+/**
+ * Void Ray - Audio Management (ES6 Module)
+ * Handles music crossfade and sound effects.
+ */
+
 let volMusic = 0.2, volSFX = 0.8;
 
-class ZenAudio {
+export class ZenAudio {
     constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        
+
         // Müzik elementlerini al
         this.musicBase = document.getElementById('music-base');
         this.musicSpace = document.getElementById('music-space');
         this.sfxError = document.getElementById('sfx-error'); // Hata sesi
-        
+
         this.currentTrack = null; // Şu an aktif olan parça
         this.activeTheme = '';    // 'base' veya 'space'
         this.fadeInterval = null; // Geçiş animasyonu zamanlayıcısı
-        
+
         // Başlangıçta sesleri tamamen kıs (Fade-in için)
-        if(this.musicBase) this.musicBase.volume = 0;
-        if(this.musicSpace) this.musicSpace.volume = 0;
-        
+        if (this.musicBase) this.musicBase.volume = 0;
+        if (this.musicSpace) this.musicSpace.volume = 0;
+
         // Hata sesi için başlangıç ayarı (düşük ses)
-        if(this.sfxError) this.sfxError.volume = Math.max(0, Math.min(1, volSFX * 0.2));
+        if (this.sfxError) this.sfxError.volume = Math.max(0, Math.min(1, volSFX * 0.2));
 
         this.scale = [196.00, 220.00, 261.63, 293.66, 329.63, 392.00];
-        this.lastChimeTime = 0; 
+        this.lastChimeTime = 0;
         this.lastEvolveTime = 0;
     }
 
-    init() { 
-        if(this.ctx.state === 'suspended') this.ctx.resume();
+    init() {
+        if (this.ctx.state === 'suspended') this.ctx.resume();
         // Oyun başladığında, game.js'den playTheme çağrılacak.
     }
 
@@ -71,7 +74,7 @@ class ZenAudio {
 
             // Yumuşatma Formülü (Easing): Daha doğal duyulması için
             // Basit lineer yerine hafif kavisli geçiş
-            const fadeLevel = ratio; 
+            const fadeLevel = ratio;
 
             // 1. Yeni Müzik Yükseliyor (Fade In)
             // volMusic (Ayarlardaki max seviye) ile sınırla
@@ -86,7 +89,7 @@ class ZenAudio {
             if (currentStep >= steps) {
                 clearInterval(this.fadeInterval);
                 this.fadeInterval = null;
-                
+
                 // Emin olmak için son değerleri set et
                 targetTrack.volume = volMusic;
                 if (fadeOutTrack) {
@@ -112,9 +115,9 @@ class ZenAudio {
             }
         }
     }
-    
+
     // --- EFEKT SESLERİ ---
-    
+
     // YENİ: Hata Sesi (Çok Kısık - volSFX'in %20'si)
     playError() {
         if (this.sfxError) {
@@ -133,17 +136,17 @@ class ZenAudio {
 
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        const freq = this.scale[Math.floor(Math.random()*this.scale.length)];
-        
+        const freq = this.scale[Math.floor(Math.random() * this.scale.length)];
+
         if (rarity.id === 'lost') osc.type = 'square';
         else if (rarity.id === 'tardigrade') osc.type = 'triangle';
         else osc.type = rarity.id === 'legendary' ? 'triangle' : 'sine';
-        
+
         osc.frequency.setValueAtTime(freq, now);
         gain.gain.setValueAtTime(0, now);
         gain.gain.linearRampToValueAtTime(volSFX * 0.2, now + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 3);
-        
+
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(now + 3.1);
     }
@@ -156,21 +159,26 @@ class ZenAudio {
         gain.gain.setValueAtTime(volSFX * 0.2, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
         osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(t + 0.35);
     }
-    
+
     playEvolve() {
         const now = this.ctx.currentTime;
-        if (now - this.lastEvolveTime < 0.5) return; 
+        if (now - this.lastEvolveTime < 0.5) return;
         this.lastEvolveTime = now;
         const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-        osc.type = 'triangle'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(600, now+2);
-        gain.gain.setValueAtTime(volSFX*0.3, now); gain.gain.linearRampToValueAtTime(0, now+2.5);
-        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(now+3);
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(600, now + 2);
+        gain.gain.setValueAtTime(volSFX * 0.3, now); gain.gain.linearRampToValueAtTime(0, now + 2.5);
+        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(now + 3);
     }
-    
+
     playToxic() {
         const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-        osc.type = 'sine'; osc.frequency.setValueAtTime(150, this.ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime+0.4);
-        gain.gain.setValueAtTime(volSFX*0.5, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime+0.4);
-        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime+0.5);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(150, this.ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(volSFX * 0.5, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.4);
+        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.5);
     }
+}
+
+// Window export for backward compatibility
+if (typeof window !== 'undefined') {
+    window.ZenAudio = ZenAudio;
 }
