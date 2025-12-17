@@ -1,9 +1,8 @@
 /**
- * Void Ray - Pencere: Nexus (UI)
- * * GÜNCELLEME: Sesler artık Utils.playSound ile güvenli çağrılıyor.
+ * Void Ray - Window: Nexus (ES6 Module)
  */
 
-let nexusOpen = false;
+export let nexusOpen = false;
 
 /**
  * Oyuncunun Nexus ile etkileşime girebilecek mesafede olup olmadığını kontrol eder.
@@ -11,32 +10,32 @@ let nexusOpen = false;
  */
 function isNearNexus() {
     if (typeof player === 'undefined' || typeof nexus === 'undefined') return false;
-    
+
     // Nexus yarıçapı (varsayılan 300) + Etkileşim tamponu (200)
     const interactionRange = (nexus.radius || 300) + 200;
     // Utils güncellemesi:
     const dist = Utils.distEntity(player, nexus);
-    
+
     return dist <= interactionRange;
 }
 
-function enterNexus() { 
+function enterNexus() {
     // --- GÜVENLİK KONTROLÜ ---
     // Profil penceresinden veya dışarıdan çağrıldığında mesafe kontrolü yap
     if (!isNearNexus()) {
-        showNotification({name: "ERİŞİM REDDEDİLDİ", type:{color:'#ef4444'}}, "Nexus menzili dışındasınız.");
+        showNotification({ name: "ERİŞİM REDDEDİLDİ", type: { color: '#ef4444' } }, "Nexus menzili dışındasınız.");
         Utils.playSound('playError'); // Güvenli Ses
         return;
     }
 
-    nexusOpen = true; 
+    nexusOpen = true;
     const overlay = document.getElementById('nexus-overlay');
     if (overlay) overlay.classList.add('open');
-    switchNexusTab('market'); 
+    switchNexusTab('market');
 }
 
-function exitNexus() { 
-    nexusOpen = false; 
+function exitNexus() {
+    nexusOpen = false;
     const overlay = document.getElementById('nexus-overlay');
     if (overlay) overlay.classList.remove('open');
     hideTooltip();
@@ -45,44 +44,44 @@ function exitNexus() {
 function switchNexusTab(tabName) {
     document.querySelectorAll('.nexus-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nexus-content').forEach(c => c.classList.remove('active'));
-    
-    if(tabName === 'market') { 
+
+    if (tabName === 'market') {
         const tab1 = document.querySelector('.nexus-tab:nth-child(1)');
-        if(tab1) tab1.classList.add('active'); 
-        
+        if (tab1) tab1.classList.add('active');
+
         const contentMarket = document.getElementById('tab-market');
-        if(contentMarket) contentMarket.classList.add('active'); 
-        
-        renderMarket(); 
-    } else { 
+        if (contentMarket) contentMarket.classList.add('active');
+
+        renderMarket();
+    } else {
         const tab2 = document.querySelector('.nexus-tab:nth-child(2)');
-        if(tab2) tab2.classList.add('active'); 
-        
+        if (tab2) tab2.classList.add('active');
+
         const contentUpgrades = document.getElementById('tab-upgrades');
-        if(contentUpgrades) contentUpgrades.classList.add('active'); 
-        
-        renderUpgrades(); 
+        if (contentUpgrades) contentUpgrades.classList.add('active');
+
+        renderUpgrades();
     }
 }
 
 function renderMarket() {
-    const grid = document.getElementById('market-grid'); 
+    const grid = document.getElementById('market-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    
-    if(collectedItems.length === 0) { 
-        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 mt-10">Satılacak eşya yok.</div>'; 
-        return; 
+
+    if (collectedItems.length === 0) {
+        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 mt-10">Satılacak eşya yok.</div>';
+        return;
     }
-    
-    const grouped = {}; 
-    collectedItems.forEach(item => { 
-        if (!grouped[item.name]) grouped[item.name] = { ...item, count: 0 }; 
-        grouped[item.name].count++; 
+
+    const grouped = {};
+    collectedItems.forEach(item => {
+        if (!grouped[item.name]) grouped[item.name] = { ...item, count: 0 };
+        grouped[item.name].count++;
     });
-    
+
     Object.values(grouped).forEach(item => {
-        if(item.type.value > 0) {
+        if (item.type.value > 0) {
             const totalVal = item.count * item.type.value;
             const div = document.createElement('div'); div.className = 'market-card';
             div.innerHTML = `<div class="text-2xl" style="color:${item.type.color}">●</div><div class="font-bold text-white">${item.name}</div><div class="text-sm text-gray-400">x${item.count}</div><div class="text-white font-mono text-lg opacity-80">${totalVal} <span class="text-xs">KRİSTAL</span></div><button class="sell-btn" onclick="sellItem('${item.name}', ${item.type.value}, ${item.count})">SAT</button>`;
@@ -92,34 +91,34 @@ function renderMarket() {
 }
 
 function renderUpgrades() {
-    const pList = document.getElementById('upg-player-list'); 
-    const eList = document.getElementById('upg-echo-list'); 
-    if (pList) pList.innerHTML = ''; 
+    const pList = document.getElementById('upg-player-list');
+    const eList = document.getElementById('upg-echo-list');
+    if (pList) pList.innerHTML = '';
     if (eList) eList.innerHTML = '';
-    
+
     const createCard = (key, data, isEcho = false) => {
-        const currentLvl = playerData.upgrades[key]; 
+        const currentLvl = playerData.upgrades[key];
         const cost = GameRules.calculateUpgradeCost(data.baseCost, currentLvl);
         const isMax = currentLvl >= data.max;
-        
+
         let isDisabled = isMax || playerData.stardust < cost;
         let btnText = isMax ? 'MAX' : 'GELİŞTİR';
         let btnClass = 'buy-btn';
 
         if (isEcho) {
-             if (!echoRay) {
+            if (!echoRay) {
                 isDisabled = true;
                 btnText = 'YANKI YOK';
-                btnClass += ' disabled-echo'; 
-             } else if (!echoRay.attached) {
+                btnClass += ' disabled-echo';
+            } else if (!echoRay.attached) {
                 isDisabled = true;
                 btnText = 'BAĞLI DEĞİL';
                 btnClass += ' disabled-echo';
-             }
+            }
         }
 
-        let pips = ''; for(let i=0; i<data.max; i++) pips += `<div class="lvl-pip ${i<currentLvl?'filled':''}"></div>`;
-        
+        let pips = ''; for (let i = 0; i < data.max; i++) pips += `<div class="lvl-pip ${i < currentLvl ? 'filled' : ''}"></div>`;
+
         return `
         <div class="upgrade-item">
             <div class="upg-info">
@@ -132,57 +131,57 @@ function renderUpgrades() {
             </button>
         </div>`;
     };
-    
+
     if (pList) ['playerSpeed', 'playerTurn', 'playerMagnet', 'playerCapacity'].forEach(k => pList.innerHTML += createCard(k, UPGRADES[k], false));
     if (eList) ['echoSpeed', 'echoRange', 'echoDurability', 'echoCapacity'].forEach(k => eList.innerHTML += createCard(k, UPGRADES[k], true));
 }
 
 // --- GLOBAL UI AKSİYONLARI ---
 
-window.buyUpgrade = function(key) {
+window.buyUpgrade = function (key) {
     // --- GÜVENLİK KONTROLÜ ---
     if (!isNearNexus()) {
-        showNotification({name: "BAĞLANTI KOPTU", type:{color:'#ef4444'}}, "İşlem sırasında uzaklaştınız.");
+        showNotification({ name: "BAĞLANTI KOPTU", type: { color: '#ef4444' } }, "İşlem sırasında uzaklaştınız.");
         exitNexus(); // Pencereyi zorla kapat
         return;
     }
 
     if (key.startsWith('echo')) {
         if (!echoRay) {
-             showNotification({name: "YANKI MEVCUT DEĞİL!", type:{color:'#ef4444'}}, "");
-             Utils.playSound('playError'); // Güvenli Ses
-             return;
+            showNotification({ name: "YANKI MEVCUT DEĞİL!", type: { color: '#ef4444' } }, "");
+            Utils.playSound('playError'); // Güvenli Ses
+            return;
         }
         if (!echoRay.attached) {
-            showNotification({name: "YANKI BAĞLI DEĞİL!", type:{color:'#ef4444'}}, "Yükseltme için birleşin.");
+            showNotification({ name: "YANKI BAĞLI DEĞİL!", type: { color: '#ef4444' } }, "Yükseltme için birleşin.");
             Utils.playSound('playError'); // Güvenli Ses
             return;
         }
     }
 
-    const data = UPGRADES[key]; const currentLvl = playerData.upgrades[key]; if(currentLvl >= data.max) return;
+    const data = UPGRADES[key]; const currentLvl = playerData.upgrades[key]; if (currentLvl >= data.max) return;
     const cost = GameRules.calculateUpgradeCost(data.baseCost, currentLvl);
-    
-    if(playerData.stardust >= cost) { 
-        playerData.stardust -= cost; 
-        playerData.upgrades[key]++; 
+
+    if (playerData.stardust >= cost) {
+        playerData.stardust -= cost;
+        playerData.upgrades[key]++;
         playerData.stats.totalSpentStardust += cost;
         Utils.playSound('playCash'); // Güvenli Ses
-        player.updateUI(); 
-        renderUpgrades(); 
-        updateEchoDropdownUI(); 
-        updateInventoryCount(); 
+        player.updateUI();
+        renderUpgrades();
+        updateEchoDropdownUI();
+        updateInventoryCount();
     } else {
         // Para yetersiz
-        showNotification({name: "YETERSİZ KRİSTAL!", type:{color:'#ef4444'}}, "");
+        showNotification({ name: "YETERSİZ KRİSTAL!", type: { color: '#ef4444' } }, "");
         Utils.playSound('playError'); // Güvenli Ses
     }
 };
 
-window.sellItem = function(name, unitPrice, count) {
+window.sellItem = function (name, unitPrice, count) {
     // --- GÜVENLİK KONTROLÜ ---
     if (!isNearNexus()) {
-        showNotification({name: "BAĞLANTI KOPTU", type:{color:'#ef4444'}}, "İşlem sırasında uzaklaştınız.");
+        showNotification({ name: "BAĞLANTI KOPTU", type: { color: '#ef4444' } }, "İşlem sırasında uzaklaştınız.");
         exitNexus();
         return;
     }
@@ -192,34 +191,34 @@ window.sellItem = function(name, unitPrice, count) {
     newItems.forEach(i => collectedItems.push(i));
 
     const totalEarned = count * unitPrice;
-    playerData.stardust += totalEarned; 
+    playerData.stardust += totalEarned;
     playerData.stats.totalStardust += totalEarned;
     Utils.playSound('playCash'); // Güvenli Ses
-    player.updateUI(); 
-    updateInventoryCount(); 
+    player.updateUI();
+    updateInventoryCount();
     renderMarket();
 };
 
-window.sellAll = function() {
+window.sellAll = function () {
     // --- GÜVENLİK KONTROLÜ ---
     if (!isNearNexus()) {
-        showNotification({name: "BAĞLANTI KOPTU", type:{color:'#ef4444'}}, "İşlem sırasında uzaklaştınız.");
+        showNotification({ name: "BAĞLANTI KOPTU", type: { color: '#ef4444' } }, "İşlem sırasında uzaklaştınız.");
         exitNexus();
         return;
     }
 
     let total = 0; let toKeep = [];
-    collectedItems.forEach(item => { if(item.type.value > 0) total += item.type.value; else toKeep.push(item); });
-    if(total > 0) { 
+    collectedItems.forEach(item => { if (item.type.value > 0) total += item.type.value; else toKeep.push(item); });
+    if (total > 0) {
         collectedItems.length = 0;
         toKeep.forEach(i => collectedItems.push(i));
-        
-        playerData.stardust += total; 
+
+        playerData.stardust += total;
         playerData.stats.totalStardust += total;
         Utils.playSound('playCash'); // Güvenli Ses
-        player.updateUI(); 
-        updateInventoryCount(); 
-        renderMarket(); 
-        showNotification({name: `${total} KRİSTAL KAZANILDI`, type:{color:'#fbbf24'}}, ""); 
+        player.updateUI();
+        updateInventoryCount();
+        renderMarket();
+        showNotification({ name: `${total} KRİSTAL KAZANILDI`, type: { color: '#fbbf24' } }, "");
     }
 };

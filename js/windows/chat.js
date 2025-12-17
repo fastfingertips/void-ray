@@ -1,26 +1,23 @@
 /**
- * Void Ray - Pencere: İletişim (Chat)
- * * Sohbet geçmişi ve kullanıcı mesajlarını yönetir.
- * * GÜNCELLEME: Opaklık ayarının çalışması için 'active' sınıfı eklendi.
+ * Void Ray - Window: Chat (ES6 Module)
  */
 
-// İletişim Sistemi (Loglar ve Mesajlar)
-let chatHistory = {
+export let chatHistory = {
     genel: [],
     bilgi: [],
     grup: []
 };
-let activeChatTab = 'genel';
+export let activeChatTab = 'genel';
 
-// CHAT MODU: 2=Aktif (Tam), 1=Yarım (Fading)
-let chatState = 1; // Varsayılan olarak Yarım Mod başlat
-let wasSemiActive = false; // Enter ile açıldığında, geri dönüş için bayrak
+// Chat mode: 2=Active, 1=Semi
+let chatState = 1;
+let wasSemiActive = false;
 
 /**
  * Chat modunu değiştirir (Buton tetikler).
  * 2 -> 1 -> 2 döngüsü (Aktif <-> Yarım).
  */
-window.cycleChatMode = function() {
+window.cycleChatMode = function () {
     if (chatState === 2) {
         chatState = 1; // Aktif -> Yarım
     } else {
@@ -37,7 +34,7 @@ function updateChatUI() {
     const panel = document.getElementById('chat-panel');
     const btn = document.getElementById('btn-chat-mode');
     const inputArea = document.getElementById('chat-input-area');
-    
+
     if (!panel || !btn) return;
 
     // Sınıfları temizle
@@ -46,39 +43,39 @@ function updateChatUI() {
     if (chatState === 2) {
         // --- AKTİF MOD ---
         // Opaklık sisteminin bu pencereyi "AÇIK" olarak algılaması için active sınıfı şart
-        panel.classList.add('active'); 
-        
-        btn.innerText = "✉"; 
+        panel.classList.add('active');
+
+        btn.innerText = "✉";
         btn.style.color = "white";
-        
+
         // Butonu aktif olarak işaretle
         if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-chat-mode', true);
-        
+
         // Input alanını görünür yap
-        if(inputArea) inputArea.style.removeProperty('display');
-        
+        if (inputArea) inputArea.style.removeProperty('display');
+
         // Tam geçmişi geri yükle
-        switchChatTab(activeChatTab); 
-    } 
+        switchChatTab(activeChatTab);
+    }
     else {
         // --- YARIM AKTİF ---
         // Pencere kapanmış gibi davranması için active sınıfını kaldırıyoruz
         // (Böylece opaklık ayarı yerine CSS'teki varsayılan şeffaflık devreye giriyor)
         panel.classList.remove('active');
-        
-        btn.innerText = "⋯"; 
-        btn.style.color = "#94a3b8"; 
+
+        btn.innerText = "⋯";
+        btn.style.color = "#94a3b8";
         panel.classList.add('chat-mode-semi');
-        
+
         // Buton aktifliğini kaldır
         if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-chat-mode', false);
-        
+
         // Input alanını ZORLA gizle
-        if(inputArea) inputArea.style.display = 'none';
+        if (inputArea) inputArea.style.display = 'none';
 
         // Yarım moda geçerken eski kalabalığı temizle
         const chatContent = document.getElementById('chat-content');
-        if (chatContent) chatContent.innerHTML = ''; 
+        if (chatContent) chatContent.innerHTML = '';
     }
 }
 
@@ -89,13 +86,13 @@ function addChatMessage(text, type = 'system', channel = 'bilgi') {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
     const msgObj = { text, type, time: timeStr };
-    
+
     // Veriyi her zaman kaydet
     chatHistory[channel].push(msgObj);
     if (channel !== 'genel') {
         chatHistory['genel'].push(msgObj);
     }
-    
+
     // Eğer kanal aktif değilse ekrana çizme (Yarım modda sadece aktif kanaldakiler görünsün)
     if (activeChatTab !== channel && activeChatTab !== 'genel') return;
 
@@ -110,11 +107,11 @@ function addChatMessage(text, type = 'system', channel = 'bilgi') {
         // YARIM MOD: Solarak kaybolma efekti (6sn toplam ömür)
         div.classList.add('fading-msg');
         chatContent.appendChild(div);
-        
+
         // Animasyon bitince DOM'dan sil (Tarihçede zaten var)
         setTimeout(() => {
             if (div.parentNode) div.parentNode.removeChild(div);
-        }, 6000); 
+        }, 6000);
     } else {
         // AKTİF MOD: Normal ekle (Silme yok)
         chatContent.appendChild(div);
@@ -124,16 +121,16 @@ function addChatMessage(text, type = 'system', channel = 'bilgi') {
 
 function switchChatTab(tab) {
     activeChatTab = tab;
-    
+
     document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
     const activeTabEl = document.getElementById(`tab-${tab}`);
-    if(activeTabEl) activeTabEl.classList.add('active');
-    
+    if (activeTabEl) activeTabEl.classList.add('active');
+
     const inputArea = document.getElementById('chat-input-area');
-    if(inputArea) {
+    if (inputArea) {
         // Sadece AKTİF (2) moddaysa input görünürlüğünü yönet
         if (chatState === 2) {
-            if(tab === 'bilgi') inputArea.style.display = 'none';
+            if (tab === 'bilgi') inputArea.style.display = 'none';
             else inputArea.style.display = 'flex';
         }
     }
@@ -146,7 +143,7 @@ function switchChatTab(tab) {
     }
 
     const chatContent = document.getElementById('chat-content');
-    if(chatContent) {
+    if (chatContent) {
         chatContent.innerHTML = '';
         chatHistory[tab].forEach(msg => {
             const div = document.createElement('div');
@@ -160,10 +157,10 @@ function switchChatTab(tab) {
 
 function sendUserMessage() {
     const input = document.getElementById('chat-input');
-    if(!input) return;
-    
+    if (!input) return;
+
     const msg = input.value.trim();
-    if(msg) {
+    if (msg) {
         // --- KOMUT SİSTEMİ ENTEGRASYONU ---
         if (msg.startsWith('/')) {
             if (typeof ConsoleSystem !== 'undefined') {
@@ -179,7 +176,7 @@ function sendUserMessage() {
             addChatMessage(`Pilot: ${msg}`, 'loot', activeChatTab);
             input.value = '';
             setTimeout(() => {
-                if(audio) audio.playError(); 
+                if (audio) audio.playError();
                 addChatMessage("Sistem: İletişim kanallarında parazit var. Mesaj iletilemedi (Bakımda).", 'alert', activeChatTab);
             }, 200);
         }
@@ -192,7 +189,7 @@ function sendUserMessage() {
         updateChatUI();
         // Odağı oyuna geri ver (Tuval)
         const canvas = document.getElementById('gameCanvas');
-        if(canvas) canvas.focus();
+        if (canvas) canvas.focus();
     }
 }
 
@@ -202,7 +199,7 @@ function initChatSystem() {
     updateChatUI(); // Başlangıç modunu uygula (1: Yarım)
 
     const sendBtn = document.getElementById('chat-send-btn');
-    if(sendBtn) {
+    if (sendBtn) {
         sendBtn.addEventListener('click', sendUserMessage);
     }
 
@@ -232,22 +229,22 @@ function initChatSystem() {
                 updateChatUI();
                 e.preventDefault();
                 setTimeout(() => {
-                    if(input) input.focus();
-                }, 50); 
-            } 
+                    if (input) input.focus();
+                }, 50);
+            }
             else if (document.activeElement === input) {
                 // Eğer input odaklıysa ve Enter'a basıldıysa -> Mesajı Gönder
                 sendUserMessage();
             }
         }
-        
+
         // ESC ile iptal etme (Eğer input açıksa kapat)
         if (e.key === 'Escape') {
             if (chatState === 2 && wasSemiActive) {
                 chatState = 1;
                 wasSemiActive = false;
                 updateChatUI();
-                if(input) {
+                if (input) {
                     input.value = ''; // Yazılanı sil
                     input.classList.remove('command-mode'); // Stili sil
                     input.blur();
@@ -255,4 +252,12 @@ function initChatSystem() {
             }
         }
     });
+}
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.chatHistory = chatHistory;
+    window.addChatMessage = addChatMessage;
+    window.initChatSystem = initChatSystem;
+    window.switchChatTab = switchChatTab;
 }

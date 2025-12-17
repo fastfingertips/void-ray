@@ -1,10 +1,8 @@
 /**
- * Void Ray - Pencere: Ayarlar
- * * Oyun ayarlarını, ses kontrollerini ve görünüm tercihlerini yönetir.
- * * GÜNCELLEME: Kamera kontrolleri için Adaptif Mod bilgilendirmesi eklendi.
+ * Void Ray - Window: Settings (ES6 Module)
  */
 
-let settingsOpen = false;
+export let settingsOpen = false;
 
 // Global Ayar Nesnesi
 if (!window.gameSettings) {
@@ -585,3 +583,14 @@ window.devLevelUp = function () {
         player.gainXp(player.maxXp);
     }
 };
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.settingsOpen = settingsOpen;
+    window.initSettings = initSettings;
+    window.toggleSettings = toggleSettings;
+    window.openSettings = openSettings;
+    window.closeSettings = closeSettings;
+    window.switchSettingsTab = switchSettingsTab;
+    window.setGameTheme = setGameTheme;
+}

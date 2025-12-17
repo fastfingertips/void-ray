@@ -1,20 +1,20 @@
 /**
- * Void Ray - Kullanıcı Arayüzü (UI) Yönetimi
- * GÜNCELLEME: Kontrol penceresi ve sürükleme entegrasyonu.
+ * Void Ray - User Interface (UI) Management (ES6 Module)
+ * Handles HUD, windows, tooltips, and drag functionality.
  */
 
-let isHudVisible = true;
-let windowGlobalZ = 5000;
+export let isHudVisible = true;
+export let windowGlobalZ = 5000;
 
-// --- SİNEMATİK MOD: OTOMATİK HUD GİZLEME ---
+// Cinematic Mode: Auto-hide HUD
 let lastActivityTime = Date.now();
 let hudAutoHidden = false;
 let autoHideCheckInterval = null;
 
 /**
- * Kullanıcı aktivitesini günceller (fare/klavye)
+ * Resets activity timer (mouse/keyboard)
  */
-function resetActivityTimer() {
+export function resetActivityTimer() {
     lastActivityTime = Date.now();
 
     // Eğer HUD otomatik gizlenmişse, geri getir
@@ -650,3 +650,21 @@ window.initDraggableWindows = function () {
         });
     });
 };
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.isHudVisible = isHudVisible;
+    window.windowGlobalZ = windowGlobalZ;
+    window.resetActivityTimer = resetActivityTimer;
+    window.startTipsCycle = startTipsCycle;
+    window.formatTime = formatTime;
+    window.renderGrid = renderGrid;
+    window.showTooltip = showTooltip;
+    window.hideTooltip = hideTooltip;
+    window.showInfoTooltip = showInfoTooltip;
+    window.toggleHUD = toggleHUD;
+    window.setHudButtonActive = setHudButtonActive;
+    window.makeElementDraggable = makeElementDraggable;
+    window.bringWindowToFront = bringWindowToFront;
+    window.updateAIButton = updateAIButton;
+}

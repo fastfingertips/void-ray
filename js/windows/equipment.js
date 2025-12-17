@@ -1,13 +1,8 @@
 /**
- * Void Ray - Pencere: Ekipman (Equipment)
- * * Oyuncunun gemisine taktığı parçaları yönetir.
- * * GÜNCELLEME: Eşya Kuşanma (Equip) ve Çıkarma (Unequip) mantığı eklendi.
- * * GÜNCELLEME: Görsel hata düzeltildi (Stillendirme artık doğru elemana uygulanıyor).
- * * GÜNCELLEME: Eşya nadirliğine göre renkli parlama efekti eklendi.
- * * GÜNCELLEME: Pencere açıldığında öne getirme (Bring to Front) eklendi.
+ * Void Ray - Window: Equipment (ES6 Module)
  */
 
-let equipmentOpen = false;
+export let equipmentOpen = false;
 
 // Ekipman Slot Tanımları (Teknik Semboller)
 const EQUIPMENT_SLOTS = {
@@ -35,9 +30,9 @@ function openEquipment() {
             bringWindowToFront(win);
         }
     }
-    
+
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-equip-icon', true);
-    
+
     renderEquipment();
 }
 
@@ -45,7 +40,7 @@ function closeEquipment() {
     equipmentOpen = false;
     const overlay = document.getElementById('equipment-overlay');
     if (overlay) overlay.classList.remove('open');
-    
+
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-equip-icon', false);
     hideTooltip();
 }
@@ -57,56 +52,56 @@ function renderEquipment() {
     Object.keys(EQUIPMENT_SLOTS).forEach(key => {
         const slotData = EQUIPMENT_SLOTS[key];
         const wrapperEl = document.getElementById(`slot-${slotData.id}`);
-        
+
         if (wrapperEl) {
             const oldSlotEl = wrapperEl.querySelector('.equip-slot');
-            
+
             if (oldSlotEl) {
                 const newSlotEl = oldSlotEl.cloneNode(true);
                 oldSlotEl.parentNode.replaceChild(newSlotEl, oldSlotEl);
-                
+
                 const iconEl = newSlotEl.querySelector('.slot-icon');
                 const item = playerData.equipment ? playerData.equipment[key] : null;
 
                 if (item) {
                     newSlotEl.classList.add('filled');
-                    if (iconEl) iconEl.innerText = item.icon || slotData.icon; 
-                    
+                    if (iconEl) iconEl.innerText = item.icon || slotData.icon;
+
                     if (item.type && item.type.color) {
                         const color = item.type.color;
                         newSlotEl.style.borderColor = color;
-                        newSlotEl.style.boxShadow = `0 0 15px ${color}`; 
-                        
+                        newSlotEl.style.boxShadow = `0 0 15px ${color}`;
+
                         if (typeof Utils !== 'undefined' && Utils.hexToRgba) {
                             newSlotEl.style.background = Utils.hexToRgba(color, 0.15);
                         }
-                        
+
                         if (iconEl) {
-                            iconEl.style.color = "#fff"; 
-                            iconEl.style.textShadow = `0 0 10px ${color}`; 
+                            iconEl.style.color = "#fff";
+                            iconEl.style.textShadow = `0 0 10px ${color}`;
                         }
                     }
 
                     newSlotEl.onmouseenter = (e) => showTooltip(e, item);
                     newSlotEl.onclick = () => unequipItem(key);
-                    
+
                 } else {
                     newSlotEl.classList.remove('filled');
-                    
+
                     newSlotEl.style.borderColor = '';
                     newSlotEl.style.boxShadow = '';
                     newSlotEl.style.background = '';
-                    
+
                     if (iconEl) {
                         iconEl.innerText = slotData.icon;
                         iconEl.style.color = '';
                         iconEl.style.textShadow = '';
                     }
-                    
+
                     newSlotEl.onmouseenter = (e) => showInfoTooltip(e, `${slotData.label}: BOŞ`);
                     newSlotEl.onclick = null;
                 }
-                
+
                 newSlotEl.onmouseleave = hideTooltip;
             }
         }
@@ -118,12 +113,12 @@ function renderEquipment() {
 function updateEquipmentStats() {
     const setVal = (id, val) => {
         const el = document.getElementById(id);
-        if(el) el.innerText = val;
+        if (el) el.innerText = val;
     };
 
     let totalSpeed = 0;
     let totalHull = 0;
-    
+
     if (playerData.equipment) {
         Object.values(playerData.equipment).forEach(item => {
             if (item && item.stats) {
@@ -135,7 +130,7 @@ function updateEquipmentStats() {
         });
     }
 
-    setVal('estat-atk', '0'); 
+    setVal('estat-atk', '0');
     setVal('estat-def', totalHull);
     setVal('estat-spd', Math.floor(playerData.stats.maxSpeed * 10) + ` (+${totalSpeed})`);
     setVal('estat-nrg', Math.floor(player.maxEnergy));
@@ -143,9 +138,9 @@ function updateEquipmentStats() {
 
 // --- EŞYA YÖNETİMİ ---
 
-window.equipItem = function(item) {
+window.equipItem = function (item) {
     if (!item || item.category !== 'equipment') {
-        showNotification({name: "UYARI", type: {color: '#f59e0b'}}, "Bu eşya kuşanılamaz.");
+        showNotification({ name: "UYARI", type: { color: '#f59e0b' } }, "Bu eşya kuşanılamaz.");
         return;
     }
 
@@ -168,21 +163,21 @@ window.equipItem = function(item) {
 
     playerData.equipment[targetSlotKey] = item;
 
-    Utils.playSound('playChime', {id: 'rare'}); 
-    showNotification({name: "SİSTEM GÜNCELLENDİ", type: {color:'#10b981'}}, item.name + " takıldı.");
+    Utils.playSound('playChime', { id: 'rare' });
+    showNotification({ name: "SİSTEM GÜNCELLENDİ", type: { color: '#10b981' } }, item.name + " takıldı.");
 
     if (typeof renderInventory === 'function') renderInventory();
     if (typeof updateInventoryCount === 'function') updateInventoryCount();
-    
+
     if (equipmentOpen) renderEquipment();
 };
 
-window.unequipItem = function(slotKey) {
+window.unequipItem = function (slotKey) {
     const item = playerData.equipment[slotKey];
     if (!item) return;
 
     if (GameRules.isInventoryFull(collectedItems.length)) {
-        showNotification({name: "HATA", type: {color:'#ef4444'}}, "Envanter dolu!");
+        showNotification({ name: "HATA", type: { color: '#ef4444' } }, "Envanter dolu!");
         Utils.playSound('playError');
         return;
     }
@@ -190,13 +185,15 @@ window.unequipItem = function(slotKey) {
     playerData.equipment[slotKey] = null;
     collectedItems.push(item);
 
-    Utils.playSound('playChime', {id: 'common'});
-    
+    Utils.playSound('playChime', { id: 'common' });
+
     if (typeof renderInventory === 'function') renderInventory();
     if (typeof updateInventoryCount === 'function') updateInventoryCount();
-    renderEquipment(); 
+    renderEquipment();
 };
 
 window.openEquipment = openEquipment;
 window.closeEquipment = closeEquipment;
 window.toggleEquipment = toggleEquipment;
+window.renderEquipment = renderEquipment;
+window.equipmentOpen = equipmentOpen;

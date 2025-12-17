@@ -1,11 +1,9 @@
 /**
- * Void Ray - Pencere: Başarımlar (Achievements)
- * * GÜNCELLEME: Başarımlar artık 'Profil Penceresi' içinde bir sekme olarak gösteriliyor.
- * * Bu dosya eski çağrıları yönlendirmek için bırakılmıştır.
+ * Void Ray - Window: Achievements (ES6 Module)
+ * Deprecated: Redirects to Profile window.
  */
 
-// Eski fonksiyonları profile.js'e yönlendir
-function openAchievements() {
+export function openAchievements() {
     if (typeof openProfile === 'function') {
         openProfile('achievements');
     }

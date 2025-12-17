@@ -1,11 +1,9 @@
 /**
- * Void Ray - Pencere: İstatistikler
- * * Oyun verilerini, sayaçları ve performans metriklerini gösteren pencere.
- * * GÜNCELLEME: Sürükleme özelliği dinamik içerik oluşumuna entegre edildi.
+ * Void Ray - Window: Stats (ES6 Module)
  */
 
-// Pencere Durumu
-let statsOpen = false;
+// Window state
+export let statsOpen = false;
 
 // DOM Elemanlarını saklamak için önbellek
 let statsCache = {
@@ -18,12 +16,13 @@ let statsCache = {
  */
 function openStats() {
     statsOpen = true;
+    window.statsOpen = true; // Sync with window
     const overlay = document.getElementById('stats-overlay');
-    if(overlay) overlay.classList.add('open');
-    
+    if (overlay) overlay.classList.add('open');
+
     // Butonu aktif yap
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-stats-icon', true);
-    
+
     // İlk render çağrısı (Yapıyı kurmak için)
     renderStats();
 }
@@ -33,11 +32,23 @@ function openStats() {
  */
 function closeStats() {
     statsOpen = false;
+    window.statsOpen = false; // Sync with window
     const overlay = document.getElementById('stats-overlay');
-    if(overlay) overlay.classList.remove('open');
-    
+    if (overlay) overlay.classList.remove('open');
+
     // Buton aktifliğini kaldır
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-stats-icon', false);
+}
+
+/**
+ * İstatistik penceresini açar/kapatır (Toggle).
+ */
+function toggleStats() {
+    if (statsOpen) {
+        closeStats();
+    } else {
+        openStats();
+    }
 }
 
 /**
@@ -112,32 +123,32 @@ function initStatsDOM(windowEl) {
  * İstatistik verilerini günceller.
  */
 function renderStats() {
-    if(!statsOpen) return;
-    
+    if (!statsOpen) return;
+
     const windowEl = document.querySelector('#stats-overlay .stats-window');
-    if(!windowEl) return;
-    
+    if (!windowEl) return;
+
     // 1. YAPI KONTROLÜ (Eğer içerik henüz oluşturulmadıysa oluştur)
     if (!statsCache.initialized) {
         initStatsDOM(windowEl);
     }
-    
+
     // 2. VERİ HESAPLAMA
     const now = Date.now();
     const gameTime = now - (window.gameStartTime || now);
-    
+
     // 3. HIZLI GÜNCELLEME (Cache kullanarak)
     updateCachedVal('stat-game-time', formatTime(gameTime));
     updateCachedVal('stat-move-time', formatTime(playerData.stats.timeMoving));
     updateCachedVal('stat-idle-time', formatTime(playerData.stats.timeIdle));
     updateCachedVal('stat-distance', Math.floor(playerData.stats.distance / 100) + " km");
-    
+
     updateCachedVal('stat-resources', playerData.stats.totalResources + " ADET");
     updateCachedVal('stat-stardust', playerData.stats.totalStardust + " ◆");
     updateCachedVal('stat-spent', playerData.stats.totalSpentStardust + " ◆");
     updateCachedVal('stat-inventory', `${collectedItems.length} / ${GameRules.getPlayerCapacity()}`);
     updateCachedVal('stat-storage', centralStorage.length + " EŞYA");
-    
+
     updateCachedVal('stat-speed-player', Math.floor(playerData.stats.maxSpeed * 10) + " KM/S");
     updateCachedVal('stat-speed-echo', Math.floor(playerData.stats.echoMaxSpeed * 10) + " KM/S");
     updateCachedVal('stat-energy', Math.floor(playerData.stats.totalEnergySpent) + " BİRİM");
@@ -147,10 +158,19 @@ function renderStats() {
 // Yardımcı Fonksiyon: Önbellekten güncelleme
 function updateCachedVal(id, val) {
     const el = statsCache.elements[id];
-    if(el) {
+    if (el) {
         // Gereksiz DOM yazımlarını önlemek için sadece değer değiştiyse güncelle
         if (el.innerText !== val) {
             el.innerText = val;
         }
     }
+}
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.statsOpen = statsOpen;
+    window.openStats = openStats;
+    window.closeStats = closeStats;
+    window.renderStats = renderStats;
+    window.toggleStats = toggleStats;
 }

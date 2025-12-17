@@ -1,10 +1,8 @@
 /**
- * Void Ray - Pencere: Depo Merkezi (Storage)
- * * Oyuncunun ve AI'nın eşya depoladığı, sınırsız kapasiteli merkez.
- * * GÜNCELLEME: Sesler artık Utils.playSound ile güvenli çağrılıyor.
+ * Void Ray - Window: Storage (ES6 Module)
  */
 
-let storageOpen = false;
+export let storageOpen = false;
 
 function openStorage() {
     storageOpen = true;
@@ -52,22 +50,22 @@ function renderStorageUI() {
  */
 function depositToStorage(sourceArray, sourceName) {
     if (sourceArray.length === 0) return;
-    
+
     const count = sourceArray.length;
     // Tardigradlar depolanmaz, gemide kalır veya harcanır. Burada filtreliyoruz.
     const itemsToStore = sourceArray.filter(i => i.type.id !== 'tardigrade');
-    
+
     // Eşyaları merkez depoya ekle
     itemsToStore.forEach(item => centralStorage.push(item));
-    
+
     // Kaynak dizisini boşalt (Referans üzerinden çalıştığı için orijinal dizi boşalır)
     sourceArray.length = 0;
-    
+
     // Güvenli Ses Çağrısı
     Utils.playSound('playCash');
-    
-    showNotification({name: `${sourceName}: ${count} EŞYA DEPOYA AKTARILDI`, type:{color:'#a855f7'}}, "");
-    
+
+    showNotification({ name: `${sourceName}: ${count} EŞYA DEPOYA AKTARILDI`, type: { color: '#a855f7' } }, "");
+
     // İlgili tüm UI'ları güncelle
     updateInventoryCount();
     if (typeof inventoryOpen !== 'undefined' && inventoryOpen) renderInventory();
@@ -77,7 +75,7 @@ function depositToStorage(sourceArray, sourceName) {
 
 // --- GLOBAL UI AKSİYONLARI (Pencere içindeki butonlar için) ---
 
-window.depositItem = function(name) {
+window.depositItem = function (name) {
     const index = collectedItems.findIndex(i => i.name === name);
     if (index !== -1) {
         const item = collectedItems.splice(index, 1)[0];
@@ -87,13 +85,13 @@ window.depositItem = function(name) {
     }
 };
 
-window.depositAllToStorage = function() {
-    depositToStorage(collectedItems, "VATOZ"); 
+window.depositAllToStorage = function () {
+    depositToStorage(collectedItems, "VATOZ");
 };
 
-window.withdrawItem = function(name) {
+window.withdrawItem = function (name) {
     if (collectedItems.length >= GameRules.getPlayerCapacity()) {
-        showNotification({name: "GEMİ DEPOSU DOLU!", type:{color:'#ef4444'}}, "");
+        showNotification({ name: "GEMİ DEPOSU DOLU!", type: { color: '#ef4444' } }, "");
         Utils.playSound('playError'); // Güvenli Ses
         return;
     }
@@ -106,22 +104,31 @@ window.withdrawItem = function(name) {
     }
 };
 
-window.withdrawAllFromStorage = function() {
+window.withdrawAllFromStorage = function () {
     const cap = GameRules.getPlayerCapacity();
     let moved = 0;
-    
+
     // Kapasite dolana kadar veya depo bitene kadar çek
-    while(centralStorage.length > 0 && collectedItems.length < cap) {
+    while (centralStorage.length > 0 && collectedItems.length < cap) {
         collectedItems.push(centralStorage.pop());
         moved++;
     }
-    
-    if (moved > 0) showNotification({name: `${moved} EŞYA GEMİYE ALINDI`, type:{color:'#38bdf8'}}, "");
+
+    if (moved > 0) showNotification({ name: `${moved} EŞYA GEMİYE ALINDI`, type: { color: '#38bdf8' } }, "");
     else if (centralStorage.length > 0) {
-        showNotification({name: "GEMİ DEPOSU DOLU!", type:{color:'#ef4444'}}, "");
+        showNotification({ name: "GEMİ DEPOSU DOLU!", type: { color: '#ef4444' } }, "");
         Utils.playSound('playError'); // Güvenli Ses
     }
-    
+
     renderStorageUI();
     updateInventoryCount();
 };
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.storageOpen = storageOpen;
+    window.openStorage = openStorage;
+    window.closeStorage = closeStorage;
+    window.renderStorageUI = renderStorageUI;
+    window.depositToStorage = depositToStorage;
+}

@@ -1,36 +1,35 @@
 /**
- * Void Ray - Pencere: Envanter (Oyuncu)
- * GÜNCELLEME: Tıklama ile eşya kuşanma (Equip) özelliği eklendi.
+ * Void Ray - Window: Inventory (ES6 Module)
  */
 
-let inventoryOpen = false;
+export let inventoryOpen = false;
 let currentInvPage = 1;
 const TOTAL_PAGES = 3;
-const SLOTS_PER_PAGE = 50; 
+const SLOTS_PER_PAGE = 50;
 
-function updateInventoryCount() {
-    const badge = document.getElementById('inv-total-badge'); 
+export function updateInventoryCount() {
+    const badge = document.getElementById('inv-total-badge');
     const count = collectedItems.length;
     const capacity = GameRules.getPlayerCapacity();
-    
-    if(badge) {
-        badge.innerText = count; 
+
+    if (badge) {
+        badge.innerText = count;
         badge.style.display = count > 0 ? 'flex' : 'none';
-        
+
         if (count >= capacity) {
-            badge.style.background = '#ef4444'; 
+            badge.style.background = '#ef4444';
             badge.style.color = '#fff';
         } else if (count >= capacity * 0.9) {
-            badge.style.background = '#f59e0b'; 
+            badge.style.background = '#f59e0b';
             badge.style.color = '#000';
         } else {
-            badge.style.background = '#fff'; 
+            badge.style.background = '#fff';
             badge.style.color = '#000';
         }
     }
 }
 
-window.switchInventoryPage = function(pageNum) {
+window.switchInventoryPage = function (pageNum) {
     if (pageNum < 1 || pageNum > TOTAL_PAGES) return;
     currentInvPage = pageNum;
     renderInventory();
@@ -40,15 +39,15 @@ function renderInventory() {
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-inv-icon', true);
 
     const gridContainer = document.getElementById('inv-grid-content');
-    if(!gridContainer) return;
-    
+    if (!gridContainer) return;
+
     const invHeader = document.querySelector('.inv-header');
     const totalCapacity = GameRules.getPlayerCapacity();
     const count = collectedItems.length;
     const startSlotIndex = (currentInvPage - 1) * SLOTS_PER_PAGE;
     const capColor = count >= totalCapacity ? '#ef4444' : (count >= totalCapacity * 0.9 ? '#f59e0b' : '#94a3b8');
-    
-    if(invHeader) {
+
+    if (invHeader) {
         invHeader.innerHTML = `
             <div class="inv-header-top">
                 <div class="inv-title-main">KARGO</div>
@@ -77,7 +76,7 @@ function renderInventory() {
             }
         } else {
             // Kaynak ise bilgi ver
-            showNotification({name: "HAMMADDE", type: {color: '#94a3b8'}}, "Nexus'ta satılabilir.");
+            showNotification({ name: "HAMMADDE", type: { color: '#94a3b8' } }, "Nexus'ta satılabilir.");
         }
     });
 
@@ -90,16 +89,42 @@ function renderInventory() {
     }
 
     let footerHTML = '';
-    for(let p=1; p<=TOTAL_PAGES; p++) {
+    for (let p = 1; p <= TOTAL_PAGES; p++) {
         const isActive = p === currentInvPage ? 'active' : '';
         footerHTML += `<div class="inv-page-btn ${isActive}" onclick="switchInventoryPage(${p})">${p}</div>`;
     }
     footer.innerHTML = footerHTML;
 }
 
-function closeInventory() { 
-    inventoryOpen = false; 
-    document.getElementById('inventory-overlay').classList.remove('open'); 
+function closeInventory() {
+    inventoryOpen = false;
+    window.inventoryOpen = false; // Sync with window
+    document.getElementById('inventory-overlay').classList.remove('open');
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-inv-icon', false);
-    hideTooltip(); 
+    hideTooltip();
+}
+
+function openInventory() {
+    inventoryOpen = true;
+    window.inventoryOpen = true; // Sync with window
+    document.getElementById('inventory-overlay').classList.add('open');
+    renderInventory();
+}
+
+function toggleInventory() {
+    if (inventoryOpen) {
+        closeInventory();
+    } else {
+        openInventory();
+    }
+}
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.inventoryOpen = inventoryOpen;
+    window.updateInventoryCount = updateInventoryCount;
+    window.renderInventory = renderInventory;
+    window.closeInventory = closeInventory;
+    window.openInventory = openInventory;
+    window.toggleInventory = toggleInventory;
 }

@@ -122,9 +122,8 @@ export function initControls() {
             const chatInp = document.getElementById('chat-input');
             if (chatInp && document.activeElement === chatInp) return;
 
-            if (typeof mapOpen !== 'undefined') {
-                if (mapOpen) closeMap();
-                else openMap();
+            if (typeof toggleMap === 'function') {
+                toggleMap();
             }
             keys.m = false;
         }
@@ -209,13 +208,8 @@ export function initControls() {
     const btnInv = document.getElementById('btn-inv-icon');
     if (btnInv) {
         btnInv.addEventListener('click', () => {
-            if (inventoryOpen) {
-                closeInventory();
-            } else {
-                inventoryOpen = true;
-                const el = document.getElementById('inventory-overlay');
-                if (el) el.classList.add('open');
-                renderInventory();
+            if (typeof toggleInventory === 'function') {
+                toggleInventory();
             }
         });
     }
@@ -250,10 +244,8 @@ export function initControls() {
     const btnStats = document.getElementById('btn-stats-icon');
     if (btnStats) {
         btnStats.addEventListener('click', () => {
-            if (typeof statsOpen !== 'undefined' && statsOpen) {
-                closeStats();
-            } else {
-                openStats();
+            if (typeof toggleStats === 'function') {
+                toggleStats();
             }
         });
     }

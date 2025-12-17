@@ -1,56 +1,54 @@
 /**
- * Void Ray - Pencere: Yankı (Echo) Yönetimi
- * * Yankı dronunun envanterini, modlarını ve oyuncu ile etkileşimini yönetir.
- * * GÜNCELLEME: Sesler artık Utils.playSound ile güvenli çağrılıyor.
+ * Void Ray - Window: Echo Inventory (ES6 Module)
  */
 
-// Pencere Durumu
-let echoInvOpen = false;
+// Window state
+export let echoInvOpen = false;
 
 function updateEchoDropdownUI() {
     document.querySelectorAll('.echo-menu-item').forEach(el => el.classList.remove('active-mode'));
-    
+
     const rateDisp = document.getElementById('echo-rate-disp');
-    if(rateDisp) {
+    if (rateDisp) {
         let rateText = "Normal";
         // playerData global (game.js)
-        if(playerData.upgrades.echoSpeed >= 2) rateText = "Hızlı";
-        if(playerData.upgrades.echoSpeed >= 4) rateText = "Turbo";
+        if (playerData.upgrades.echoSpeed >= 2) rateText = "Hızlı";
+        if (playerData.upgrades.echoSpeed >= 4) rateText = "Turbo";
         rateDisp.innerText = "Toplama Hızı: " + rateText;
     }
 
     if (!echoRay) return;
-    
+
     if (echoRay.attached) document.getElementById('menu-merge').classList.add('active-mode');
     else if (echoRay.mode === 'return') document.getElementById('menu-return').classList.add('active-mode');
     else if (echoRay.mode === 'recharge') { /* Şarj */ }
-    else if (echoRay.mode === 'deposit_storage') { /* Depolama */ } 
+    else if (echoRay.mode === 'deposit_storage') { /* Depolama */ }
     else document.getElementById('menu-roam').classList.add('active-mode');
 }
 
-function openEchoInventory() { 
-    if(!echoRay) return; 
-    
+function openEchoInventory() {
+    if (!echoRay) return;
+
     if (!echoRay.attached) {
-        showNotification({name: "BAĞLANTI YOK", type:{color:'#ef4444'}}, "Yankı envanterine erişmek için birleşin.");
+        showNotification({ name: "BAĞLANTI YOK", type: { color: '#ef4444' } }, "Yankı envanterine erişmek için birleşin.");
         Utils.playSound('playError'); // Güvenli Ses
         return;
     }
-    
-    echoInvOpen = true; 
-    document.getElementById('echo-inventory-overlay').classList.add('open'); 
-    renderEchoInventory(); 
+
+    echoInvOpen = true;
+    document.getElementById('echo-inventory-overlay').classList.add('open');
+    renderEchoInventory();
 }
 
-function closeEchoInventory() { 
-    echoInvOpen = false; 
-    document.getElementById('echo-inventory-overlay').classList.remove('open'); 
+function closeEchoInventory() {
+    echoInvOpen = false;
+    document.getElementById('echo-inventory-overlay').classList.remove('open');
     hideTooltip();
 }
 
 function renderEchoInventory() {
-    if(!echoRay || !echoInvOpen) return;
-    
+    if (!echoRay || !echoInvOpen) return;
+
     const playerContainer = document.getElementById('echo-player-grid');
     const echoContainer = document.getElementById('echo-storage-grid');
     const playerCapLabel = document.getElementById('echo-player-cap');
@@ -58,9 +56,9 @@ function renderEchoInventory() {
 
     const pCap = GameRules.getPlayerCapacity();
     const eCap = GameRules.getEchoCapacity();
-    
-    if(playerCapLabel) playerCapLabel.innerText = `${collectedItems.length} / ${pCap}`;
-    if(echoCapLabel) echoCapLabel.innerText = `${echoRay.lootBag.length} / ${eCap}`;
+
+    if (playerCapLabel) playerCapLabel.innerText = `${collectedItems.length} / ${pCap}`;
+    if (echoCapLabel) echoCapLabel.innerText = `${echoRay.lootBag.length} / ${eCap}`;
 
     // renderGrid -> ui.js
     renderGrid(playerContainer, collectedItems, pCap, (item) => {
@@ -73,12 +71,12 @@ function renderEchoInventory() {
 }
 
 // Global Transfer Fonksiyonları (Yankı için)
-window.transferToEcho = function(item) {
+window.transferToEcho = function (item) {
     if (!echoRay) return;
     if (echoRay.lootBag.length >= GameRules.getEchoCapacity()) {
-         showNotification({name: "YANKI DOLU!", type:{color:'#ef4444'}}, "");
-         Utils.playSound('playError'); // Güvenli Ses
-         return;
+        showNotification({ name: "YANKI DOLU!", type: { color: '#ef4444' } }, "");
+        Utils.playSound('playError'); // Güvenli Ses
+        return;
     }
     const idx = collectedItems.indexOf(item);
     if (idx > -1) {
@@ -89,31 +87,31 @@ window.transferToEcho = function(item) {
     }
 }
 
-window.transferToPlayer = function(item) {
+window.transferToPlayer = function (item) {
     if (collectedItems.length >= GameRules.getPlayerCapacity()) {
-         showNotification({name: "GEMİ DOLU!", type:{color:'#ef4444'}}, "");
-         Utils.playSound('playError'); // Güvenli Ses
-         return;
+        showNotification({ name: "GEMİ DOLU!", type: { color: '#ef4444' } }, "");
+        Utils.playSound('playError'); // Güvenli Ses
+        return;
     }
     const idx = echoRay.lootBag.indexOf(item);
     if (idx > -1) {
         echoRay.lootBag.splice(idx, 1);
-        
+
         if (item.type.id === 'tardigrade') {
             player.energy = Math.min(player.energy + 50, player.maxEnergy);
             const xp = GameRules.calculatePlanetXp(item.type);
             player.gainXp(xp);
-            showNotification({name: "TARDİGRAD KULLANILDI", type:{color:'#C7C0AE'}}, "");
+            showNotification({ name: "TARDİGRAD KULLANILDI", type: { color: '#C7C0AE' } }, "");
         } else {
             collectedItems.push(item);
         }
-        
+
         renderEchoInventory();
         updateInventoryCount();
     }
 }
 
-window.transferAllToEcho = function() {
+window.transferAllToEcho = function () {
     if (!echoRay) return;
     const eCap = GameRules.getEchoCapacity();
     let movedCount = 0;
@@ -125,24 +123,24 @@ window.transferAllToEcho = function() {
     }
 
     if (movedCount > 0) {
-        showNotification({name: `${movedCount} EŞYA AKTARILDI`, type:{color:'#67e8f9'}}, "");
+        showNotification({ name: `${movedCount} EŞYA AKTARILDI`, type: { color: '#67e8f9' } }, "");
         Utils.playSound('playCash'); // Güvenli Ses
     } else {
-         if(collectedItems.length > 0) {
-             showNotification({name: "YANKI DOLU!", type:{color:'#ef4444'}}, "");
-             Utils.playSound('playError'); // Güvenli Ses
-         }
-         else {
-             showNotification({name: "GEMİ BOŞ!", type:{color:'#ef4444'}}, "");
-             Utils.playSound('playError'); // Güvenli Ses
-         }
+        if (collectedItems.length > 0) {
+            showNotification({ name: "YANKI DOLU!", type: { color: '#ef4444' } }, "");
+            Utils.playSound('playError'); // Güvenli Ses
+        }
+        else {
+            showNotification({ name: "GEMİ BOŞ!", type: { color: '#ef4444' } }, "");
+            Utils.playSound('playError'); // Güvenli Ses
+        }
     }
 
     renderEchoInventory();
     updateInventoryCount();
 };
 
-window.transferAllToPlayer = function() {
+window.transferAllToPlayer = function () {
     if (!echoRay) return;
     const pCap = GameRules.getPlayerCapacity();
     let movedCount = 0;
@@ -150,18 +148,18 @@ window.transferAllToPlayer = function() {
     while (echoRay.lootBag.length > 0) {
         const nextItem = echoRay.lootBag[0];
         if (nextItem.type.id !== 'tardigrade' && collectedItems.length >= pCap) {
-             showNotification({name: "GEMİ DOLU!", type:{color:'#ef4444'}}, "");
-             Utils.playSound('playError'); // Güvenli Ses
-             break;
+            showNotification({ name: "GEMİ DOLU!", type: { color: '#ef4444' } }, "");
+            Utils.playSound('playError'); // Güvenli Ses
+            break;
         }
 
         const item = echoRay.lootBag.shift();
-        
+
         if (item.type.id === 'tardigrade') {
             player.energy = Math.min(player.energy + 50, player.maxEnergy);
             const xp = GameRules.calculatePlanetXp(item.type);
             player.gainXp(xp);
-            showNotification({name: "TARDİGRAD KULLANILDI", type:{color:'#C7C0AE'}}, "");
+            showNotification({ name: "TARDİGRAD KULLANILDI", type: { color: '#C7C0AE' } }, "");
         } else {
             collectedItems.push(item);
             movedCount++;
@@ -169,10 +167,19 @@ window.transferAllToPlayer = function() {
     }
 
     if (movedCount > 0) {
-         showNotification({name: `${movedCount} EŞYA ALINDI`, type:{color:'#38bdf8'}}, "");
-         Utils.playSound('playCash'); // Güvenli Ses
+        showNotification({ name: `${movedCount} EŞYA ALINDI`, type: { color: '#38bdf8' } }, "");
+        Utils.playSound('playCash'); // Güvenli Ses
     }
 
     renderEchoInventory();
     updateInventoryCount();
 };
+
+// Window exports for backward compatibility
+if (typeof window !== 'undefined') {
+    window.echoInvOpen = echoInvOpen;
+    window.updateEchoDropdownUI = updateEchoDropdownUI;
+    window.openEchoInventory = openEchoInventory;
+    window.closeEchoInventory = closeEchoInventory;
+    window.renderEchoInventory = renderEchoInventory;
+}
