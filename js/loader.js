@@ -1,10 +1,9 @@
 /**
- * Void Ray - HTML Parça Yükleyici
- * * Bu modül, 'partials/' klasöründeki HTML dosyalarını okur ve
- * * index.html içindeki ilgili yerlere yerleştirir.
+ * Void Ray - HTML Partial Loader (ES6 Module)
+ * Loads HTML files from 'partials/' folder into index.html.
  */
 
-async function loadPartials() {
+export async function loadPartials() {
     const partials = [
         { id: 'ui-core', url: 'partials/ui-core.html' },
         { id: 'ui-menus', url: 'partials/ui-menus.html' },
@@ -17,7 +16,7 @@ async function loadPartials() {
     console.log("Arayüz parçaları yükleniyor...");
 
     // Tüm parçaları paralel olarak çek
-    const promises = partials.map(p => 
+    const promises = partials.map(p =>
         fetch(p.url)
             .then(response => {
                 if (!response.ok) throw new Error(`Dosya yüklenemedi: ${p.url}`);
@@ -34,7 +33,7 @@ async function loadPartials() {
     try {
         await Promise.all(promises);
         console.log("Tüm arayüz yüklendi.");
-        
+
         // Parçalar yüklendikten sonra oyunu başlatmaya hazırız.
         // Eğer bir başlatma fonksiyonu varsa tetikleyebiliriz.
         if (window.onUILoaded) {
@@ -46,5 +45,10 @@ async function loadPartials() {
     }
 }
 
-// Sayfa yüklendiğinde çalıştır
+// Window export for backward compatibility
+if (typeof window !== 'undefined') {
+    window.loadPartials = loadPartials;
+}
+
+// Run on DOMContentLoaded
 window.addEventListener('DOMContentLoaded', loadPartials);

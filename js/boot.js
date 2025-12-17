@@ -1,20 +1,20 @@
 /**
- * Void Ray - Sistem Önyükleme (Boot) Modülü
- * * project_structure.yaml dosyasını okur, ağaç yapısını çözer ve dosyaları kontrol eder.
+ * Void Ray - System Boot Module (ES6 Module)
+ * Reads project_structure.yaml, parses tree and checks files.
  */
 
-class SystemBoot {
+export class SystemBoot {
     constructor() {
         this.tasks = [
             { id: 'init', label: 'ÇEKİRDEK BAŞLATILIYOR', action: async () => { await this.wait(150); return true; } },
             { id: 'yaml', label: 'DOSYA SİSTEMİ TARANIYOR', action: this.loadConfiguration.bind(this) }
         ];
-        
+
         this.container = document.getElementById('integrated-boot-container');
         this.listContainer = document.querySelector('.check-list-integrated');
         this.progressBar = document.querySelector('.progress-fill-integrated');
         this.statusText = document.querySelector('.boot-status-text');
-        
+
         this.currentTaskIndex = 0;
         this.filePaths = [];
     }
@@ -36,7 +36,7 @@ class SystemBoot {
         }
 
         const task = this.tasks[index];
-        
+
         // Listeye ekle
         const item = document.createElement('div');
         item.className = 'check-item';
@@ -70,7 +70,7 @@ class SystemBoot {
 
     updateProgress(current, total) {
         const pct = Math.floor((current / total) * 100);
-        if(this.progressBar) this.progressBar.style.width = `${pct}%`;
+        if (this.progressBar) this.progressBar.style.width = `${pct}%`;
     }
 
     async wait(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -82,13 +82,13 @@ class SystemBoot {
             // Cache-busting: Dosyayı taze çekmek için zaman damgası ekle
             const timestamp = Date.now();
             const response = await fetch(`project_structure.yaml?t=${timestamp}`);
-            
+
             if (!response.ok) throw new Error("Manifest dosyası bulunamadı");
             const text = await response.text();
-            
+
             // 1. YAML Ağacını Ayrıştır
             const tree = this.parseYamlTree(text);
-            
+
             // 2. Düz Dosya Yollarına Çevir
             this.filePaths = [];
             this.flattenTree(tree, "");
@@ -98,7 +98,7 @@ class SystemBoot {
             // 3. Kontrol Görevlerini Oluştur
             this.filePaths.forEach((path, i) => {
                 let label = path.split('/').pop().toUpperCase();
-                if(label.length > 25) label = label.substring(0, 22) + '...';
+                if (label.length > 25) label = label.substring(0, 22) + '...';
 
                 this.tasks.push({
                     id: `node_${i}`,
@@ -133,17 +133,17 @@ class SystemBoot {
 
             const indent = line.search(/\S/);
             const content = line.trim();
-            
+
             while (stack.length > 1 && indent <= stack[stack.length - 1].indent) {
                 stack.pop();
             }
-            
+
             const parent = stack[stack.length - 1].obj;
 
             if (content.endsWith(':')) {
                 const key = content.replace(':', '');
                 const newObj = []; // Klasörler liste olarak başlar
-                
+
                 if (Array.isArray(parent)) {
                     const wrapper = {};
                     wrapper[key] = newObj;
@@ -178,14 +178,14 @@ class SystemBoot {
     }
 
     finish() {
-        if(this.progressBar) this.progressBar.style.width = '100%';
-        if(this.statusText) {
+        if (this.progressBar) this.progressBar.style.width = '100%';
+        if (this.statusText) {
             this.statusText.innerText = "SİSTEM HAZIR";
             this.statusText.style.color = "#10b981";
         }
-        
+
         setTimeout(() => {
-            if(this.container) {
+            if (this.container) {
                 this.container.classList.add('fade-out');
                 setTimeout(() => {
                     this.container.style.display = 'none';
@@ -207,7 +207,12 @@ class SystemBoot {
 
     forceShowMenu() {
         const container = document.getElementById('integrated-boot-container');
-        if(container) container.style.display = 'none';
+        if (container) container.style.display = 'none';
         this.showMenuControls();
     }
+}
+
+// Window export for backward compatibility
+if (typeof window !== 'undefined') {
+    window.SystemBoot = SystemBoot;
 }
