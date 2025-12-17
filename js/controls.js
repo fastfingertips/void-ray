@@ -608,6 +608,28 @@ export function initControls() {
             if (typeof openEchoInventory === 'function') openEchoInventory();
         });
     }
+
+    // --- MENU BUTTON LISTENERS ---
+    const btnCloseMobileWarning = document.getElementById('btn-close-mobile-warning');
+    if (btnCloseMobileWarning) {
+        btnCloseMobileWarning.addEventListener('click', () => {
+            if (typeof closeMobileWarning === 'function') closeMobileWarning();
+        });
+    }
+
+    const btnResumeGame = document.getElementById('btn-resume-game');
+    if (btnResumeGame) {
+        btnResumeGame.addEventListener('click', () => {
+            if (typeof resumeGame === 'function') resumeGame();
+        });
+    }
+
+    const btnQuitGame = document.getElementById('btn-quit-game');
+    if (btnQuitGame) {
+        btnQuitGame.addEventListener('click', () => {
+            if (typeof quitToMain === 'function') quitToMain();
+        });
+    }
 }
 
 // Window exports for backward compatibility

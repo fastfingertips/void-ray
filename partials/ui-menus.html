@@ -4,10 +4,10 @@
     <div class="menu-top-section">
         <div class="title-main" style="margin-top: 8vh;">VOID RAY</div>
     </div>
-    
+
     <!-- ETKİLEŞİM ALANI -->
     <div class="interaction-zone">
-        
+
         <!-- 1. SİSTEM KONTROL (Boot - Vatoz Yok) -->
         <div id="integrated-boot-container" class="boot-container-integrated">
             <div class="boot-status-text">SYSTEM_INIT...</div>
@@ -19,18 +19,22 @@
 
         <!-- 2. OYUN KONTROLLERİ (Launch - Vatoz Var) -->
         <div id="menu-controls-wrapper" class="menu-controls-hidden">
-            
+
             <!-- VATOZ SİMGESİ (Ortalanmış ve Dengeli) -->
             <svg class="void-symbol-center" viewBox="0 0 100 100" fill="none">
                 <!-- Renkler CSS'den kontrol ediliyor -->
-                <path d="M50 20 C 65 30, 90 45, 80 75 C 65 65, 55 85, 50 95 C 45 85, 35 65, 20 75 C 10 45, 35 30, 50 20 Z" stroke-width="2" />
+                <path
+                    d="M50 20 C 65 30, 90 45, 80 75 C 65 65, 55 85, 50 95 C 45 85, 35 65, 20 75 C 10 45, 35 30, 50 20 Z"
+                    stroke-width="2" />
                 <circle cx="50" cy="40" r="3" />
             </svg>
 
             <!-- BUTON GRUBU -->
-            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; margin-bottom: 30px;">
-                
-                <button id="btn-continue" class="menu-btn-primary" style="display: none; border-color: #10b981; color: #10b981;">
+            <div
+                style="display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; margin-bottom: 30px;">
+
+                <button id="btn-continue" class="menu-btn-primary"
+                    style="display: none; border-color: #10b981; color: #10b981;">
                     [ DEVAM ET ]
                 </button>
 
@@ -43,10 +47,12 @@
             <div class="controls-grid-classic">
                 <!-- Sol Sütun -->
                 <div class="key-col">
-                    <div class="key-row"><span class="key-cap">W</span><span class="key-cap">A</span><span class="key-cap">S</span><span class="key-cap">D</span> <span>Navigasyon</span></div>
-                    <div class="key-row"><span class="key-cap" style="width: 80px;">SPACE</span> <span>İtici Güç</span></div>
+                    <div class="key-row"><span class="key-cap">W</span><span class="key-cap">A</span><span
+                            class="key-cap">S</span><span class="key-cap">D</span> <span>Navigasyon</span></div>
+                    <div class="key-row"><span class="key-cap" style="width: 80px;">SPACE</span> <span>İtici Güç</span>
+                    </div>
                 </div>
-                
+
                 <!-- Orta Sütun -->
                 <div class="key-col">
                     <div class="key-row"><span class="key-cap">E</span> <span>Etkileşim</span></div>
@@ -63,9 +69,10 @@
                     <!-- YENİ: IŞIK ATLAMASI TUŞU (RENK DÜZELTİLDİ) -->
                     <div class="key-row"><span class="key-cap">J</span> <span>Işık Atla</span></div>
                 </div>
-                
+
                 <!-- Alt Sütun -->
-                <div class="key-col" style="grid-column: span 3; justify-content: center; border-top: 1px dashed rgba(148, 216, 195, 0.3); padding-top: 15px; margin-top: 5px;">
+                <div class="key-col"
+                    style="grid-column: span 3; justify-content: center; border-top: 1px dashed rgba(148, 216, 195, 0.3); padding-top: 15px; margin-top: 5px;">
                     <div class="key-row"><span class="key-cap">ESC</span> <span>Sistem Menüsü</span></div>
                 </div>
             </div>
@@ -75,36 +82,56 @@
 
     <!-- GELİŞTİRİCİ ALT BİLGİSİ -->
     <div class="dev-footer">
-        <a href="https://github.com/tugracoskun" target="_blank" class="dev-info-item link-hover" title="Geliştirici Profilini Görüntüle" style="text-decoration: none; display: flex; flex-direction: column;">
+        <a href="https://github.com/tugracoskun" target="_blank" class="dev-info-item link-hover"
+            title="Geliştirici Profilini Görüntüle"
+            style="text-decoration: none; display: flex; flex-direction: column;">
             <span class="dev-label">DEVELOPER</span>
             <span class="dev-name">@tugracoskun</span>
         </a>
-        
+
         <div style="width: 1px; height: 25px; background: var(--hud-color-dim);"></div>
-        
-        <a href="https://github.com/tugracoskun/void-ray" target="_blank" class="github-link-btn" title="GitHub Deposu" style="text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 1.5px;">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+
+        <a href="https://github.com/tugracoskun/void-ray" target="_blank" class="github-link-btn" title="GitHub Deposu"
+            style="text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 1.5px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                </path>
+            </svg>
             <span>SOURCE</span>
         </a>
 
         <!-- YENİ: DESTEK BUTONU -->
         <div style="width: 1px; height: 25px; background: var(--hud-color-dim);"></div>
-        
-        <a href="https://github.com/tugracoskun/void-ray/issues" target="_blank" class="github-link-btn" title="Sorun Bildir / İletişim" style="text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 1.5px;">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+
+        <a href="https://github.com/tugracoskun/void-ray/issues" target="_blank" class="github-link-btn"
+            title="Sorun Bildir / İletişim"
+            style="text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 1.5px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
             <span>DESTEK</span>
         </a>
 
         <!-- YENİ: GÜNCELLEME VAKTİ VE DETAYI -->
-        <div id="update-separator" style="width: 1px; height: 25px; background: var(--hud-color-dim); display:none;"></div>
-        
-        <a href="https://github.com/tugracoskun/void-ray/commits" target="_blank" id="update-container" class="dev-info-item link-hover" title="Son Değişiklikler" style="text-decoration: none; display: none; flex-direction: column; align-items: flex-end; max-width: 250px;">
+        <div id="update-separator" style="width: 1px; height: 25px; background: var(--hud-color-dim); display:none;">
+        </div>
+
+        <a href="https://github.com/tugracoskun/void-ray/commits" target="_blank" id="update-container"
+            class="dev-info-item link-hover" title="Son Değişiklikler"
+            style="text-decoration: none; display: none; flex-direction: column; align-items: flex-end; max-width: 250px;">
             <div style="display:flex; gap:6px; align-items:center;">
                 <span class="dev-label">GÜNCELLEME</span>
-                <span id="commit-sha" style="font-size: 0.55rem; color: var(--hud-color); opacity: 0.8; font-family: monospace; background: rgba(148, 216, 195, 0.1); padding: 1px 4px; border-radius: 2px;"></span>
+                <span id="commit-sha"
+                    style="font-size: 0.55rem; color: var(--hud-color); opacity: 0.8; font-family: monospace; background: rgba(148, 216, 195, 0.1); padding: 1px 4px; border-radius: 2px;"></span>
             </div>
             <span class="dev-name" id="update-date" style="font-size: 0.7rem; margin-bottom: 2px;">...</span>
-            <span id="commit-msg" style="display: block; font-size: 0.6rem; color: var(--hud-text-dim); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 220px; opacity: 0.7; font-style: italic;">...</span>
+            <span id="commit-msg"
+                style="display: block; font-size: 0.6rem; color: var(--hud-text-dim); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 220px; opacity: 0.7; font-style: italic;">...</span>
         </a>
     </div>
 </div>
@@ -117,7 +144,7 @@
             <div class="warning-icon">⚠</div>
             <h2>MOBİL CİHAZ ALGILANDI</h2>
             <p>Bu simülasyon klavye kontrolleri için tasarlanmıştır.</p>
-            <button class="menu-btn small-btn" onclick="closeMobileWarning()">[ YİNE DE DEVAM ET ]</button>
+            <button id="btn-close-mobile-warning" class="menu-btn small-btn">[ YİNE DE DEVAM ET ]</button>
         </div>
     </div>
 </div>
@@ -130,7 +157,9 @@
             <div class="death-title">BAĞLANTI KOPTU</div>
             <div class="death-sub">GEMİ GÖVDE BÜTÜNLÜĞÜ KRİTİK SEVİYENİN ALTINDA</div>
             <div class="death-info">> Acil durum protokolü devrede...<br>> Tamir istasyonuna veri aktarılıyor...</div>
-            <div class="loading-bar-wrapper"><div class="loading-bar-fill"></div></div>
+            <div class="loading-bar-wrapper">
+                <div class="loading-bar-fill"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -142,8 +171,8 @@
         <div class="modal-content">
             <div class="pause-title">BEKLEME MODU</div>
             <div class="pause-menu-grid">
-                <button class="pause-btn" onclick="resumeGame()">[ SİMÜLASYONA DÖN ]</button>
-                <button class="pause-btn danger" onclick="quitToMain()">[ BAĞLANTIYI KES ]</button>
+                <button id="btn-resume-game" class="pause-btn">[ SİMÜLASYONA DÖN ]</button>
+                <button id="btn-quit-game" class="pause-btn danger">[ BAĞLANTIYI KES ]</button>
             </div>
         </div>
     </div>
