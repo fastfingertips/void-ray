@@ -13,21 +13,21 @@
 
             <div class="absolute bottom-4 right-4 flex gap-2">
                 <!-- TAKİP MODU BUTONU -->
-                <button id="btn-map-track" onclick="toggleMapTracking()"
+                <button id="btn-map-track"
                     class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
                     title="Oyuncuyu Takip Et">
                     ◎
                 </button>
 
                 <!-- HEDEF VEKTÖRLERİ GÖSTER BUTONU -->
-                <button id="btn-map-targets" onclick="toggleMapTargets()"
+                <button id="btn-map-targets"
                     class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
                     title="Hedef Vektörleri">
                     ⇢
                 </button>
 
                 <!-- MERKEZE ODAKLA BUTONU -->
-                <button onclick="centerMapOnPlayer()"
+                <button id="btn-map-center"
                     class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
                     title="Merkeze Odakla">
                     ⌖
@@ -218,7 +218,7 @@
                 </div>
                 <div id="storage-ship-list" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="depositAllToStorage()"
+                    <button id="btn-deposit-all"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
                         style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ DEPOLA</button>
                 </div>
@@ -234,7 +234,7 @@
                 </div>
                 <div id="storage-center-list" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="withdrawAllFromStorage()"
+                    <button id="btn-withdraw-all"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
                         style="color: var(--color-storage); border-color: rgba(168, 85, 247, 0.3);">TÜMÜNÜ AL</button>
                 </div>
@@ -281,7 +281,7 @@
                 </div>
                 <div id="echo-player-grid" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="transferAllToEcho()"
+                    <button id="btn-transfer-to-echo"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
                         style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ AKTAR</button>
                 </div>
@@ -297,7 +297,7 @@
                 </div>
                 <div id="echo-storage-grid" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
-                    <button onclick="transferAllToPlayer()"
+                    <button id="btn-transfer-to-player"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
                         style="color: var(--echo-color); border-color: rgba(103, 232, 249, 0.3);">TÜMÜNÜ AL</button>
                 </div>

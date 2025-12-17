@@ -342,6 +342,58 @@ export function initControls() {
             if (typeof sellAll === 'function') sellAll();
         });
     }
+
+    // --- MAP BUTTON LISTENERS ---
+    const btnMapTrack = document.getElementById('btn-map-track');
+    if (btnMapTrack) {
+        btnMapTrack.addEventListener('click', () => {
+            if (typeof toggleMapTracking === 'function') toggleMapTracking();
+        });
+    }
+
+    const btnMapTargets = document.getElementById('btn-map-targets');
+    if (btnMapTargets) {
+        btnMapTargets.addEventListener('click', () => {
+            if (typeof toggleMapTargets === 'function') toggleMapTargets();
+        });
+    }
+
+    const btnMapCenter = document.getElementById('btn-map-center');
+    if (btnMapCenter) {
+        btnMapCenter.addEventListener('click', () => {
+            if (typeof centerMapOnPlayer === 'function') centerMapOnPlayer();
+        });
+    }
+
+    // --- STORAGE ACTION BUTTON LISTENERS ---
+    const btnDepositAll = document.getElementById('btn-deposit-all');
+    if (btnDepositAll) {
+        btnDepositAll.addEventListener('click', () => {
+            if (typeof depositAllToStorage === 'function') depositAllToStorage();
+        });
+    }
+
+    const btnWithdrawAll = document.getElementById('btn-withdraw-all');
+    if (btnWithdrawAll) {
+        btnWithdrawAll.addEventListener('click', () => {
+            if (typeof withdrawAllFromStorage === 'function') withdrawAllFromStorage();
+        });
+    }
+
+    // --- ECHO TRANSFER BUTTON LISTENERS ---
+    const btnTransferToEcho = document.getElementById('btn-transfer-to-echo');
+    if (btnTransferToEcho) {
+        btnTransferToEcho.addEventListener('click', () => {
+            if (typeof transferAllToEcho === 'function') transferAllToEcho();
+        });
+    }
+
+    const btnTransferToPlayer = document.getElementById('btn-transfer-to-player');
+    if (btnTransferToPlayer) {
+        btnTransferToPlayer.addEventListener('click', () => {
+            if (typeof transferAllToPlayer === 'function') transferAllToPlayer();
+        });
+    }
 }
 
 // Window exports for backward compatibility
