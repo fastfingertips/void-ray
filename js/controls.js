@@ -394,6 +394,75 @@ export function initControls() {
             if (typeof transferAllToPlayer === 'function') transferAllToPlayer();
         });
     }
+
+    // --- PROFILE BUTTON LISTENERS ---
+    const btnCloseProfile = document.getElementById('btn-close-profile');
+    if (btnCloseProfile) {
+        btnCloseProfile.addEventListener('click', () => {
+            if (typeof closeProfile === 'function') closeProfile();
+        });
+    }
+
+    // Profile Nexus Buttons (multiple)
+    const statPlusBtns = document.querySelectorAll('.stat-plus');
+    statPlusBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (typeof enterNexus === 'function') enterNexus();
+        });
+    });
+
+    // Profile Tabs
+    const tabSummary = document.getElementById('p-tab-btn-summary');
+    if (tabSummary) {
+        tabSummary.addEventListener('click', () => {
+            if (typeof switchProfileTab === 'function') switchProfileTab('summary');
+        });
+    }
+
+    const tabAchievements = document.getElementById('p-tab-btn-achievements');
+    if (tabAchievements) {
+        tabAchievements.addEventListener('click', () => {
+            if (typeof switchProfileTab === 'function') switchProfileTab('achievements');
+        });
+    }
+
+    // --- EQUIPMENT BUTTON LISTENERS ---
+    const btnCloseEquipment = document.getElementById('btn-close-equipment');
+    if (btnCloseEquipment) {
+        btnCloseEquipment.addEventListener('click', () => {
+            if (typeof closeEquipment === 'function') closeEquipment();
+        });
+    }
+
+    // --- CONTROLS BUTTON LISTENERS ---
+    const btnCloseControls = document.getElementById('btn-close-controls');
+    if (btnCloseControls) {
+        btnCloseControls.addEventListener('click', () => {
+            if (typeof closeControls === 'function') closeControls();
+        });
+    }
+
+    // --- CHAT TAB LISTENERS ---
+    const tabGenel = document.getElementById('tab-genel');
+    if (tabGenel) {
+        tabGenel.addEventListener('click', () => {
+            if (typeof switchChatTab === 'function') switchChatTab('genel');
+        });
+    }
+
+    const tabGrup = document.getElementById('tab-grup');
+    if (tabGrup) {
+        tabGrup.addEventListener('click', () => {
+            if (typeof switchChatTab === 'function') switchChatTab('grup');
+        });
+    }
+
+    const tabBilgi = document.getElementById('tab-bilgi');
+    if (tabBilgi) {
+        tabBilgi.addEventListener('click', () => {
+            if (typeof switchChatTab === 'function') switchChatTab('bilgi');
+        });
+    }
 }
 
 // Window exports for backward compatibility

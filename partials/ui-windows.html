@@ -10,7 +10,7 @@
                 <div class="p-rpg-name" style="color: var(--hud-color);">VOID RAY</div>
                 <div id="profile-rank-text" class="p-rpg-rank" style="color: var(--hud-text-dim);">ACEMİ PİLOT</div>
             </div>
-            <div class="ui-close-btn" onclick="closeProfile()">✕</div>
+            <div class="ui-close-btn" id="btn-close-profile">✕</div>
         </div>
 
         <div class="profile-content no-padding">
@@ -30,7 +30,7 @@
                         <span id="xp-max" class="val" style="color: var(--hud-text);">100</span>
                     </div>
                 </div>
-                
+
                 <div class="p-xp-bar-container">
                     <div id="profile-xp-fill" class="p-xp-bar-fill"></div>
                 </div>
@@ -38,32 +38,32 @@
                 <div class="p-rpg-main-grid">
                     <div class="p-rpg-col">
                         <div class="p-rpg-section-title">GEMİ STATÜSÜ</div>
-                        
+
                         <div class="p-rpg-stat-row">
                             <span class="stat-name">MOTOR</span>
                             <div class="stat-val-group">
-                                <span class="stat-plus" onclick="enterNexus()">+</span>
+                                <span class="stat-plus">+</span>
                                 <span id="stat-lvl-speed" class="stat-num">1</span>
                             </div>
                         </div>
                         <div class="p-rpg-stat-row">
                             <span class="stat-name">MANEVRA</span>
                             <div class="stat-val-group">
-                                <span class="stat-plus" onclick="enterNexus()">+</span>
+                                <span class="stat-plus">+</span>
                                 <span id="stat-lvl-turn" class="stat-num">1</span>
                             </div>
                         </div>
                         <div class="p-rpg-stat-row">
                             <span class="stat-name">ÇEKİM</span>
                             <div class="stat-val-group">
-                                <span class="stat-plus" onclick="enterNexus()">+</span>
+                                <span class="stat-plus">+</span>
                                 <span id="stat-lvl-magnet" class="stat-num">1</span>
                             </div>
                         </div>
                         <div class="p-rpg-stat-row">
                             <span class="stat-name">KARGO</span>
                             <div class="stat-val-group">
-                                <span class="stat-plus" onclick="enterNexus()">+</span>
+                                <span class="stat-plus">+</span>
                                 <span id="stat-lvl-cap" class="stat-num">1</span>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
 
                     <div class="p-rpg-col">
                         <div class="p-rpg-section-title">DURUM</div>
-                        
+
                         <div class="p-rpg-val-row">
                             <span class="val-name">GÖVDE</span>
                             <span id="val-hp-text" class="val-num">100/100</span>
@@ -106,8 +106,10 @@
 
             <!-- SEKME 2: BAŞARIMLAR -->
             <div id="p-tab-achievements" class="profile-tab-content" style="display: none; padding: 15px;">
-                <div class="flex justify-between items-center mb-3 pb-2 border-b border-dashed" style="border-color: var(--hud-color-dim);">
-                    <span class="text-xs tracking-widest font-mono" style="color: var(--hud-text-dim);">GÖREV DURUMU</span>
+                <div class="flex justify-between items-center mb-3 pb-2 border-b border-dashed"
+                    style="border-color: var(--hud-color-dim);">
+                    <span class="text-xs tracking-widest font-mono" style="color: var(--hud-text-dim);">GÖREV
+                        DURUMU</span>
                     <span id="ach-progress-text" class="text-xs font-mono" style="color: var(--hud-color);">0 / 0</span>
                 </div>
                 <div id="profile-achievements-list" class="space-y-2">
@@ -117,8 +119,8 @@
         </div>
 
         <div class="profile-tabs-bottom">
-            <div id="p-tab-btn-summary" class="profile-tab-btn active" onclick="switchProfileTab('summary')">STATÜ</div>
-            <div id="p-tab-btn-achievements" class="profile-tab-btn" onclick="switchProfileTab('achievements')">GÖREVLER</div>
+            <div id="p-tab-btn-summary" class="profile-tab-btn active">STATÜ</div>
+            <div id="p-tab-btn-achievements" class="profile-tab-btn">GÖREVLER</div>
         </div>
     </div>
 </div>
@@ -128,23 +130,23 @@
     <div class="equipment-window">
         <div class="equip-header">
             <div class="equip-title">DONANIM & MODÜLLER</div>
-            <div class="ui-close-btn" onclick="closeEquipment()">✕</div>
+            <div class="ui-close-btn" id="btn-close-equipment">✕</div>
         </div>
-        
+
         <div class="equip-content">
             <!-- GEMİ SİLÜETİ VE SLOTLAR -->
             <div class="ship-silhouette-container">
                 <svg class="ship-silhouette" viewBox="0 0 100 140" fill="none">
                     <path d="M50 20 C 70 40, 90 70, 80 110 L 50 130 L 20 110 C 10 70, 30 40, 50 20 Z" />
-                    <path d="M50 20 L 50 130" stroke-opacity="0.3" stroke-dasharray="4 2"/>
-                    <path d="M20 110 L 80 110" stroke-opacity="0.3" stroke-dasharray="4 2"/>
+                    <path d="M50 20 L 50 130" stroke-opacity="0.3" stroke-dasharray="4 2" />
+                    <path d="M20 110 L 80 110" stroke-opacity="0.3" stroke-dasharray="4 2" />
                 </svg>
 
                 <div class="equip-slot-wrapper slot-engine" id="slot-engine">
                     <div class="equip-slot"><span class="slot-icon">🚀</span></div>
                     <span class="slot-label">MOTOR</span>
                 </div>
-                
+
                 <div class="equip-slot-wrapper slot-shield" id="slot-shield">
                     <div class="equip-slot"><span class="slot-icon">🛡️</span></div>
                     <span class="slot-label">KALKAN</span>
@@ -173,10 +175,16 @@
 
             <!-- STAT ÖZETİ -->
             <div class="equip-stats-summary">
-                <div class="estat-row"><span class="estat-name">SALDIRI GÜCÜ</span><span id="estat-atk" class="estat-val">0</span></div>
-                <div class="estat-row"><span class="estat-name">SAVUNMA</span><span id="estat-def" class="estat-val">0</span></div>
-                <div class="estat-row"><span class="estat-name">HIZ</span><div class="flex items-center"><span id="estat-spd" class="estat-val">0</span><span class="estat-bonus"></span></div></div>
-                <div class="estat-row"><span class="estat-name">ENERJİ</span><span id="estat-nrg" class="estat-val">0</span></div>
+                <div class="estat-row"><span class="estat-name">SALDIRI GÜCÜ</span><span id="estat-atk"
+                        class="estat-val">0</span></div>
+                <div class="estat-row"><span class="estat-name">SAVUNMA</span><span id="estat-def"
+                        class="estat-val">0</span></div>
+                <div class="estat-row"><span class="estat-name">HIZ</span>
+                    <div class="flex items-center"><span id="estat-spd" class="estat-val">0</span><span
+                            class="estat-bonus"></span></div>
+                </div>
+                <div class="estat-row"><span class="estat-name">ENERJİ</span><span id="estat-nrg"
+                        class="estat-val">0</span></div>
             </div>
         </div>
     </div>
@@ -187,18 +195,19 @@
     <div class="controls-window">
         <div class="controls-header">
             <div class="controls-title">SİSTEM KONTROLLERİ</div>
-            <div class="ui-close-btn" onclick="closeControls()">✕</div>
+            <div class="ui-close-btn" id="btn-close-controls">✕</div>
         </div>
         <div class="controls-content">
             <div class="controls-grid-compact">
                 <!-- Sol Sütun -->
                 <div class="ctrl-col">
-                    <div class="ctrl-row"><span class="ctrl-key">W</span><span class="ctrl-key">A</span><span class="ctrl-key">S</span><span class="ctrl-key">D</span> <span>Navigasyon</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">W</span><span class="ctrl-key">A</span><span
+                            class="ctrl-key">S</span><span class="ctrl-key">D</span> <span>Navigasyon</span></div>
                     <div class="ctrl-row"><span class="ctrl-key wide">SPACE</span> <span>İtici Güç (Boost)</span></div>
                     <div class="ctrl-row"><span class="ctrl-key">Q</span> <span>Oto-Pilot Modu</span></div>
                     <div class="ctrl-row"><span class="ctrl-key">C</span> <span>Kamera (Vatoz/Yankı)</span></div>
                 </div>
-                
+
                 <!-- Sağ Sütun -->
                 <div class="ctrl-col">
                     <div class="ctrl-row"><span class="ctrl-key">E</span> <span>Etkileşim</span></div>
@@ -216,9 +225,9 @@
 <!-- CHAT PANELİ -->
 <div id="chat-panel">
     <div class="chat-header">
-        <div class="chat-tab active" id="tab-genel" onclick="switchChatTab('genel')">GENEL</div>
-        <div class="chat-tab" id="tab-grup" onclick="switchChatTab('grup')">GRUP</div>
-        <div class="chat-tab" id="tab-bilgi" onclick="switchChatTab('bilgi')">BİLGİ</div>
+        <div class="chat-tab active" id="tab-genel">GENEL</div>
+        <div class="chat-tab" id="tab-grup">GRUP</div>
+        <div class="chat-tab" id="tab-bilgi">BİLGİ</div>
     </div>
     <div id="chat-content" class="chat-content"></div>
     <div id="chat-input-area" class="chat-input-area">
