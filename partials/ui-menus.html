@@ -29,18 +29,115 @@
                 <circle cx="50" cy="40" r="3" />
             </svg>
 
-            <!-- BUTON GRUBU -->
-            <div
-                style="display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; margin-bottom: 30px;">
+            <!-- OYUN BAŞLATMA KARTI -->
+            <div id="game-start-card" class="game-start-card">
 
-                <button id="btn-continue" class="menu-btn-primary"
-                    style="display: none; border-color: #10b981; color: #10b981;">
-                    [ DEVAM ET ]
-                </button>
+                <!-- KAYIT BİLGİ BÖLÜMÜ (Kayıt varsa gösterilecek) -->
+                <div id="save-info-section" style="display: none;">
+                    <div style="font-size: 0.65rem; color: #10b981; letter-spacing: 2px; margin-bottom: 16px; 
+                        text-align: center; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;
+                        display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        KAYITLI YAŞAM DÖNGÜSÜ
+                    </div>
 
-                <button id="btn-start" class="menu-btn-primary">
-                    [ BAŞLAT ]
-                </button>
+                    <!-- İstatistikler Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+                        <!-- Seviye -->
+                        <div class="stat-item">
+                            <div class="stat-label">SEVİYE</div>
+                            <div id="save-info-level" class="stat-value" style="color: #10b981;">-</div>
+                        </div>
+                        <!-- Sağlık -->
+                        <div class="stat-item">
+                            <div class="stat-label">SAĞLIK</div>
+                            <div id="save-info-health" class="stat-value" style="color: #ef4444;">-</div>
+                        </div>
+                        <!-- Enerji -->
+                        <div class="stat-item">
+                            <div class="stat-label">ENERJİ</div>
+                            <div id="save-info-energy" class="stat-value" style="color: #38bdf8;">-</div>
+                        </div>
+                        <!-- Envanter -->
+                        <div class="stat-item">
+                            <div class="stat-label">ENVANTER</div>
+                            <div id="save-info-inventory" class="stat-value" style="color: #fbbf24;">-</div>
+                        </div>
+                        <!-- Depo -->
+                        <div class="stat-item">
+                            <div class="stat-label">DEPO</div>
+                            <div id="save-info-storage" class="stat-value" style="color: #a855f7;">-</div>
+                        </div>
+                        <!-- Başarım -->
+                        <div class="stat-item">
+                            <div class="stat-label">BAŞARIM</div>
+                            <div id="save-info-achievements" class="stat-value" style="color: #fbbf24;">-</div>
+                        </div>
+                    </div>
+
+                    <!-- Detaylı Bilgiler -->
+                    <div style="padding: 12px; background: rgba(0,0,0,0.3); 
+                        border: 1px solid rgba(148, 216, 195, 0.15); margin-bottom: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.7rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #94d8c3; opacity: 0.7;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2"
+                                        style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                    Oynama Süresi
+                                </span>
+                                <span id="save-info-playtime" style="color: #e2e8f0; font-weight: 600;">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #94d8c3; opacity: 0.7;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2"
+                                        style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                    Son Kayıt
+                                </span>
+                                <span id="save-info-lastsave" style="color: #e2e8f0; font-weight: 600;">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #94d8c3; opacity: 0.7;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2"
+                                        style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg>
+                                    Konum
+                                </span>
+                                <span id="save-info-location"
+                                    style="color: #67e8f9; font-family: monospace; font-size: 0.65rem; font-weight: 600;">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUTONLAR -->
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    <button id="btn-continue" class="menu-btn-primary"
+                        style="display: none; border-color: #10b981; color: #10b981;">
+                        [ DEVAM ET ]
+                    </button>
+
+                    <button id="btn-start" class="menu-btn-primary">
+                        [ BAŞLAT ]
+                    </button>
+                </div>
             </div>
 
             <!-- KLASİK GRID TUŞ TAKIMI -->

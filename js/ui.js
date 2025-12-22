@@ -362,6 +362,31 @@ window.closeMobileWarning = function () {
     if (warning) warning.style.display = 'none';
 }
 
+function updateSaveInfoCard(saveInfo) {
+    if (!saveInfo) return;
+
+    // Seviye ve temel bilgiler
+    const levelEl = document.getElementById('save-info-level');
+    const healthEl = document.getElementById('save-info-health');
+    const energyEl = document.getElementById('save-info-energy');
+    const inventoryEl = document.getElementById('save-info-inventory');
+    const storageEl = document.getElementById('save-info-storage');
+    const achievementsEl = document.getElementById('save-info-achievements');
+    const playtimeEl = document.getElementById('save-info-playtime');
+    const lastSaveEl = document.getElementById('save-info-lastsave');
+    const locationEl = document.getElementById('save-info-location');
+
+    if (levelEl) levelEl.innerText = saveInfo.level;
+    if (healthEl) healthEl.innerText = Math.round(saveInfo.health);
+    if (energyEl) energyEl.innerText = Math.round(saveInfo.energy);
+    if (inventoryEl) inventoryEl.innerText = saveInfo.inventoryCount;
+    if (storageEl) storageEl.innerText = saveInfo.storageCount;
+    if (achievementsEl) achievementsEl.innerText = saveInfo.achievements;
+    if (playtimeEl) playtimeEl.innerText = saveInfo.gameTime.formatted;
+    if (lastSaveEl) lastSaveEl.innerText = saveInfo.lastSave.formatted;
+    if (locationEl) locationEl.innerText = `(${saveInfo.location.x}, ${saveInfo.location.y})`;
+}
+
 window.initMainMenu = function () {
     const btnContinue = document.getElementById('btn-continue');
     const btnStart = document.getElementById('btn-start');
@@ -381,6 +406,19 @@ window.initMainMenu = function () {
     if (typeof SaveManager !== 'undefined' && SaveManager.hasSave()) {
         if (cleanBtnContinue) {
             cleanBtnContinue.style.display = 'block';
+
+            // Kayıt bilgilerini yükle ve göster
+            const saveInfo = SaveManager.getSaveInfo();
+            if (saveInfo) {
+                updateSaveInfoCard(saveInfo);
+
+                // Kayıt bilgi bölümünü göster
+                const saveInfoSection = document.getElementById('save-info-section');
+                if (saveInfoSection) {
+                    saveInfoSection.style.display = 'block';
+                }
+            }
+
             cleanBtnContinue.addEventListener('click', () => {
                 startGameSession(true);
             });
@@ -396,6 +434,12 @@ window.initMainMenu = function () {
             });
         }
     } else {
+        // Kayıt yoksa bilgi bölümünü gizle
+        const saveInfoSection = document.getElementById('save-info-section');
+        if (saveInfoSection) {
+            saveInfoSection.style.display = 'none';
+        }
+
         if (cleanBtnContinue) cleanBtnContinue.style.display = 'none';
         if (cleanBtnStart) {
             cleanBtnStart.innerText = "YAŞAM DÖNGÜSÜNÜ BAŞLAT";

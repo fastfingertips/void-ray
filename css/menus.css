@@ -1,7 +1,7 @@
 /* * MENUS.CSS * Wireframe Style Update */
 
 :root {
-    --hud-color: #94d8c3;       
+    --hud-color: #94d8c3;
     --hud-color-dim: rgba(148, 216, 195, 0.3);
     --hud-bg: rgba(10, 12, 14, 0.95);
     --hud-text: #e2e8f0;
@@ -11,51 +11,121 @@
 
 /* --- ANA MENÜ --- */
 #main-menu {
-    position: absolute; inset: 0;
+    position: absolute;
+    inset: 0;
     /* GÜNCELLEME: Siyah Gradient */
-    background: 
+    background:
         linear-gradient(#000000, #000000),
         repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(148, 216, 195, 0.03) 1px, rgba(148, 216, 195, 0.03) 2px);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 100; transition: opacity 0.5s ease, visibility 0.5s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.5s ease, visibility 0.5s;
     font-family: 'Courier New', Courier, monospace;
 }
 
-.menu-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.menu-hidden * { pointer-events: none !important; }
+.menu-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.menu-hidden * {
+    pointer-events: none !important;
+}
 
 .title-main {
-    font-size: 5rem; font-weight: 400; letter-spacing: 1.5rem;
+    font-size: 5rem;
+    font-weight: 400;
+    letter-spacing: 1.5rem;
     color: var(--hud-color);
     text-shadow: 0 0 20px rgba(148, 216, 195, 0.4);
-    margin-bottom: 20px; text-align: center;
+    margin-bottom: 20px;
+    text-align: center;
     border-bottom: 1px solid var(--hud-color-dim);
-    padding-bottom: 20px; width: 100%; position: relative;
+    padding-bottom: 20px;
+    width: 100%;
+    position: relative;
 }
+
 .title-main::after {
-    content: "SYSTEM_READY // V.1.2"; display: block; font-size: 0.8rem; letter-spacing: 5px; color: var(--hud-text-dim); margin-top: 10px; opacity: 0.7;
+    content: "SYSTEM_READY // V.1.2";
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 5px;
+    color: var(--hud-text-dim);
+    margin-top: 10px;
+    opacity: 0.7;
 }
 
 .void-symbol-center {
-    width: 100px; height: 100px; margin-bottom: 40px;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 40px;
     filter: drop-shadow(0 0 10px var(--hud-color));
     animation: pulseSymbol 4s ease-in-out infinite;
 }
-.void-symbol-center path { fill: var(--hud-color-dim) !important; stroke: var(--hud-color) !important; }
-.void-symbol-center circle { fill: var(--hud-color) !important; }
-@keyframes pulseSymbol { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
+
+.void-symbol-center path {
+    fill: var(--hud-color-dim) !important;
+    stroke: var(--hud-color) !important;
+}
+
+.void-symbol-center circle {
+    fill: var(--hud-color) !important;
+}
+
+@keyframes pulseSymbol {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+}
 
 /* BUTTONS TAŞINDI: .menu-btn, .menu-btn-primary */
 
 .dev-footer {
-    position: absolute; bottom: 30px; display: flex; align-items: center; gap: 30px; padding: 10px 40px;
-    background: rgba(10, 12, 14, 0.8); border: 1px solid var(--hud-color-dim); border-radius: 0;
+    position: absolute;
+    bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 40px;
+    background: rgba(10, 12, 14, 0.8);
+    border: 1px solid var(--hud-color-dim);
+    border-radius: 0;
     background-image: linear-gradient(to right, var(--hud-color) 2px, transparent 2px), linear-gradient(to top, var(--hud-color) 2px, transparent 2px);
-    background-size: 8px 8px; background-position: bottom left; background-repeat: no-repeat;
+    background-size: 8px 8px;
+    background-position: bottom left;
+    background-repeat: no-repeat;
 }
-.dev-footer:hover { border-color: var(--hud-color); box-shadow: 0 0 15px var(--hud-color-dim); }
-.dev-label { font-size: 0.5rem; letter-spacing: 2px; color: var(--hud-text-dim); }
-.dev-name { font-size: 0.8rem; letter-spacing: 1px; color: var(--hud-text); font-weight: bold; }
+
+.dev-footer:hover {
+    border-color: var(--hud-color);
+    box-shadow: 0 0 15px var(--hud-color-dim);
+}
+
+.dev-label {
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    color: var(--hud-text-dim);
+}
+
+.dev-name {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--hud-text);
+    font-weight: bold;
+}
 
 /* BUTTONS TAŞINDI: .github-link-btn */
 
@@ -64,7 +134,7 @@
     width: 500px;
     background: var(--hud-bg);
     border: 1px solid var(--hud-color-dim);
-    background-image: 
+    background-image:
         linear-gradient(to right, var(--hud-color) 2px, transparent 2px),
         linear-gradient(to bottom, var(--hud-color) 2px, transparent 2px),
         linear-gradient(to left, var(--hud-color) 2px, transparent 2px),
@@ -72,13 +142,14 @@
     background-size: 10px 10px;
     background-position: top left, top left, bottom right, bottom right;
     background-repeat: no-repeat;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    display: flex; flex-direction: column;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
 }
 
 .system-modal.danger {
     border-color: rgba(239, 68, 68, 0.3);
-    background-image: 
+    background-image:
         linear-gradient(to right, var(--hud-danger) 2px, transparent 2px),
         linear-gradient(to bottom, var(--hud-danger) 2px, transparent 2px),
         linear-gradient(to left, var(--hud-danger) 2px, transparent 2px),
@@ -89,9 +160,9 @@
 .system-modal.warning {
     border-color: var(--color-warning);
     box-shadow: 0 0 40px rgba(245, 158, 11, 0.15);
-    
+
     /* Wireframe Grid Pattern (Sarı/Turuncu) */
-    background-image: 
+    background-image:
         linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
     background-size: 20px 20px;
@@ -104,9 +175,12 @@
     background: rgba(148, 216, 195, 0.05);
     border-bottom: 1px solid var(--hud-color-dim);
     color: var(--hud-color);
-    font-size: 0.8rem; letter-spacing: 3px; font-weight: bold;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    font-weight: bold;
     text-align: center;
 }
+
 .modal-header.danger {
     background: rgba(239, 68, 68, 0.05);
     border-bottom-color: rgba(239, 68, 68, 0.3);
@@ -123,7 +197,10 @@
 
 .modal-content {
     padding: 30px;
-    display: flex; flex-direction: column; align-items: center; text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 /* YENİ: UYARI İKONU VE BUTONLARI */
@@ -147,46 +224,179 @@
     box-shadow: 0 0 20px var(--color-warning);
 }
 
-.system-modal.warning .menu-btn::before, 
+.system-modal.warning .menu-btn::before,
 .system-modal.warning .menu-btn::after {
     background-color: var(--color-warning);
 }
 
 /* --- OVERLAYS --- */
-#pause-overlay, #death-screen, .mobile-warning-overlay {
-    position: absolute; inset: 0;
+#pause-overlay,
+#death-screen,
+.mobile-warning-overlay {
+    position: absolute;
+    inset: 0;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(5px);
     z-index: 200;
     display: none;
-    justify-content: center; align-items: center;
+    justify-content: center;
+    align-items: center;
     font-family: 'Courier New', Courier, monospace;
 }
-#pause-overlay.active, #death-screen.active { display: flex; }
+
+#pause-overlay.active,
+#death-screen.active {
+    display: flex;
+}
 
 /* PAUSE ÖZEL */
 .pause-title {
-    font-size: 2rem; letter-spacing: 5px; color: var(--hud-text); margin-bottom: 30px;
+    font-size: 2rem;
+    letter-spacing: 5px;
+    color: var(--hud-text);
+    margin-bottom: 30px;
     text-shadow: 0 0 10px var(--hud-color-dim);
 }
-.pause-menu-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+
+.pause-menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
 
 /* BUTTONS TAŞINDI: .pause-btn */
 
 /* DEATH ÖZEL */
-.death-title { font-size: 2.5rem; letter-spacing: 5px; color: var(--hud-danger); margin-bottom: 10px; font-weight: bold; text-transform: uppercase; }
-.death-sub { font-size: 0.8rem; color: #fca5a5; letter-spacing: 1px; margin-bottom: 30px; }
-.death-info { 
-    font-size: 0.7rem; color: var(--hud-text-dim); text-align: left; width: 100%; 
-    border: 1px dashed rgba(239, 68, 68, 0.3); padding: 10px; margin-bottom: 20px;
-    background: rgba(0,0,0,0.3);
+.death-title {
+    font-size: 2.5rem;
+    letter-spacing: 5px;
+    color: var(--hud-danger);
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.death-sub {
+    font-size: 0.8rem;
+    color: #fca5a5;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+.death-info {
+    font-size: 0.7rem;
+    color: var(--hud-text-dim);
+    text-align: left;
+    width: 100%;
+    border: 1px dashed rgba(239, 68, 68, 0.3);
+    padding: 10px;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .loading-bar-wrapper {
-    width: 100%; height: 4px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);
+    width: 100%;
+    height: 4px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
+
 .loading-bar-fill {
-    height: 100%; width: 0%; background: var(--hud-danger);
+    height: 100%;
+    width: 0%;
+    background: var(--hud-danger);
     animation: loadDeath 3s linear forwards;
 }
-@keyframes loadDeath { 0% { width: 0%; } 100% { width: 100%; } }
+
+@keyframes loadDeath {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+/* --- KAYIT BİLGİ KARTI ANİMASYONLARI --- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-105%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(-110%);
+    }
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(-110%);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-105%);
+    }
+}
+
+/* --- OYUN BAŞLATMA KARTI --- */
+.game-start-card {
+    background: transparent;
+    /* Card arka planı kaldırıldı */
+    border: none;
+    /* Border kaldırıldı */
+    padding: 0;
+    min-width: 450px;
+    max-width: 500px;
+    position: relative;
+    margin-bottom: 30px;
+    animation: cardFadeIn 0.6s ease-out;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* İstatistik Item Stili */
+.stat-item {
+    background: rgba(148, 216, 195, 0.05);
+    border: 1px solid rgba(148, 216, 195, 0.15);
+    border-radius: 0;
+    /* Wireframe tema - keskin köşeler */
+    padding: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    background: rgba(148, 216, 195, 0.1);
+    border-color: rgba(148, 216, 195, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
+    color: var(--hud-text-dim);
+    margin-bottom: 6px;
+    opacity: 0.8;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}

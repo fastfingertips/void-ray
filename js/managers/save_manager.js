@@ -27,6 +27,67 @@ export const SaveManager = {
         return !!localStorage.getItem(this.SAVE_KEY);
     },
 
+    getSaveInfo: function () {
+        const encoded = localStorage.getItem(this.SAVE_KEY);
+        if (!encoded) return null;
+
+        try {
+            let json;
+            if (encoded.trim().startsWith('{')) {
+                json = encoded;
+            } else {
+                json = decodeURIComponent(atob(encoded).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+            }
+
+            const data = JSON.parse(json);
+
+            // Oyun süresini hesapla
+            const gameTime = data.meta?.gameTime || 0;
+            const hours = Math.floor(gameTime / 3600000);
+            const minutes = Math.floor((gameTime % 3600000) / 60000);
+
+            // Son kayıt zamanı
+            const saveDate = data.meta?.timestamp ? new Date(data.meta.timestamp) : null;
+            const timeSinceSave = saveDate ? Math.floor((Date.now() - saveDate.getTime()) / 60000) : 0; // dakika cinsinden
+
+            return {
+                level: data.player?.level || 1,
+                xp: data.player?.xp || 0,
+                health: data.player?.health || 100,
+                energy: data.player?.energy || 100,
+                location: {
+                    x: Math.round(data.player?.x || 0),
+                    y: Math.round(data.player?.y || 0)
+                },
+                inventoryCount: data.inventory?.length || 0,
+                storageCount: data.storage?.length || 0,
+                hasEcho: data.echo?.active || false,
+                echoInventory: data.echo?.lootBag?.length || 0,
+                achievements: data.achievements?.length || 0,
+                gameTime: {
+                    hours,
+                    minutes,
+                    formatted: `${hours}s ${minutes}dk`
+                },
+                lastSave: {
+                    date: saveDate,
+                    minutesAgo: timeSinceSave,
+                    formatted: timeSinceSave < 60
+                        ? `${timeSinceSave} dakika önce`
+                        : timeSinceSave < 1440
+                            ? `${Math.floor(timeSinceSave / 60)} saat önce`
+                            : `${Math.floor(timeSinceSave / 1440)} gün önce`
+                },
+                version: data.meta?.version || '1.0'
+            };
+        } catch (e) {
+            console.error("Kayıt bilgisi okunamadı:", e);
+            return null;
+        }
+    },
+
     save: function (silent = false) {
         if (!player) return;
 
