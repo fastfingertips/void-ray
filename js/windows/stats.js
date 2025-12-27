@@ -56,7 +56,7 @@ function toggleStats() {
  */
 function initStatsDOM(windowEl) {
     // Sınıf ismini 'stats-header' olarak düzelttik (Core CSS uyumu için)
-    windowEl.innerHTML = `
+    let htmlContent = `
         <div class="stats-header" style="cursor: move;">
             <div class="stats-icon-box">≣</div>
             <div class="stats-title-group">
@@ -66,18 +66,7 @@ function initStatsDOM(windowEl) {
             <div class="ui-close-btn" id="btn-close-stats-dynamic">✕</div>
         </div>
         
-        <div class="stats-wireframe-content">`;
-
-    // Event Listener Ekle
-    const closeBtn = windowEl.querySelector('#btn-close-stats-dynamic');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            if (typeof closeStats === 'function') closeStats();
-        });
-    }
-
-    windowEl.innerHTML += `
-            <!-- GRUP 1: ZAMAN VE KEŞİF -->
+        <div class="stats-wireframe-content">
             <!-- GRUP 1: ZAMAN VE KEŞİF -->
             <div class="stats-group">
                 <div class="stats-group-title">ZAMAN & KEŞİF</div>
@@ -107,6 +96,16 @@ function initStatsDOM(windowEl) {
             </div>
         </div>
     `;
+
+    windowEl.innerHTML = htmlContent;
+
+    // Event Listener Ekle (DOM oluşturulduktan sonra)
+    const closeBtn = windowEl.querySelector('#btn-close-stats-dynamic');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            if (typeof closeStats === 'function') closeStats();
+        });
+    }
 
     // Elementleri önbelleğe al (Cache lookup)
     const ids = [
