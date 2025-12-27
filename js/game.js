@@ -314,6 +314,38 @@ function drawStaticNoise(ctx, w, h, intensity) {
 }
 
 function loop() {
+    // --- TUŞ KONTROLLERİ (PAUSE MODUNDA DA ÇALIŞMALI) ---
+    if (keys.Escape) {
+        if (isPaused) {
+            resumeGame();
+        } else if (typeof inventoryOpen !== 'undefined' && inventoryOpen) {
+            closeInventory();
+        } else if (typeof echoInvOpen !== 'undefined' && echoInvOpen) {
+            closeEchoInventory();
+        } else if (typeof nexusOpen !== 'undefined' && nexusOpen) {
+            exitNexus();
+        } else if (typeof storageOpen !== 'undefined' && storageOpen) {
+            closeStorage();
+        } else if (typeof mapOpen !== 'undefined' && mapOpen) {
+            closeMap();
+        } else if (typeof statsOpen !== 'undefined' && statsOpen) {
+            closeStats();
+        } else if (typeof equipmentOpen !== 'undefined' && equipmentOpen) {
+            closeEquipment();
+        } else if (typeof settingsOpen !== 'undefined' && settingsOpen) {
+            closeSettings();
+        } else if (typeof contextOpen !== 'undefined' && contextOpen) {
+            closeContext();
+        } else if (typeof profileOpen !== 'undefined' && profileOpen) {
+            closeProfile();
+        } else if (typeof controlsOpen !== 'undefined' && controlsOpen) {
+            closeControls();
+        } else {
+            togglePause();
+        }
+        keys.Escape = false;
+    }
+
     if (!isPaused && ctx) {
         const now = Date.now();
         const dt = now - lastFrameTime;
@@ -411,23 +443,6 @@ function loop() {
         if (typeof contextOpen !== 'undefined' && contextOpen) renderContext();
         if (typeof TutorialManager !== 'undefined') TutorialManager.update(dt);
         if (entityManager) entityManager.update(dt);
-
-        // --- TUŞ KONTROLLERİ ---
-        if (keys.Escape) {
-            if (typeof inventoryOpen !== 'undefined' && inventoryOpen) closeInventory();
-            else if (typeof echoInvOpen !== 'undefined' && echoInvOpen) closeEchoInventory();
-            else if (typeof nexusOpen !== 'undefined' && nexusOpen) exitNexus();
-            else if (typeof storageOpen !== 'undefined' && storageOpen) closeStorage();
-            else if (typeof mapOpen !== 'undefined' && mapOpen) closeMap();
-            else if (typeof statsOpen !== 'undefined' && statsOpen) closeStats();
-            else if (typeof equipmentOpen !== 'undefined' && equipmentOpen) closeEquipment();
-            else if (typeof settingsOpen !== 'undefined' && settingsOpen) closeSettings();
-            else if (typeof contextOpen !== 'undefined' && contextOpen) closeContext();
-            else if (typeof profileOpen !== 'undefined' && profileOpen) closeProfile();
-            else if (typeof controlsOpen !== 'undefined' && controlsOpen) closeControls();
-            else togglePause();
-            keys.Escape = false;
-        }
 
         // --- ARKA PLAN (SİYAH) ---
         ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, width, height);
