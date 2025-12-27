@@ -101,7 +101,7 @@ function renderInventory() {
     let footerHTML = '';
     for (let p = 1; p <= TOTAL_PAGES; p++) {
         const isActive = p === currentInvPage ? 'active' : '';
-        footerHTML += `< div class="inv-page-btn ${isActive}" data - page="${p}" > ${p}</div > `;
+        footerHTML += `<div class="inv-page-btn ${isActive}" data-page="${p}">${p}</div>`;
     }
     footer.innerHTML = footerHTML;
 
