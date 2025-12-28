@@ -17,14 +17,14 @@ let autoHideCheckInterval = null;
 export function resetActivityTimer() {
     lastActivityTime = Date.now();
 
-    // Eğer HUD otomatik gizlenmişse, geri getir
+    // If HUD was auto-hidden, bring it back
     if (hudAutoHidden && isHudVisible === false) {
         showHUDFromAutoHide();
     }
 }
 
 /**
- * Otomatik gizleme sonrası HUD'ı geri getirir
+ * Restores HUD after auto-hide
  */
 function showHUDFromAutoHide() {
     if (!hudAutoHidden) return;
@@ -40,7 +40,7 @@ function showHUDFromAutoHide() {
 }
 
 /**
- * HUD'ı sinematik mod için gizler
+ * Hides HUD for cinematic mode
  */
 function hideHUDForCinematic() {
     if (hudAutoHidden) return;
@@ -58,35 +58,35 @@ function hideHUDForCinematic() {
 }
 
 /**
- * Otomatik gizleme kontrolünü yapar
+ * Performs auto-hide check
  */
 function checkAutoHide() {
     if (!window.gameSettings || !window.gameSettings.autoHideHUD) return;
 
-    // AI modu aktif mi?
+    // Is AI mode active?
     const isAIActive = typeof AIManager !== 'undefined' && AIManager.active;
 
-    // Ne kadar süre geçti?
+    // How much time has passed?
     const idleTime = Date.now() - lastActivityTime;
     const delay = window.gameSettings.autoHideDelay || 5000;
 
-    // AI aktif VE yeterince boşta kaldıysa gizle
+    // If AI is active AND idle long enough, hide
     if (isAIActive && idleTime >= delay && !hudAutoHidden) {
         hideHUDForCinematic();
     }
 }
 
 /**
- * Otomatik HUD gizleme sistemini başlatır
+ * Starts the auto-hide HUD system
  */
 window.initAutoHideHUD = function () {
-    // Mevcut interval'ı temizle
+    // Clear existing interval
     if (autoHideCheckInterval) {
         clearInterval(autoHideCheckInterval);
         autoHideCheckInterval = null;
     }
 
-    // Event listener'ları ekle (bir kez)
+    // Add event listeners (once)
     if (!window._autoHideListenersAdded) {
         document.addEventListener('mousemove', resetActivityTimer);
         document.addEventListener('keydown', resetActivityTimer);
@@ -95,12 +95,12 @@ window.initAutoHideHUD = function () {
         window._autoHideListenersAdded = true;
     }
 
-    // Periyodik kontrol başlat
+    // Start periodic check
     autoHideCheckInterval = setInterval(checkAutoHide, 1000);
 };
 
 /**
- * Otomatik HUD gizleme sistemini durdurur
+ * Stops the auto-hide HUD system
  */
 window.stopAutoHideHUD = function () {
     if (autoHideCheckInterval) {
@@ -108,14 +108,14 @@ window.stopAutoHideHUD = function () {
         autoHideCheckInterval = null;
     }
 
-    // Eğer gizliyse geri getir
+    // If hidden, bring it back
     if (hudAutoHidden) {
         showHUDFromAutoHide();
     }
 };
-// --- SİNEMATİK MOD SONU ---
+// --- CINEMATIC MODE END ---
 
-// --- YENİ: KONTROLLER PENCERESİ YÖNETİMİ ---
+// --- CONTROLS WINDOW MANAGEMENT ---
 let controlsOpen = false;
 
 window.toggleControls = function () {
@@ -141,7 +141,8 @@ globalTooltip.id = 'global-tooltip';
 document.body.appendChild(globalTooltip);
 
 function generateItemTooltipHTML(item) {
-    const name = item.name || "Bilinmeyen";
+    const t = window.t || ((key) => key.split('.').pop());
+    const name = item.name || t('general.unknown');
     const typeColor = item.type ? item.type.color : '#fff';
 
     let html = `<div style="min-width: 180px;">`;
@@ -179,6 +180,7 @@ function showTooltip(e, item) {
     let html = generateItemTooltipHTML(item);
 
     if (item.category === 'equipment' && typeof playerData !== 'undefined' && playerData.equipment) {
+        const t = window.t || ((key) => key.split('.').pop());
         let equippedItem = null;
         let equippedItem2 = null;
 
@@ -192,11 +194,11 @@ function showTooltip(e, item) {
         if (equippedItem || equippedItem2) {
             html = `<div style="display:flex; gap:15px; align-items: flex-start;">
                         <div>
-                            <div style="font-size:0.6rem; color:#94a3b8; margin-bottom:4px; letter-spacing:1px;">ENVANTER</div>
+                            <div style="font-size:0.6rem; color:#94a3b8; margin-bottom:4px; letter-spacing:1px;">${t('general.inventory')}</div>
                             ${html}
                         </div>
                         <div style="border-left:1px solid rgba(255,255,255,0.2); padding-left:15px;">
-                            <div style="font-size:0.6rem; color:#fbbf24; margin-bottom:4px; letter-spacing:1px; font-weight:bold;">KUŞANILAN</div>
+                            <div style="font-size:0.6rem; color:#fbbf24; margin-bottom:4px; letter-spacing:1px; font-weight:bold;">${t('general.equipped')}</div>
                             ${equippedItem ? generateItemTooltipHTML(equippedItem) : ''}
                             ${equippedItem2 ? `<div style="margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.1);">${generateItemTooltipHTML(equippedItem2)}</div>` : ''}
                         </div>
@@ -231,9 +233,10 @@ function moveTooltip(e) {
 window.hideTooltip = function () { globalTooltip.style.display = 'none'; };
 
 window.initUIListeners = function () {
-    console.log("UI Olay Dinleyicileri başlatılıyor...");
+    console.log("UI Event Listeners initializing...");
     window.eventBus.on('player:levelup', (data) => {
-        showNotification({ name: `EVRİM GEÇİRİLDİ: SEVİYE ${data.level}`, type: { color: '#fff' } }, "");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: `${t('uiNotif.evolved')}: ${t('uiNotif.level')} ${data.level}`, type: { color: '#fff' } }, "");
         if (typeof audio !== 'undefined' && audio) audio.playEvolve();
     });
     setTimeout(initDraggableWindows, 100);
@@ -266,7 +269,10 @@ window.toggleHUD = function () {
     if (panelsContainer) panelsContainer.classList.toggle('hidden-ui', !isHudVisible);
 
     if (!isHudVisible) hideTooltip();
-    else showNotification({ name: "ARAYÜZ AKTİF", type: { color: '#fff' } }, "");
+    else {
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('uiNotif.interfaceActive'), type: { color: '#fff' } }, "");
+    }
 }
 
 function formatTime(ms) {
@@ -324,6 +330,7 @@ function renderGrid(container, items, capacity, onClickAction, isUnlimited = fal
 }
 
 function updateAIButton() {
+    const t = window.t || ((key) => key.split('.').pop());
     const btn = document.getElementById('ai-mode-btn');
     const aiToggle = document.getElementById('btn-ai-toggle');
     const modeBtn = document.getElementById('ai-mode-btn');
@@ -338,16 +345,16 @@ function updateAIButton() {
     modeBtn.classList.add('visible');
 
     if (aiMode === 'travel') {
-        btn.innerText = 'SEYİR'; btn.style.color = '#ef4444'; btn.style.borderColor = '#ef4444';
+        btn.innerText = t('ai.travel'); btn.style.color = '#ef4444'; btn.style.borderColor = '#ef4444';
     } else if (aiMode === 'base') {
-        btn.innerText = 'ÜS'; btn.style.color = '#fbbf24'; btn.style.borderColor = '#fbbf24';
+        btn.innerText = t('ai.base'); btn.style.color = '#fbbf24'; btn.style.borderColor = '#fbbf24';
     } else if (aiMode === 'deposit') {
-        btn.innerText = 'DEPO'; btn.style.color = '#a855f7'; btn.style.borderColor = '#a855f7';
+        btn.innerText = t('ai.deposit'); btn.style.color = '#a855f7'; btn.style.borderColor = '#a855f7';
     } else {
         if (typeof player !== 'undefined' && player.scoutTarget) {
-            btn.innerText = 'KEŞİF'; btn.style.color = '#67e8f9'; btn.style.borderColor = '#67e8f9';
+            btn.innerText = t('ai.scout'); btn.style.color = '#67e8f9'; btn.style.borderColor = '#67e8f9';
         } else {
-            btn.innerText = 'TOPLA'; btn.style.color = 'white'; btn.style.borderColor = 'transparent';
+            btn.innerText = t('ai.collect'); btn.style.color = 'white'; btn.style.borderColor = 'transparent';
         }
     }
 }
@@ -365,7 +372,7 @@ window.closeMobileWarning = function () {
 function updateSaveInfoCard(saveInfo) {
     if (!saveInfo) return;
 
-    // Seviye ve temel bilgiler
+    // Level and basic info
     const levelEl = document.getElementById('save-info-level');
     const healthEl = document.getElementById('save-info-health');
     const energyEl = document.getElementById('save-info-energy');
@@ -407,12 +414,12 @@ window.initMainMenu = function () {
         if (cleanBtnContinue) {
             cleanBtnContinue.style.display = 'block';
 
-            // Kayıt bilgilerini yükle ve göster
+            // Load and display save info
             const saveInfo = SaveManager.getSaveInfo();
             if (saveInfo) {
                 updateSaveInfoCard(saveInfo);
 
-                // Kayıt bilgi bölümünü göster
+                // Show save info section
                 const saveInfoSection = document.getElementById('save-info-section');
                 if (saveInfoSection) {
                     saveInfoSection.style.display = 'block';
@@ -425,16 +432,17 @@ window.initMainMenu = function () {
         }
 
         if (cleanBtnStart) {
-            cleanBtnStart.innerText = "YENİ YAŞAM DÖNGÜSÜ";
+            const t = window.t || ((key) => key.split('.').pop());
+            cleanBtnStart.innerText = t('menu.newGame');
             cleanBtnStart.addEventListener('click', () => {
-                if (confirm("Mevcut ilerleme silinecek. Emin misin?")) {
+                if (confirm(t('general.deleteConfirm'))) {
                     SaveManager.resetSave();
                     startGameSession(false);
                 }
             });
         }
     } else {
-        // Kayıt yoksa bilgi bölümünü gizle
+        // If no save, hide info section
         const saveInfoSection = document.getElementById('save-info-section');
         if (saveInfoSection) {
             saveInfoSection.style.display = 'none';
@@ -442,14 +450,15 @@ window.initMainMenu = function () {
 
         if (cleanBtnContinue) cleanBtnContinue.style.display = 'none';
         if (cleanBtnStart) {
-            cleanBtnStart.innerText = "YAŞAM DÖNGÜSÜNÜ BAŞLAT";
+            const t = window.t || ((key) => key.split('.').pop());
+            cleanBtnStart.innerText = t('menu.startGame');
             cleanBtnStart.addEventListener('click', () => {
                 startGameSession(false);
             });
         }
     }
 
-    // --- GITHUB SON GÜNCELLEME KONTROLÜ (DİNAMİK) ---
+    // --- GITHUB LAST UPDATE CHECK (DYNAMIC) ---
     const repoOwner = 'tugracoskun';
     const repoName = 'void-ray';
 
@@ -461,13 +470,13 @@ window.initMainMenu = function () {
         .then(data => {
             if (data && data.length > 0 && data[0].commit) {
                 const commit = data[0].commit;
-                const sha = data[0].sha.substring(0, 7); // Kısa SHA (Versiyon kodu)
+                const sha = data[0].sha.substring(0, 7); // Short SHA (Version code)
                 const date = new Date(commit.committer.date);
-                const dateStr = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
+                const dateStr = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 
-                // Mesajın sadece ilk satırını al
+                // Get only the first line of the message
                 let message = commit.message.split('\n')[0];
-                // Kısaltma işlemini CSS'e bıraktık, JS'de tam metni tutuyoruz.
+                // Left truncation to CSS, keeping full text in JS
 
                 const container = document.getElementById('update-container');
                 const separator = document.getElementById('update-separator');
@@ -480,9 +489,9 @@ window.initMainMenu = function () {
 
                     if (msgEl) {
                         msgEl.innerText = message;
-                        msgEl.title = message; // Hover için tam metni ekle
+                        msgEl.title = message; // Add full text for hover
                     }
-                    if (shaEl) shaEl.innerText = `v.${sha}`; // Versiyon formatı
+                    if (shaEl) shaEl.innerText = `v.${sha}`; // Version format
 
                     container.style.display = 'flex';
                     if (separator) separator.style.display = 'block';
@@ -633,7 +642,7 @@ window.initDraggableWindows = function () {
             handle: '#settings-header',
             getPos: (w, h, elW, elH) => ({ x: w - elW - 20, y: 70 })
         },
-        // YENİ: KONTROLLER PENCERESİ (MERKEZLİ)
+        // CONTROLS WINDOW (CENTERED)
         {
             container: '#controls-overlay .controls-window',
             handle: '.controls-header',

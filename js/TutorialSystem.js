@@ -5,59 +5,65 @@ import Utils from './utils.js';
  * Step-by-step guide to teach game basics.
  */
 
+// Helper to get translation
+const getTutorialText = (key) => {
+    const t = window.t || ((k) => k.split('.').pop());
+    return t(`tutorialSteps.${key}`);
+};
+
 const TUTORIAL_STEPS = [
     {
         id: 'intro_welcome',
-        text: "Sistemler aktif. [WASD] tuşları ile gemiyi hareket ettir.",
-        trigger: () => true, // Başlangıçta hemen tetiklenir
-        checkComplete: () => Math.hypot(player.vx, player.vy) > 2, // Hareket edince
+        get text() { return getTutorialText('introWelcome'); },
+        trigger: () => true, // Triggers immediately at start
+        checkComplete: () => Math.hypot(player.vx, player.vy) > 2, // When moving
         delay: 1000
     },
     {
         id: 'intro_boost',
-        text: "Motor gücünü artırmak için [SPACE] tuşuna basılı tut.",
+        get text() { return getTutorialText('introBoost'); },
         trigger: () => TutorialManager.isStepCompleted('intro_welcome'),
-        checkComplete: () => keys && keys[" "], // Space basılınca
+        checkComplete: () => keys && keys[" "], // When Space is pressed
         delay: 500
     },
     {
         id: 'first_resource',
-        text: "Yakındaki kaynakları topla. Onlara yaklaşman yeterli.",
+        get text() { return getTutorialText('firstResource'); },
         trigger: () => TutorialManager.isStepCompleted('intro_boost'),
         checkComplete: () => collectedItems.length > 0,
         delay: 2000
     },
     {
         id: 'inventory_check',
-        text: "Kargo bölümüne erişmek için [I] tuşuna bas.",
+        get text() { return getTutorialText('inventoryCheck'); },
         trigger: () => TutorialManager.isStepCompleted('first_resource'),
         checkComplete: () => typeof inventoryOpen !== 'undefined' && inventoryOpen,
         delay: 1000
     },
     {
         id: 'nexus_find',
-        text: "Envanterin dolunca Nexus'a (Üs) dönmelisin. Beyaz oku takip et.",
-        trigger: () => collectedItems.length >= 5, // Biraz kaynak toplayınca
+        get text() { return getTutorialText('nexusFind'); },
+        trigger: () => collectedItems.length >= 5, // After collecting some resources
         checkComplete: () => Utils.distEntity(player, nexus) < 400,
         delay: 500
     },
     {
         id: 'nexus_trade',
-        text: "[E] tuşu ile Nexus'a bağlan ve kaynaklarını sat.",
+        get text() { return getTutorialText('nexusTrade'); },
         trigger: () => TutorialManager.isStepCompleted('nexus_find') && Utils.distEntity(player, nexus) < 400,
         checkComplete: () => typeof nexusOpen !== 'undefined' && nexusOpen,
         delay: 0
     },
     {
         id: 'echo_intro',
-        text: "3. Seviyeye ulaştığında Yankı (Echo) dronu otomatik üretilecek.",
+        get text() { return getTutorialText('echoIntro'); },
         trigger: () => player.level >= 2 && !echoRay,
         checkComplete: () => player.level >= 3,
         delay: 2000
     },
     {
         id: 'echo_command',
-        text: "Yankı seninle! [F] tuşu ile onu serbest bırak veya çağır.",
+        get text() { return getTutorialText('echoCommand'); },
         trigger: () => echoRay !== null,
         checkComplete: () => echoRay && !echoRay.attached,
         delay: 1000
@@ -72,7 +78,7 @@ class TutorialSystem {
         this.uiText = null;
         this.uiIcon = null;
 
-        // Durumlar: 'idle', 'active', 'success', 'waiting_next'
+        // States: 'idle', 'active', 'success', 'waiting_next'
         this.state = 'idle';
         this.timer = 0;
     }
@@ -82,7 +88,7 @@ class TutorialSystem {
         this.uiText = document.getElementById('tutorial-text');
         this.uiIcon = document.getElementById('tutorial-icon');
 
-        console.log("Tutorial System başlatıldı.");
+        console.log("Tutorial System initialized.");
     }
 
     loadProgress(savedSteps) {
@@ -102,12 +108,12 @@ class TutorialSystem {
     update(dt) {
         if (!player || !this.uiContainer) return;
 
-        // 1. Yeni Görev Ara
+        // 1. Search for New Task
         if (this.state === 'idle') {
             for (const step of TUTORIAL_STEPS) {
                 if (!this.completedSteps.has(step.id)) {
                     if (step.trigger()) {
-                        // Delay kontrolü için waiting state'e geçebilirdik ama basit tutalım
+                        // Could use waiting state for delay control but keeping it simple
                         this.startStep(step);
                         break;
                     }
@@ -115,14 +121,14 @@ class TutorialSystem {
             }
         }
 
-        // 2. Aktif Görevi Kontrol Et
+        // 2. Check Active Task
         if (this.state === 'active' && this.activeStep) {
             if (this.activeStep.checkComplete()) {
                 this.completeStep();
             }
         }
 
-        // 3. Başarı Ekranı Zamanlayıcısı
+        // 3. Success Screen Timer
         if (this.state === 'success') {
             this.timer -= dt;
             if (this.timer <= 0) {
@@ -143,22 +149,22 @@ class TutorialSystem {
         this.uiContainer.classList.remove('success');
         this.uiContainer.classList.add('visible');
 
-        // Yeni görev sesi
+        // New task sound
         if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'common' });
     }
 
     completeStep() {
         this.completedSteps.add(this.activeStep.id);
         this.state = 'success';
-        this.timer = 3000; // 3 saniye ekranda kalsın
+        this.timer = 3000; // Stay on screen for 3 seconds
 
         this.uiContainer.classList.add('success');
         this.uiIcon.innerHTML = "✔";
 
-        // Eğer SaveManager varsa anlık kaydet
+        // If SaveManager exists, save immediately
         if (typeof SaveManager !== 'undefined') SaveManager.save(true);
 
-        // Başarım sesi
+        // Achievement sound
         if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'rare' });
     }
 

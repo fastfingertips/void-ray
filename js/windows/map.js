@@ -5,17 +5,17 @@
 // Window state
 export let mapOpen = false;
 
-// Büyük Harita Durumu (Zoom ve Pan Kontrolü)
+// Big Map State (Zoom and Pan Control)
 const bigMapState = {
     zoom: 1,
-    targetZoom: 1, // Hedef Zoom (Soft geçiş için)
+    targetZoom: 1, // Target Zoom (For soft transition)
     panX: 0,
-    targetPanX: 0, // Hedef Pan X
+    targetPanX: 0, // Target Pan X
     panY: 0,
-    targetPanY: 0, // Hedef Pan Y
+    targetPanY: 0, // Target Pan Y
     isDragging: false,
-    isTracking: false, // Takip modu
-    showTargets: false // Hedef Çizgilerini Gösterme Modu (YENİ)
+    isTracking: false, // Tracking mode
+    showTargets: false // Show Target Lines Mode (NEW)
 };
 
 function openMap() {
@@ -39,8 +39,8 @@ function toggleMap() {
 }
 
 /**
- * Haritayı OYUNCUNUN o anki konumuna odaklar.
- * Pan değerlerini oyuncunun dünya üzerindeki konumuna ve zoom seviyesine göre hesaplar.
+ * Focuses the map on the PLAYER'S current position.
+ * Calculates Pan values based on the player's position in the world and the zoom level.
  */
 window.centerMapOnPlayer = function () {
     const canvas = document.getElementById('big-map-canvas');
@@ -51,30 +51,30 @@ window.centerMapOnPlayer = function () {
     const cHeight = container.clientHeight;
 
     const margin = MAP_CONFIG.bigmap.margin;
-    // Hedef hesaplamalarında targetZoom kullanıyoruz ki kararlı olsun
+    // We use targetZoom in target calculations for stability
     const baseScale = Math.min((cWidth - margin * 2) / WORLD_SIZE, (cHeight - margin * 2) / WORLD_SIZE);
     const scale = baseScale * bigMapState.targetZoom;
 
-    // Hedef Pan değerlerini ayarla
+    // Set Target Pan values
     bigMapState.targetPanX = (WORLD_SIZE / 2 - player.x) * scale;
     bigMapState.targetPanY = (WORLD_SIZE / 2 - player.y) * scale;
 }
 
 /**
- * Oyuncu Takip Modunu Açar/Kapatır (Toggle)
+ * Toggles Player Tracking Mode
  */
 window.toggleMapTracking = function () {
     bigMapState.isTracking = !bigMapState.isTracking;
     updateTrackButtonState();
 
     if (bigMapState.isTracking) {
-        // Takip açıldığında hemen odakla ama animasyonlu gitmesi için sadece target'ı set et
+        // Focus immediately when tracking starts, but only set the target for animated transition
         centerMapOnPlayer();
     }
 }
 
 /**
- * Hedef Çizgisi Modunu Açar/Kapatır (YENİ)
+ * Toggles Target Line Mode (NEW)
  */
 window.toggleMapTargets = function () {
     bigMapState.showTargets = !bigMapState.showTargets;
@@ -86,15 +86,15 @@ function updateTrackButtonState() {
     if (!btn) return;
 
     if (bigMapState.isTracking) {
-        // GÜNCELLEME: Sabit sky (mavi) renkleri yerine CSS değişkenleri kullanıldı
+        // UPDATE: CSS variables used instead of static sky (blue) colors
         btn.classList.remove('text-white', 'bg-white/10');
-        // Aktif durum stili (Tema Rengi)
+        // Active state style (Theme Color)
         btn.style.color = 'var(--hud-color)';
         btn.style.borderColor = 'var(--hud-color)';
         btn.style.backgroundColor = 'var(--hud-color-dim)';
         btn.style.boxShadow = '0 0 10px var(--hud-color-dim)';
     } else {
-        // Pasif durum stili (Sıfırla)
+        // Passive state style (Reset)
         btn.style.color = '';
         btn.style.borderColor = '';
         btn.style.backgroundColor = '';
@@ -109,15 +109,15 @@ function updateTargetButtonState() {
     if (!btn) return;
 
     if (bigMapState.showTargets) {
-        // GÜNCELLEME: Sabit sky (mavi) renkleri yerine CSS değişkenleri kullanıldı
+        // UPDATE: CSS variables used instead of static sky (blue) colors
         btn.classList.remove('text-white', 'bg-white/10');
-        // Aktif durum stili (Tema Rengi)
+        // Active state style (Theme Color)
         btn.style.color = 'var(--hud-color)';
         btn.style.borderColor = 'var(--hud-color)';
         btn.style.backgroundColor = 'var(--hud-color-dim)';
         btn.style.boxShadow = '0 0 10px var(--hud-color-dim)';
     } else {
-        // Pasif durum stili (Sıfırla)
+        // Passive state style (Reset)
         btn.style.color = '';
         btn.style.borderColor = '';
         btn.style.backgroundColor = '';
@@ -135,7 +135,7 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
     let hasDragged = false;
     const coordsDisplay = document.getElementById('big-map-coords');
 
-    // Zoom (Tekerlek) - Mouse Konumuna Göre
+    // Zoom (Wheel) - Based on Mouse Position
     canvasElement.addEventListener('wheel', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -144,13 +144,13 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
 
-        // --- SOFT ZOOM AYARLARI ---
-        const zoomSensitivity = 0.0008; // Daha düşük hassasiyet
-        const oldZoom = bigMapState.targetZoom; // Hesaplamayı hedef zoom üzerinden yap
+        // --- SOFT ZOOM SETTINGS ---
+        const zoomSensitivity = 0.0008; // Lower sensitivity
+        const oldZoom = bigMapState.targetZoom; // Perform calculation based on target zoom
 
-        // Yeni hedef zoom'u hesapla
+        // Calculate new target zoom
         let newZoom = oldZoom + (e.deltaY * -zoomSensitivity * 2);
-        newZoom = Math.min(Math.max(1, newZoom), 8); // Limitler
+        newZoom = Math.min(Math.max(1, newZoom), 8); // Limits
 
         if (newZoom !== oldZoom) {
             const canvasCenterX = canvasElement.width / 2;
@@ -160,40 +160,40 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
 
             const zoomFactor = newZoom / oldZoom;
 
-            // Mouse imlecini koruyacak şekilde Pan hedefini güncelle
+            // Update Pan target to preserve mouse cursor position
             bigMapState.targetPanX = mouseRelX - (mouseRelX - bigMapState.targetPanX) * zoomFactor;
             bigMapState.targetPanY = mouseRelY - (mouseRelY - bigMapState.targetPanY) * zoomFactor;
 
             bigMapState.targetZoom = newZoom;
 
-            // Zoom yaparken takip modunu kapatmaya gerek yok, oyuncu odaklı zoom yapmak isteyebilir
+            // No need to disable tracking while zooming, the player may want to zoom focused on the ship
         }
     });
 
-    // Sürükleme Başlangıcı
+    // Start Dragging
     canvasElement.addEventListener('mousedown', (e) => {
         bigMapState.isDragging = true;
         dragStartX = e.clientX;
         dragStartY = e.clientY;
         hasDragged = false;
 
-        // Kullanıcı haritayı elle kaydırırsa takibi bırak
+        // Stop tracking if the user pans the map manually
         if (bigMapState.isTracking) {
             bigMapState.isTracking = false;
             updateTrackButtonState();
         }
     });
 
-    // Sürükleme ve Koordinat Gösterimi
+    // Dragging and Coordinate Display
     window.addEventListener('mousemove', (e) => {
-        // 1. Sürükleme İşlemi
+        // 1. Dragging Operation
         if (bigMapState.isDragging) {
             const dx = e.clientX - dragStartX;
             const dy = e.clientY - dragStartY;
 
             if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasDragged = true;
 
-            // Sürüklemede anında tepki için hem target hem current güncellenir
+            // Both target and current are updated for immediate response during dragging
             bigMapState.panX += dx;
             bigMapState.panY += dy;
             bigMapState.targetPanX = bigMapState.panX;
@@ -203,7 +203,7 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
             dragStartY = e.clientY;
         }
 
-        // 2. Koordinat Hesaplama
+        // 2. Coordinate Calculation
         if (mapOpen && coordsDisplay && e.target === canvasElement) {
             const rect = canvasElement.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
@@ -213,7 +213,7 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
             const cWidth = canvasElement.width;
             const cHeight = canvasElement.height;
 
-            // Görseldeki anlık zoom değerini (bigMapState.zoom) kullanarak doğru koordinatı göster
+            // Show correct coordinates using the instantaneous zoom value (bigMapState.zoom)
             const baseScale = Math.min((cWidth - margin * 2) / worldSize, (cHeight - margin * 2) / worldSize);
             const finalScale = baseScale * bigMapState.zoom;
 
@@ -235,7 +235,7 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
         bigMapState.isDragging = false;
 
         if (!hasDragged && e.target === canvasElement) {
-            // Tıklama ile hedef seçme mantığı...
+            // Logic for selecting target with click...
             const rect = canvasElement.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
@@ -265,16 +265,16 @@ function initMapListeners(canvasElement, worldSize, onTargetSelected) {
 function drawBigMap(ctx, canvas, worldSize, entities, state) {
     const container = canvas.parentElement;
 
-    // Canvas boyutu değişmişse güncelle (Performans optimizasyonu)
+    // Update if canvas size has changed (Performance optimization)
     if (canvas.width !== container.clientWidth || canvas.height !== container.clientHeight) {
         canvas.width = container.clientWidth;
         canvas.height = container.clientHeight;
     } else {
-        // Boyut değişmediyse sadece temizle
+        // If size hasn't changed, just clear
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // --- DİNAMİK TEMA RENGİ ---
+    // --- DYNAMIC THEME COLOR ---
     let themeColor = "#94d8c3";
     if (window.gameSettings && window.gameSettings.themeColor) {
         themeColor = window.gameSettings.themeColor;
@@ -283,22 +283,22 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     const themeRgbaMid = (typeof Utils !== 'undefined' && Utils.hexToRgba) ? Utils.hexToRgba(themeColor, 0.3) : "rgba(148, 216, 195, 0.3)";
     const themeRgbaHigh = (typeof Utils !== 'undefined' && Utils.hexToRgba) ? Utils.hexToRgba(themeColor, 0.5) : "rgba(148, 216, 195, 0.5)";
 
-    // --- İNTERPOLASYON (SOFT ZOOM/PAN) ---
-    // Mevcut değerleri hedef değerlere %10 oranında yaklaştır (Lerp)
+    // --- INTERPOLATION (SOFT ZOOM/PAN) ---
+    // Bring current values closer to target values by 10% (Lerp)
     const lerpSpeed = 0.1;
 
     bigMapState.zoom += (bigMapState.targetZoom - bigMapState.zoom) * lerpSpeed;
     bigMapState.panX += (bigMapState.targetPanX - bigMapState.panX) * lerpSpeed;
     bigMapState.panY += (bigMapState.targetPanY - bigMapState.panY) * lerpSpeed;
 
-    // Titremeyi önlemek için çok küçük farkları yoksay
+    // Ignore very small differences to prevent flickering
     if (Math.abs(bigMapState.targetZoom - bigMapState.zoom) < 0.001) bigMapState.zoom = bigMapState.targetZoom;
-    // Pan için tolerans biraz daha yüksek olabilir
+    // Tolerance for Pan can be slightly higher
     if (Math.abs(bigMapState.targetPanX - bigMapState.panX) < 0.1) bigMapState.panX = bigMapState.targetPanX;
     if (Math.abs(bigMapState.targetPanY - bigMapState.panY) < 0.1) bigMapState.panY = bigMapState.targetPanY;
 
-    // --- TAKİP MODU ---
-    // Takip açıksa hedefi sürekli güncelle, lerp sayesinde yumuşak takip eder
+    // --- TRACKING MODE ---
+    // Update target continuously if tracking is open, it tracks smoothly thanks to lerp
     if (bigMapState.isTracking) {
         centerMapOnPlayer();
     }
@@ -311,7 +311,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     const offsetX = (canvas.width - worldSize * scale) / 2 + bigMapState.panX;
     const offsetY = (canvas.height - worldSize * scale) / 2 + bigMapState.panY;
 
-    // --- ZOOM SEVİYESİ GÖSTERGESİ ---
+    // --- ZOOM LEVEL INDICATOR ---
     ctx.save();
     ctx.font = "bold 16px monospace";
     ctx.fillStyle = themeRgbaHigh;
@@ -319,11 +319,11 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     ctx.textBaseline = "top";
     ctx.shadowColor = "rgba(0,0,0,0.8)";
     ctx.shadowBlur = 4;
-    // Hedef zoom yerine o anki görsel zoom'u göstermek daha doğal hissettirir
+    // It feels more natural to show the current visual zoom rather than the target zoom
     ctx.fillText(`ZOOM: ${bigMapState.zoom.toFixed(1)}x`, canvas.width - 20, 20);
     ctx.restore();
 
-    // --- GRID SİSTEMİ ---
+    // --- GRID SYSTEM ---
     const GRID_STEP_MAJOR = MAP_CONFIG.grid.major;
     const GRID_STEP_MINOR = MAP_CONFIG.grid.minor;
 
@@ -383,7 +383,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     const px = offsetX + entities.player.x * scale;
     const py = offsetY + entities.player.y * scale;
 
-    // Mesafe Halkaları
+    // Distance Rings
     ctx.save();
     ctx.translate(px, py);
     ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
@@ -403,7 +403,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     });
     ctx.restore();
 
-    // Oyuncu Radarı
+    // Player Radar
     ctx.beginPath();
     ctx.arc(px, py, entities.player.radarRadius * scale, 0, Math.PI * 2);
     ctx.shadowBlur = 10; ctx.shadowColor = "rgba(251, 191, 36, 0.8)";
@@ -411,7 +411,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     ctx.lineWidth = 1; ctx.setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle = MAP_CONFIG.colors.radarArea; ctx.fill(); ctx.shadowBlur = 0;
 
-    // Oyuncu Tarama Alanı
+    // Player Scan Area
     ctx.beginPath();
     ctx.arc(px, py, entities.player.scanRadius * scale, 0, Math.PI * 2);
     ctx.shadowBlur = 15; ctx.shadowColor = MAP_CONFIG.minimap.scanColor;
@@ -419,7 +419,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     ctx.lineWidth = 1; ctx.stroke();
     ctx.fillStyle = MAP_CONFIG.colors.scanArea; ctx.fill(); ctx.shadowBlur = 0;
 
-    // Yankı Radarı
+    // Echo Radar
     if (entities.echoRay) {
         const ex = offsetX + entities.echoRay.x * scale;
         const ey = offsetY + entities.echoRay.y * scale;
@@ -436,7 +436,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
         ctx.fillStyle = MAP_CONFIG.colors.scanArea; ctx.fill(); ctx.shadowBlur = 0;
     }
 
-    // Gezegenler
+    // Planets
     entities.planets.forEach(p => {
         if (!p.collected) {
             const visibility = GameRules.getPlanetVisibility(p, entities.player, entities.echoRay);
@@ -452,8 +452,8 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
         }
     });
 
-    // --- GÜVENLİ BÖLGE (YENİ) ---
-    // Nexus ve çevresini kapsayan alan
+    // --- SAFE ZONE (NEW) ---
+    // Area covering Nexus and its surroundings
     const SAFE_ZONE_R = 1500;
     const nx = offsetX + entities.nexus.x * scale;
     const ny = offsetY + entities.nexus.y * scale;
@@ -468,7 +468,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     ctx.fillStyle = (typeof Utils !== 'undefined' && Utils.hexToRgba) ? Utils.hexToRgba(themeColor, 0.05) : "rgba(148, 216, 195, 0.05)";
     ctx.fill();
 
-    // Üsler
+    // Bases
     const drawBaseIcon = (entity, color, label) => {
         const bx = offsetX + entity.x * scale;
         const by = offsetY + entity.y * scale;
@@ -488,22 +488,23 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
         }
     };
 
+    const t = window.t || ((key) => key.split('.').pop());
     drawBaseIcon(entities.nexus, MAP_CONFIG.colors.nexus, "NEXUS");
-    if (entities.repairStation) drawBaseIcon(entities.repairStation, MAP_CONFIG.colors.repair, "TAMİR");
-    if (entities.storageCenter) drawBaseIcon(entities.storageCenter, MAP_CONFIG.colors.storage, "DEPO");
+    if (entities.repairStation) drawBaseIcon(entities.repairStation, MAP_CONFIG.colors.repair, t('map.repair'));
+    if (entities.storageCenter) drawBaseIcon(entities.storageCenter, MAP_CONFIG.colors.storage, t('map.storage'));
 
-    // Solucan Delikleri (YENİ)
+    // Wormholes (NEW)
     if (entities.wormholes) {
         entities.wormholes.forEach(w => {
-            // YENİ: Görünürlük Kontrolü (Radar Menzili)
-            // Varsayılan olarak gizli, sadece radar menzilindeyse çiz
+            // NEW: Visibility Control (Radar Range)
+            // Hidden by default, only drawn if within radar range
             let isVisible = false;
 
-            // Oyuncu radarı içinde mi?
+            // Is it within player radar?
             if (Utils.distEntity(entities.player, w) <= entities.player.radarRadius) {
                 isVisible = true;
             }
-            // Yankı (Echo) radarı içinde mi?
+            // Is it within Echo radar?
             else if (entities.echoRay && Utils.distEntity(entities.echoRay, w) <= entities.echoRay.radarRadius) {
                 isVisible = true;
             }
@@ -513,7 +514,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
             const wx = offsetX + w.x * scale;
             const wy = offsetY + w.y * scale;
 
-            // Sabit boyutlu görünür ikon
+            // Constant-sized visible icon
             const size = Math.max(4, 3 * scale);
 
             ctx.strokeStyle = GAME_CONFIG.WORMHOLE.COLOR_CORE || "#8b5cf6";
@@ -522,7 +523,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
             ctx.arc(wx, wy, size, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Merkez nokta
+            // Center point
             ctx.fillStyle = GAME_CONFIG.WORMHOLE.COLOR_OUTER || "#c4b5fd";
             ctx.beginPath();
             ctx.arc(wx, wy, size * 0.4, 0, Math.PI * 2);
@@ -534,7 +535,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
         ctx.fillStyle = MAP_CONFIG.colors.echo; ctx.beginPath(); ctx.arc(offsetX + entities.echoRay.x * scale, offsetY + entities.echoRay.y * scale, 4, 0, Math.PI * 2); ctx.fill();
     }
 
-    // Oyuncu İkonu
+    // Player Icon
     ctx.save();
     ctx.translate(offsetX + entities.player.x * scale, offsetY + entities.player.y * scale);
     ctx.rotate(entities.player.angle + Math.PI / 2);
@@ -542,14 +543,14 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
     ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(6, 8); ctx.lineTo(-6, 8); ctx.fill();
     ctx.restore();
 
-    // --- SCOUT (KEŞİF) HEDEFİ GÖRSELLEŞTİRME ---
+    // --- SCOUT (EXPLORATION) TARGET VISUALIZATION ---
     if (entities.player.scoutTarget) {
         const sx = offsetX + entities.player.scoutTarget.x * scale;
         const sy = offsetY + entities.player.scoutTarget.y * scale;
         const px = offsetX + entities.player.x * scale;
         const py = offsetY + entities.player.y * scale;
 
-        // Rota Çizgisi (Kesikli, Turkuaz)
+        // Route Line (Dashed, Turquoise)
         ctx.strokeStyle = "#67e8f9"; // Echo Rengi (Araştırma/Keşif teması)
         ctx.setLineDash([2, 8]);
         ctx.lineWidth = 1;
@@ -560,19 +561,19 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Hedef Noktası
+        // Target Point
         ctx.fillStyle = "#67e8f9";
         ctx.beginPath(); ctx.arc(sx, sy, 3, 0, Math.PI * 2); ctx.fill();
 
-        // Etiket (Zoom yapıldığında görünür)
+        // Label (Visible when zoomed in)
         if (bigMapState.zoom > 0.8) {
             ctx.font = "9px monospace";
             ctx.fillStyle = "#67e8f9";
-            ctx.fillText("KEŞİF", sx + 6, sy);
+            ctx.fillText(t('map.scoutLabel'), sx + 6, sy);
         }
     }
 
-    // Hedef Çizgisi (Manuel Target)
+    // Target Line (Manual Target)
     if (state.manualTarget) {
         const tx = offsetX + state.manualTarget.x * scale;
         const ty = offsetY + state.manualTarget.y * scale;
@@ -584,10 +585,10 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
 
         ctx.fillStyle = MAP_CONFIG.colors.target;
         ctx.font = "10px monospace";
-        ctx.fillText(`HEDEF [${Math.floor(state.manualTarget.x / 1000)}:${Math.floor(state.manualTarget.y / 1000)}]`, tx + 10, ty);
+        ctx.fillText(`${t('map.targetLabel')} [${Math.floor(state.manualTarget.x / 1000)}:${Math.floor(state.manualTarget.y / 1000)}]`, tx + 10, ty);
     }
 
-    // Yankı Dönüş Çizgisi
+    // Echo Return Line
     if (entities.echoRay && entities.echoRay.mode === 'return') {
         const ex = offsetX + entities.echoRay.x * scale;
         const ey = offsetY + entities.echoRay.y * scale;
@@ -608,9 +609,9 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
         ctx.lineDashOffset = 0;
     }
 
-    // --- HEDEF VEKTÖRLERİ (TARGET LINES) ÇİZİMİ ---
+    // --- TARGET LINES VISUALIZATION ---
     if (bigMapState.showTargets) {
-        // 1. Oyuncu Hedeﬁ (Kesikli Çizgi)
+        // 1. Player Target (Dashed Line)
         if (entities.player.debugTarget) {
             const px = offsetX + entities.player.x * scale;
             const py = offsetY + entities.player.y * scale;
@@ -626,7 +627,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
             ctx.globalAlpha = 0.6;
             ctx.stroke();
 
-            // Ok Ucu
+            // Arrow Head
             const angle = Math.atan2(ty - py, tx - px);
             const headLen = 10;
             ctx.beginPath();
@@ -640,7 +641,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
             ctx.globalAlpha = 1.0;
         }
 
-        // 2. Yankı Hedeﬁ (Kesikli Çizgi)
+        // 2. Echo Target (Dashed Line)
         if (entities.echoRay && entities.echoRay.debugTarget && !entities.echoRay.attached) {
             const ex = offsetX + entities.echoRay.x * scale;
             const ey = offsetY + entities.echoRay.y * scale;
@@ -656,7 +657,7 @@ function drawBigMap(ctx, canvas, worldSize, entities, state) {
             ctx.globalAlpha = 0.6;
             ctx.stroke();
 
-            // Ok Ucu
+            // Arrow Head
             const angle = Math.atan2(ty - ey, tx - ex);
             const headLen = 8;
             ctx.beginPath();

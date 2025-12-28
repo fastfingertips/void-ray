@@ -101,44 +101,56 @@ export const GAME_CONFIG = {
     ]
 };
 
-// --- INTRO SEQUENCE ---
-export const INTRO_SEQUENCE = [
-    { time: 0, text: "Sistem başlatılıyor...", type: "system" },
-    { time: 1000, text: "Optik sensörler kalibre ediliyor...", type: "info" },
-    { time: 3500, text: "Hoş geldin, Pilot. Motorlar aktif.", type: "loot" }
-];
-
-// --- MESSAGES ---
-export const MESSAGES = {
-    ECHO: {
-        SPAWN: "YANKI DOĞDU",
-        DETACH: "YANKI AYRILDI",
-        MERGE: "SİSTEMLER BİRLEŞTİ",
-        MERGE_DESC: "Yankı deposuna erişilebilir.",
-        COMING: "YANKI BİRLEŞMEK İÇİN GELİYOR...",
-        LOST_SIGNAL: "SİNYAL KAYBI",
-        LOST_SIGNAL_DESC: "Kamera Vatoz'a döndü.",
-        RANGE_WARNING: "SİNYAL KAYBI: MENZİL DIŞI"
-    },
-    UI: {
-        INVENTORY_FULL: "ENVANTER DOLU! NEXUS VEYA DEPOYA GİDİN.",
-        ROUTE_CREATED: "ROTA OLUŞTURULDU",
-        CAMERA_RESET: "KAMERA SIFIRLANDI",
-        CAMERA_RESET_DESC: "Gemiye dönüldü.",
-        SAFE_ZONE_ENTER: "GÜVENLİ BÖLGEYE VARILDI",
-        SAFE_ZONE_ENTER_DESC: "Nexus Koruma Alanı",
-        SAFE_ZONE_EXIT: "GÜVENLİ BÖLGEDEN AYRILDINIZ",
-        SAFE_ZONE_EXIT_DESC: "Dikkatli Olun",
-        WORMHOLE_ENTER: "SOLUCAN DELİĞİ TESPİT EDİLDİ",
-        WORMHOLE_DESC: "Uzay-Zaman Atlaması Başlatılıyor...",
-        JUMP_FAIL_ENERGY: "ENERJİ KRİTİK SEVİYEDE",
-        JUMP_FAIL_UNPREDICTABLE: "ATLAMA ÖNGÖRÜLEMİYOR",
-        JUMP_CANCELLED: "ATLAMA İPTAL EDİLDİ",
-        JUMP_PHASE_1: "ROTA HESAPLANIYOR...",
-        JUMP_PHASE_2: "KOORDİNATLARA KİLİTLENİYOR...",
-        JUMP_PHASE_3: "HİPER MOTORLAR ATEŞLENİYOR!"
-    }
+// --- INTRO SEQUENCE (Dynamic i18n support) ---
+export const getIntroSequence = () => {
+    const t = window.t || ((key) => key.split('.').pop());
+    return [
+        { time: 0, text: t('intro.systemStarting'), type: "system" },
+        { time: 1000, text: t('intro.calibratingSensors'), type: "info" },
+        { time: 3500, text: t('intro.welcomePilot'), type: "loot" }
+    ];
 };
+export const INTRO_SEQUENCE = getIntroSequence();
+
+// --- MESSAGES (Dynamic i18n support) ---
+const getMessages = () => {
+    const t = window.t || ((key) => key.split('.').pop());
+    return {
+        ECHO: {
+            SPAWN: t('messages.echo.spawn'),
+            DETACH: t('messages.echo.detach'),
+            MERGE: t('messages.echo.merge'),
+            MERGE_DESC: t('messages.echo.mergeDesc'),
+            COMING: t('messages.echo.coming'),
+            LOST_SIGNAL: t('messages.echo.lostSignal'),
+            LOST_SIGNAL_DESC: t('messages.echo.lostSignalDesc'),
+            RANGE_WARNING: t('messages.echo.rangeWarning')
+        },
+        UI: {
+            INVENTORY_FULL: t('messages.ui.inventoryFull'),
+            ROUTE_CREATED: t('messages.ui.routeCreated'),
+            CAMERA_RESET: t('messages.ui.cameraReset'),
+            CAMERA_RESET_DESC: t('messages.ui.cameraResetDesc'),
+            SAFE_ZONE_ENTER: t('messages.ui.safeZoneEnter'),
+            SAFE_ZONE_ENTER_DESC: t('messages.ui.safeZoneEnterDesc'),
+            SAFE_ZONE_EXIT: t('messages.ui.safeZoneExit'),
+            SAFE_ZONE_EXIT_DESC: t('messages.ui.safeZoneExitDesc'),
+            WORMHOLE_ENTER: t('messages.ui.wormholeEnter'),
+            WORMHOLE_DESC: t('messages.ui.wormholeDesc'),
+            JUMP_FAIL_ENERGY: t('messages.ui.jumpFailEnergy'),
+            JUMP_FAIL_UNPREDICTABLE: t('messages.ui.jumpFailUnpredictable'),
+            JUMP_CANCELLED: t('messages.ui.jumpCancelled'),
+            JUMP_PHASE_1: t('messages.ui.jumpPhase1'),
+            JUMP_PHASE_2: t('messages.ui.jumpPhase2'),
+            JUMP_PHASE_3: t('messages.ui.jumpPhase3')
+        }
+    };
+};
+
+// Export as a getter that returns fresh translations
+export const MESSAGES = new Proxy({}, {
+    get: (target, prop) => getMessages()[prop]
+});
 
 // --- INITIAL PLAYER DATA ---
 export const INITIAL_PLAYER_DATA = {
@@ -159,84 +171,101 @@ export const INITIAL_PLAYER_DATA = {
 
 // --- RARITY SYSTEM ---
 export const RARITY = {
-    COMMON: { id: 'common', name: 'Madde', color: '#94a3b8', prob: 0.5, xp: 10, value: 10 },
-    RARE: { id: 'rare', name: 'Kristal', color: '#38bdf8', prob: 0.2, xp: 40, value: 30 },
-    EPIC: { id: 'epic', name: 'Öz', color: '#c084fc', prob: 0.1, xp: 100, value: 100 },
-    LEGENDARY: { id: 'legendary', name: 'Yadigâr', color: '#fbbf24', prob: 0.04, xp: 500, value: 400 },
-    TOXIC: { id: 'toxic', name: 'Veri Sisi', color: '#10b981', prob: 0.01, xp: 0, value: 0 },
-    TARDIGRADE: { id: 'tardigrade', name: 'Tardigrad Yuvası', color: '#C7C0AE', prob: 0.02, xp: 20, value: 0 },
-    LOST: { id: 'lost', name: 'Kayıp Kargo', color: '#a855f7', prob: 0, xp: 0, value: 0 }
+    COMMON: { id: 'common', name: 'Matter', color: '#94a3b8', prob: 0.5, xp: 10, value: 10 },
+    RARE: { id: 'rare', name: 'Crystal', color: '#38bdf8', prob: 0.2, xp: 40, value: 30 },
+    EPIC: { id: 'epic', name: 'Essence', color: '#c084fc', prob: 0.1, xp: 100, value: 100 },
+    LEGENDARY: { id: 'legendary', name: 'Relic', color: '#fbbf24', prob: 0.04, xp: 500, value: 400 },
+    TOXIC: { id: 'toxic', name: 'Data Fog', color: '#10b981', prob: 0.01, xp: 0, value: 0 },
+    TARDIGRADE: { id: 'tardigrade', name: 'Tardigrade Nest', color: '#C7C0AE', prob: 0.02, xp: 20, value: 0 },
+    LOST: { id: 'lost', name: 'Lost Cargo', color: '#a855f7', prob: 0, xp: 0, value: 0 }
 };
 
 // --- LOOT DATABASE ---
 export const LOOT_DB = {
-    common: ["Hidrojen", "Karbon Tozu", "Demir", "Silika"],
-    rare: ["Buz Çekirdeği", "Safir", "İyonize Gaz"],
-    epic: ["Nebula Özü", "Yıldız Parçası", "Plazma"],
-    legendary: ["Zaman Kristali", "Kara Delik Kalıntısı"],
-    toxic: ["Statik Gürültü", "Bozuk Sektör"],
-    tardigrade: ["Tardigrad"],
-    lost: ["KAYIP SİNYAL"]
+    common: ["Hydrogen", "Carbon Dust", "Iron", "Silica"],
+    rare: ["Ice Core", "Sapphire", "Ionized Gas"],
+    epic: ["Nebula Essence", "Star Fragment", "Plasma"],
+    legendary: ["Time Crystal", "Black Hole Remnant"],
+    toxic: ["Static Noise", "Corrupted Sector"],
+    tardigrade: ["Tardigrade"],
+    lost: ["LOST SIGNAL"]
 };
 
 // --- ITEM TYPES (RPG System) ---
 export const ITEM_TYPES = {
-    WEAPON: { id: 'weapon', label: 'Lazer Modülü', icon: '⌖' },
-    ENGINE: { id: 'engine', label: 'İyon Motoru', icon: '▲' },
-    SHIELD: { id: 'shield', label: 'Enerji Kalkanı', icon: '◊' },
-    SENSOR: { id: 'sensor', label: 'Radar Ünitesi', icon: '◎' },
-    HULL: { id: 'hull', label: 'Nano Kaplama', icon: '⬢' }
+    WEAPON: { id: 'weapon', label: 'Laser Module', icon: '⌖' },
+    ENGINE: { id: 'engine', label: 'Ion Engine', icon: '▲' },
+    SHIELD: { id: 'shield', label: 'Energy Shield', icon: '◊' },
+    SENSOR: { id: 'sensor', label: 'Radar Unit', icon: '◎' },
+    HULL: { id: 'hull', label: 'Nano Plating', icon: '⬢' }
 };
 
 // --- RPG ITEMS ---
 export const RPG_ITEMS = {
-    weapon: ["Foton Işını", "Plazma Topu", "Kuantum Lazeri", "Anti-Madde Projektörü", "Void Kesicisi"],
-    engine: ["Warp Sürücüsü", "İyon İticisi", "Füzyon Reaktörü", "Karanlık Madde Motoru", "Hiper Sürücü"],
-    shield: ["Manyetik Kalkan", "Plazma Bariyeri", "Saptırıcı Kalkan", "Ayna Alan Üreteci"],
-    sensor: ["Derin Uzay Radarı", "Spektral Tarayıcı", "Biyo-Sensör", "Uzun Menzil Dizisi"],
-    hull: ["Titanyum Zırh", "Karbon Fiber Gövde", "Reaktif Zırh", "Kristal Kaplama"]
+    weapon: ["Photon Beam", "Plasma Cannon", "Quantum Laser", "Antimatter Projector", "Void Cutter"],
+    engine: ["Warp Drive", "Ion Thruster", "Fusion Reactor", "Dark Matter Engine", "Hyperdrive"],
+    shield: ["Magnetic Shield", "Plasma Barrier", "Deflector Shield", "Mirror Field Generator"],
+    sensor: ["Deep Space Radar", "Spectral Scanner", "Bio-Sensor", "Long Range Array"],
+    hull: ["Titanium Armor", "Carbon Fiber Hull", "Reactive Armor", "Crystal Plating"]
 };
 
 // --- BONUS TYPES ---
 export const BONUS_TYPES = [
-    { id: 'thrust', name: 'İtici Güç', unit: '%', min: 2, max: 20, weight: 25 },
-    { id: 'maneuver', name: 'Manevra Kabiliyeti', unit: '%', min: 5, max: 30, weight: 20 },
-    { id: 'energy_max', name: 'Max Enerji', unit: '', min: 20, max: 200, weight: 25 },
-    { id: 'energy_regen', name: 'Enerji Yenilenmesi', unit: '%', min: 5, max: 25, weight: 20 },
-    { id: 'fuel_save', name: 'Yakıt Tasarrufu', unit: '%', min: 5, max: 30, weight: 15 },
-    { id: 'radar_range', name: 'Radar Menzili', unit: 'km', min: 1, max: 10, weight: 20 },
-    { id: 'scan_speed', name: 'Tarama Hızı', unit: '%', min: 5, max: 40, weight: 15 },
-    { id: 'magnet', name: 'Çekim Alanı', unit: '%', min: 5, max: 50, weight: 25 },
-    { id: 'xp_gain', name: 'Veri Analizi (XP)', unit: '%', min: 5, max: 30, weight: 20 },
-    { id: 'cargo', name: 'Kargo Kapasitesi', unit: '', min: 10, max: 100, weight: 20 },
-    { id: 'hull_hp', name: 'Gövde Bütünlüğü', unit: '', min: 50, max: 500, weight: 30 },
-    { id: 'shield_cap', name: 'Kalkan Kapasitesi', unit: '', min: 20, max: 200, weight: 20 },
-    { id: 'gravity_res', name: 'Çekim Direnci', unit: '%', min: 5, max: 25, weight: 15 },
-    { id: 'rad_res', name: 'Radyasyon Koruması', unit: '%', min: 5, max: 30, weight: 15 }
+    { id: 'thrust', name: 'Thrust Power', unit: '%', min: 2, max: 20, weight: 25 },
+    { id: 'maneuver', name: 'Maneuverability', unit: '%', min: 5, max: 30, weight: 20 },
+    { id: 'energy_max', name: 'Max Energy', unit: '', min: 20, max: 200, weight: 25 },
+    { id: 'energy_regen', name: 'Energy Regen', unit: '%', min: 5, max: 25, weight: 20 },
+    { id: 'fuel_save', name: 'Fuel Save', unit: '%', min: 5, max: 30, weight: 15 },
+    { id: 'radar_range', name: 'Radar Range', unit: 'km', min: 1, max: 10, weight: 20 },
+    { id: 'scan_speed', name: 'Scan Speed', unit: '%', min: 5, max: 40, weight: 15 },
+    { id: 'magnet', name: 'Magnet Range', unit: '%', min: 5, max: 50, weight: 25 },
+    { id: 'xp_gain', name: 'Data Analysis (XP)', unit: '%', min: 5, max: 30, weight: 20 },
+    { id: 'cargo', name: 'Cargo Capacity', unit: '', min: 10, max: 100, weight: 20 },
+    { id: 'hull_hp', name: 'Hull Integrity', unit: '', min: 50, max: 500, weight: 30 },
+    { id: 'shield_cap', name: 'Shield Capacity', unit: '', min: 20, max: 200, weight: 20 },
+    { id: 'gravity_res', name: 'Gravity Resistance', unit: '%', min: 5, max: 25, weight: 15 },
+    { id: 'rad_res', name: 'Radiation Protection', unit: '%', min: 5, max: 30, weight: 15 }
 ];
 
-// --- UPGRADES ---
-export const UPGRADES = {
-    playerSpeed: { name: "İyon Motorları", desc: "Maksimum uçuş hızı.", baseCost: 100, max: 5 },
-    playerTurn: { name: "Manevra İticileri", desc: "Dönüş kabiliyeti.", baseCost: 150, max: 5 },
-    playerMagnet: { name: "Çekim Alanı", desc: "Eşya toplama mesafesi.", baseCost: 200, max: 5 },
-    playerCapacity: { name: "Kargo Genişletme", desc: "Envanter kapasitesini artırır.", baseCost: 300, max: 5 },
-    echoSpeed: { name: "Yankı Hızı", desc: "Yankı'nın uçuş hızı.", baseCost: 150, max: 5 },
-    echoRange: { name: "Sensör Ağı", desc: "Yankı'nın toplama çapı.", baseCost: 250, max: 5 },
-    echoDurability: { name: "Yankı Bataryası", desc: "Enerji tüketim verimliliği.", baseCost: 200, max: 5 },
-    echoCapacity: { name: "Yankı Deposu", desc: "Yankı'nın taşıma kapasitesini artırır.", baseCost: 250, max: 5 }
+// --- UPGRADES (Dynamic i18n support) ---
+export const getUpgrades = () => {
+    const t = window.t || ((key) => key.split('.').pop());
+    return {
+        playerSpeed: { name: t('upgrades.playerSpeed.name'), desc: t('upgrades.playerSpeed.desc'), baseCost: 100, max: 5 },
+        playerTurn: { name: t('upgrades.playerTurn.name'), desc: t('upgrades.playerTurn.desc'), baseCost: 150, max: 5 },
+        playerMagnet: { name: t('upgrades.playerMagnet.name'), desc: t('upgrades.playerMagnet.desc'), baseCost: 200, max: 5 },
+        playerCapacity: { name: t('upgrades.playerCapacity.name'), desc: t('upgrades.playerCapacity.desc'), baseCost: 300, max: 5 },
+        echoSpeed: { name: t('upgrades.echoSpeed.name'), desc: t('upgrades.echoSpeed.desc'), baseCost: 150, max: 5 },
+        echoRange: { name: t('upgrades.echoRange.name'), desc: t('upgrades.echoRange.desc'), baseCost: 250, max: 5 },
+        echoDurability: { name: t('upgrades.echoDurability.name'), desc: t('upgrades.echoDurability.desc'), baseCost: 200, max: 5 },
+        echoCapacity: { name: t('upgrades.echoCapacity.name'), desc: t('upgrades.echoCapacity.desc'), baseCost: 250, max: 5 }
+    };
 };
 
-// --- TIPS ---
-export const TIPS = [
-    "Enerjinizi yenilemek için Tardigradlar çok değerlidir.",
-    "Solucan delikleri (Mor Girdaplar) sizi haritanın rastgele bir yerine fırlatır.",
-    "Nadir gezegenlerden Efsunlu Eşyalar düşebilir!",
-    "Efsunlu motorlar İtici Güç bonusu ile geminizi hızlandırır.",
-    "Space tuşu ile kısa süreli hızlanabilirsiniz (Enerji harcar).",
-    "Envanteriniz dolarsa Nexus'ta satış yapın veya kapasiteyi artırın.",
-    "[J] tuşu ile Işık Atlamasını başlatabilir, tekrar basarak iptal edebilirsiniz."
-];
+// Create a proxy to get fresh translations each time
+export const UPGRADES = new Proxy({}, {
+    get: (target, prop) => {
+        const upgrades = getUpgrades();
+        return upgrades[prop];
+    },
+    ownKeys: () => ['playerSpeed', 'playerTurn', 'playerMagnet', 'playerCapacity', 'echoSpeed', 'echoRange', 'echoDurability', 'echoCapacity'],
+    getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+});
+
+// --- TIPS (Dynamic i18n support) ---
+export const getTips = () => {
+    const t = window.t || ((key) => key.split('.').pop());
+    return [
+        t('tips.tardigrade'),
+        t('tips.wormholes'),
+        t('tips.rarePlanets'),
+        t('tips.enchantedEngines'),
+        t('tips.spaceBoost'),
+        t('tips.inventoryFull'),
+        t('tips.lightJump')
+    ];
+};
+export const TIPS = getTips();
 
 // --- MAP CONFIGURATION ---
 export const MAP_CONFIG = {

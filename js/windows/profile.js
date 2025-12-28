@@ -6,7 +6,7 @@ export let profileOpen = false;
 let activeProfileTab = 'summary';
 
 /**
- * Profil penceresini açar/kapatır (Toggle).
+ * Toggles the profile window.
  */
 window.toggleProfile = function () {
     if (profileOpen) {
@@ -17,18 +17,18 @@ window.toggleProfile = function () {
 };
 
 /**
- * Profil penceresini açar.
- * @param {string} tab - Açılacak sekme ('summary' veya 'achievements')
+ * Opens the profile window.
+ * @param {string} tab - Tab to open ('summary' or 'achievements')
  */
 function openProfile(tab = 'summary') {
     profileOpen = true;
     const overlay = document.getElementById('profile-overlay');
     if (overlay) overlay.classList.add('open');
 
-    // Butonu aktif yap
+    // Activate button
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-profile-icon', true);
 
-    // İstenen sekmeye geç
+    // Switch to desired tab
     switchProfileTab(tab);
 
     renderProfile();
@@ -39,7 +39,7 @@ function closeProfile() {
     const overlay = document.getElementById('profile-overlay');
     if (overlay) overlay.classList.remove('open');
 
-    // Buton aktifliğini kaldır
+    // Deactivate button
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-profile-icon', false);
 
     hideTooltip();
@@ -48,17 +48,17 @@ function closeProfile() {
 function switchProfileTab(tabName) {
     activeProfileTab = tabName;
 
-    // Buton stillerini güncelle
+    // Update button styles
     document.querySelectorAll('.profile-tab-btn').forEach(t => t.classList.remove('active'));
     const activeBtn = document.getElementById(`p-tab-btn-${tabName}`);
     if (activeBtn) activeBtn.classList.add('active');
 
-    // İçerik görünürlüğünü güncelle
+    // Update content visibility
     document.querySelectorAll('.profile-tab-content').forEach(c => c.style.display = 'none');
     const activeContent = document.getElementById(`p-tab-${tabName}`);
     if (activeContent) activeContent.style.display = 'block';
 
-    // Eğer başarım sekmesi açıldıysa listeyi render et
+    // If achievement tab is opened, render list
     if (tabName === 'achievements') {
         renderAchievements();
     }
@@ -68,9 +68,9 @@ function renderProfile() {
     if (!profileOpen) return;
 
     if (typeof player !== 'undefined') {
-        player.updateUI(); // Bu fonksiyon zaten genel UI elementlerini günceller
+        player.updateUI(); // This function already updates general UI elements
 
-        // Yeni Profil Elementlerini Doldur
+        // Fill New Profile Elements
 
         // 1. Level / XP
         const xpCurr = document.getElementById('xp-current');
@@ -78,14 +78,14 @@ function renderProfile() {
         if (xpCurr) xpCurr.innerText = Math.floor(player.xp);
         if (xpMax) xpMax.innerText = Math.floor(player.maxXp);
 
-        // YENİ: XP BAR GÜNCELLEMESİ
+        // NEW: XP BAR UPDATE
         const xpBar = document.getElementById('profile-xp-fill');
         if (xpBar) {
             const percentage = Math.min(100, Math.max(0, (player.xp / player.maxXp) * 100));
             xpBar.style.width = `${percentage}%`;
         }
 
-        // 2. Statü (Upgrades)
+        // 2. Status (Upgrades)
         // playerData.upgrades -> { playerSpeed, playerTurn, playerMagnet, playerCapacity }
         if (playerData && playerData.upgrades) {
             const setStat = (id, val) => {
@@ -98,22 +98,22 @@ function renderProfile() {
             setStat('stat-lvl-cap', playerData.upgrades.playerCapacity);
         }
 
-        // 3. Durum (Vitals)
+        // 3. Status (Vitals)
         // player.health, player.energy
         const hpText = document.getElementById('val-hp-text');
         const epText = document.getElementById('val-ep-text');
         if (hpText) hpText.innerText = `${Math.floor(player.health)}/${Math.floor(player.maxHealth)}`;
         if (epText) epText.innerText = `${Math.floor(player.energy)}/${Math.floor(player.maxEnergy)}`;
 
-        // 4. Özellikler (Attributes)
-        // formatTime ui.js'den gelir
+        // 4. Attributes (Attributes)
+        // formatTime comes from ui.js
         if (playerData && playerData.stats) {
             const setAttr = (id, val) => {
                 const el = document.getElementById(id);
                 if (el) el.innerText = val;
             };
 
-            // Hız (Fiziksel hızın 10 katı HUD hızıdır)
+            // Speed (10x of physical speed is HUD speed)
             const speed = Math.floor(Math.hypot(player.vx, player.vy) * 10);
             setAttr('attr-speed', speed);
             setAttr('attr-echo-speed', Math.floor(playerData.stats.echoMaxSpeed * 10));
@@ -127,14 +127,15 @@ function renderProfile() {
             }
         }
 
-        // Rütbe
+        // Rank
         const rankEl = document.getElementById('profile-rank-text');
         if (rankEl) {
-            let rank = "ACEMİ PİLOT";
-            if (player.level > 2) rank = "GEZGİN";
-            if (player.level > 5) rank = "YILDIZ AVCISI";
-            if (player.level > 10) rank = "VOID SÜVARİSİ";
-            if (player.level > 20) rank = "EVRENİN HAKİMİ";
+            const t = window.t || ((key) => key.split('.').pop());
+            let rank = t('ranks.novice');
+            if (player.level > 2) rank = t('ranks.explorer');
+            if (player.level > 5) rank = t('ranks.starHunter');
+            if (player.level > 10) rank = t('ranks.voidCavalier');
+            if (player.level > 20) rank = t('ranks.cosmicLord');
             rankEl.innerText = rank;
         }
     }
@@ -145,7 +146,7 @@ function renderProfile() {
 }
 
 /**
- * Başarım listesini Profil Penceresi içine çizer.
+ * Renders the achievement list inside the Profile Window.
  */
 function renderAchievements() {
     if (typeof AchievementManager === 'undefined') return;
@@ -158,7 +159,7 @@ function renderAchievements() {
     AchievementManager.achievements.forEach(ach => {
         const isUnlocked = ach.unlocked;
 
-        // Değerleri Hesapla
+        // Calculate Values
         let currentVal = ach.getValue ? ach.getValue() : 0;
         let targetVal = ach.target || 1;
 
@@ -199,10 +200,11 @@ function renderAchievements() {
     const total = AchievementManager.achievements.length;
     const unlockedCount = AchievementManager.achievements.filter(a => a.unlocked).length;
     const progressEl = document.getElementById('ach-progress-text');
-    if (progressEl) progressEl.innerText = `${unlockedCount} / ${total} TAMAMLANDI`;
+    const t = window.t || ((key) => key.split('.').pop());
+    if (progressEl) progressEl.innerText = `${unlockedCount} / ${total} ${t('panels.completed')}`;
 }
 
-// Global erişim için window nesnesine atamalar
+// Assign to window object for global access
 window.openProfile = openProfile;
 window.closeProfile = closeProfile;
 window.switchProfileTab = switchProfileTab;

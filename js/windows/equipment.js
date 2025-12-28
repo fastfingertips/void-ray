@@ -4,14 +4,14 @@
 
 export let equipmentOpen = false;
 
-// Ekipman Slot Tanımları (Teknik Semboller)
+// Equipment Slot Definitions (Technical Symbols)
 const EQUIPMENT_SLOTS = {
-    shield: { id: 'shield', label: 'KALKAN', icon: '◊' },   // Eşkenar Dörtgen
-    engine: { id: 'engine', label: 'MOTOR', icon: '▲' },    // Üçgen
-    weaponL: { id: 'weapon_l', label: 'SİLAH L', icon: '⌖' }, // Nişangah
-    weaponR: { id: 'weapon_r', label: 'SİLAH R', icon: '⌖' }, // Nişangah
-    sensor: { id: 'sensor', label: 'RADAR', icon: '◎' },    // Bullseye
-    hull: { id: 'hull', label: 'GÖVDE', icon: '⬢' }         // Altıgen
+    shield: { id: 'shield', label: 'SHIELD', icon: '◊' },   // Diamond
+    engine: { id: 'engine', label: 'ENGINE', icon: '▲' },    // Triangle
+    weaponL: { id: 'weapon_l', label: 'WEAPON L', icon: '⌖' }, // Crosshair
+    weaponR: { id: 'weapon_r', label: 'WEAPON R', icon: '⌖' }, // Crosshair
+    sensor: { id: 'sensor', label: 'SENSOR', icon: '◎' },    // Bullseye
+    hull: { id: 'hull', label: 'HULL', icon: '⬢' }         // Hexagon
 };
 
 function toggleEquipment() {
@@ -24,7 +24,7 @@ function openEquipment() {
     const overlay = document.getElementById('equipment-overlay');
     if (overlay) {
         overlay.classList.add('open');
-        // YENİ: Pencereyi en öne getir
+        // NEW: Bring window to front
         const win = overlay.querySelector('.equipment-window');
         if (win && typeof bringWindowToFront === 'function') {
             bringWindowToFront(win);
@@ -48,7 +48,7 @@ function closeEquipment() {
 function renderEquipment() {
     if (!equipmentOpen) return;
 
-    // Slotları güncelle
+    // Update slots
     Object.keys(EQUIPMENT_SLOTS).forEach(key => {
         const slotData = EQUIPMENT_SLOTS[key];
         const wrapperEl = document.getElementById(`slot-${slotData.id}`);
@@ -98,7 +98,8 @@ function renderEquipment() {
                         iconEl.style.textShadow = '';
                     }
 
-                    newSlotEl.onmouseenter = (e) => showInfoTooltip(e, `${slotData.label}: BOŞ`);
+                    const t = window.t || ((key) => key.split('.').pop());
+                    newSlotEl.onmouseenter = (e) => showInfoTooltip(e, `${slotData.label}: ${t('equipNotif.slotEmpty')}`);
                     newSlotEl.onclick = null;
                 }
 
@@ -136,11 +137,12 @@ function updateEquipmentStats() {
     setVal('estat-nrg', Math.floor(player.maxEnergy));
 }
 
-// --- EŞYA YÖNETİMİ ---
+// --- ITEM MANAGEMENT ---
 
 window.equipItem = function (item) {
+    const t = window.t || ((key) => key.split('.').pop());
     if (!item || item.category !== 'equipment') {
-        showNotification({ name: "UYARI", type: { color: '#f59e0b' } }, "Bu eşya kuşanılamaz.");
+        showNotification({ name: t('equipNotif.warning'), type: { color: '#f59e0b' } }, t('equipNotif.cannotEquip'));
         return;
     }
 
@@ -164,7 +166,7 @@ window.equipItem = function (item) {
     playerData.equipment[targetSlotKey] = item;
 
     Utils.playSound('playChime', { id: 'rare' });
-    showNotification({ name: "SİSTEM GÜNCELLENDİ", type: { color: '#10b981' } }, item.name + " takıldı.");
+    showNotification({ name: t('equipNotif.systemUpdated'), type: { color: '#10b981' } }, item.name + " " + t('equipNotif.equipped'));
 
     if (typeof renderInventory === 'function') renderInventory();
     if (typeof updateInventoryCount === 'function') updateInventoryCount();
@@ -177,7 +179,8 @@ window.unequipItem = function (slotKey) {
     if (!item) return;
 
     if (GameRules.isInventoryFull(collectedItems.length)) {
-        showNotification({ name: "HATA", type: { color: '#ef4444' } }, "Envanter dolu!");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('equipNotif.error'), type: { color: '#ef4444' } }, t('equipNotif.inventoryFull'));
         Utils.playSound('playError');
         return;
     }

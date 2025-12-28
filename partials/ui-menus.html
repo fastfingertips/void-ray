@@ -1,14 +1,26 @@
-<!-- ANA MENÜ -->
+<!-- MAIN MENU -->
 <div id="main-menu">
-    <!-- BAŞLIK -->
-    <div class="menu-top-section">
-        <div class="title-main" style="margin-top: 8vh;">VOID RAY</div>
+    <!-- LANGUAGE SELECTOR (TOP RIGHT CORNER) -->
+    <div id="menu-language-selector">
+        <button id="menu-lang-tr" class="menu-lang-btn active" title="Türkçe">
+            <span>🇹🇷</span>
+            <span>TR</span>
+        </button>
+        <button id="menu-lang-en" class="menu-lang-btn" title="English">
+            <span>🇬🇧</span>
+            <span>EN</span>
+        </button>
     </div>
 
-    <!-- ETKİLEŞİM ALANI -->
+    <!-- TITLE -->
+    <div class="menu-top-section">
+        <div class="title-main">VOID RAY</div>
+    </div>
+
+    <!-- INTERACTION ZONE -->
     <div class="interaction-zone">
 
-        <!-- 1. SİSTEM KONTROL (Boot - Vatoz Yok) -->
+        <!-- 1. SYSTEM CONTROL (Boot - No Ship) -->
         <div id="integrated-boot-container" class="boot-container-integrated">
             <div class="boot-status-text">SYSTEM_INIT...</div>
             <div class="check-list-integrated"></div>
@@ -17,22 +29,22 @@
             </div>
         </div>
 
-        <!-- 2. OYUN KONTROLLERİ (Launch - Vatoz Var) -->
+        <!-- 2. GAME CONTROLS (Launch - Ship Ready) -->
         <div id="menu-controls-wrapper" class="menu-controls-hidden">
 
-            <!-- VATOZ SİMGESİ (Ortalanmış ve Dengeli) -->
+            <!-- SHIP SYMBOL (Centered and Balanced) -->
             <svg class="void-symbol-center" viewBox="0 0 100 100" fill="none">
-                <!-- Renkler CSS'den kontrol ediliyor -->
+                <!-- Colors controlled by CSS -->
                 <path
                     d="M50 20 C 65 30, 90 45, 80 75 C 65 65, 55 85, 50 95 C 45 85, 35 65, 20 75 C 10 45, 35 30, 50 20 Z"
                     stroke-width="2" />
                 <circle cx="50" cy="40" r="3" />
             </svg>
 
-            <!-- OYUN BAŞLATMA KARTI -->
+            <!-- GAME START CARD -->
             <div id="game-start-card" class="game-start-card">
 
-                <!-- KAYIT BİLGİ BÖLÜMÜ (Kayıt varsa gösterilecek) -->
+                <!-- SAVE INFO SECTION (Shown if save exists) -->
                 <div id="save-info-section" style="display: none;">
                     <div style="font-size: 0.65rem; color: #10b981; letter-spacing: 2px; margin-bottom: 16px; 
                         text-align: center; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 10px;
@@ -43,44 +55,44 @@
                             <polyline points="17 21 17 13 7 13 7 21" />
                             <polyline points="7 3 7 8 15 8" />
                         </svg>
-                        KAYITLI YAŞAM DÖNGÜSÜ
+                        <span data-i18n="menu.savedLifeCycle">SAVED LIFE CYCLE</span>
                     </div>
 
-                    <!-- İstatistikler Grid -->
+                    <!-- Statistics Grid -->
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
-                        <!-- Seviye -->
+                        <!-- Level -->
                         <div class="stat-item">
-                            <div class="stat-label">SEVİYE</div>
+                            <div class="stat-label" data-i18n="menu.level">LEVEL</div>
                             <div id="save-info-level" class="stat-value" style="color: #10b981;">-</div>
                         </div>
-                        <!-- Sağlık -->
+                        <!-- Health -->
                         <div class="stat-item">
-                            <div class="stat-label">SAĞLIK</div>
+                            <div class="stat-label" data-i18n="menu.health">HEALTH</div>
                             <div id="save-info-health" class="stat-value" style="color: #ef4444;">-</div>
                         </div>
-                        <!-- Enerji -->
+                        <!-- Energy -->
                         <div class="stat-item">
-                            <div class="stat-label">ENERJİ</div>
+                            <div class="stat-label" data-i18n="menu.energy">ENERGY</div>
                             <div id="save-info-energy" class="stat-value" style="color: #38bdf8;">-</div>
                         </div>
-                        <!-- Envanter -->
+                        <!-- Inventory -->
                         <div class="stat-item">
-                            <div class="stat-label">ENVANTER</div>
+                            <div class="stat-label" data-i18n="menu.inventory">INVENTORY</div>
                             <div id="save-info-inventory" class="stat-value" style="color: #fbbf24;">-</div>
                         </div>
-                        <!-- Depo -->
+                        <!-- Storage -->
                         <div class="stat-item">
-                            <div class="stat-label">DEPO</div>
+                            <div class="stat-label" data-i18n="menu.storage">STORAGE</div>
                             <div id="save-info-storage" class="stat-value" style="color: #a855f7;">-</div>
                         </div>
-                        <!-- Başarım -->
+                        <!-- Achievement -->
                         <div class="stat-item">
-                            <div class="stat-label">BAŞARIM</div>
+                            <div class="stat-label" data-i18n="menu.achievement">ACHIEVEMENT</div>
                             <div id="save-info-achievements" class="stat-value" style="color: #fbbf24;">-</div>
                         </div>
                     </div>
 
-                    <!-- Detaylı Bilgiler -->
+                    <!-- Detailed Info -->
                     <div style="padding: 12px; background: rgba(0,0,0,0.3); 
                         border: 1px solid rgba(148, 216, 195, 0.15); margin-bottom: 20px;">
                         <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.7rem;">
@@ -92,7 +104,7 @@
                                         <circle cx="12" cy="12" r="10" />
                                         <polyline points="12 6 12 12 16 14" />
                                     </svg>
-                                    Oynama Süresi
+                                    <span data-i18n="menu.playTime">Play Time</span>
                                 </span>
                                 <span id="save-info-playtime" style="color: #e2e8f0; font-weight: 600;">-</span>
                             </div>
@@ -106,7 +118,7 @@
                                         <line x1="8" y1="2" x2="8" y2="6" />
                                         <line x1="3" y1="10" x2="21" y2="10" />
                                     </svg>
-                                    Son Kayıt
+                                    <span data-i18n="menu.lastSave">Last Save</span>
                                 </span>
                                 <span id="save-info-lastsave" style="color: #e2e8f0; font-weight: 600;">-</span>
                             </div>
@@ -118,7 +130,7 @@
                                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                                         <circle cx="12" cy="10" r="3" />
                                     </svg>
-                                    Konum
+                                    <span data-i18n="menu.location">Location</span>
                                 </span>
                                 <span id="save-info-location"
                                     style="color: #67e8f9; font-family: monospace; font-size: 0.65rem; font-weight: 600;">-</span>
@@ -127,68 +139,78 @@
                     </div>
                 </div>
 
-                <!-- BUTONLAR -->
+                <!-- BUTTONS -->
                 <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
                     <button id="btn-continue" class="menu-btn-primary"
-                        style="display: none; border-color: #10b981; color: #10b981;">
-                        [ DEVAM ET ]
+                        style="display: none; border-color: #10b981; color: #10b981;" data-i18n="menu.continue">
+                        [ CONTINUE ]
                     </button>
 
-                    <button id="btn-start" class="menu-btn-primary">
-                        [ BAŞLAT ]
+                    <button id="btn-start" class="menu-btn-primary" data-i18n="menu.start">
+                        [ START ]
                     </button>
                 </div>
             </div>
 
-            <!-- KLASİK GRID TUŞ TAKIMI -->
+            <!-- CLASSIC GRID KEYPAD -->
             <div class="controls-grid-classic">
-                <!-- Sol Sütun -->
+                <!-- Left Column -->
                 <div class="key-col">
                     <div class="key-row"><span class="key-cap">W</span><span class="key-cap">A</span><span
-                            class="key-cap">S</span><span class="key-cap">D</span> <span>Navigasyon</span></div>
-                    <div class="key-row"><span class="key-cap" style="width: 80px;">SPACE</span> <span>İtici Güç</span>
+                            class="key-cap">S</span><span class="key-cap">D</span> <span
+                            data-i18n="controls.navigation">Navigation</span></div>
+                    <div class="key-row"><span class="key-cap" style="width: 80px;">SPACE</span> <span
+                            data-i18n="controls.thrust">Thrust (Boost)</span>
                     </div>
                 </div>
 
-                <!-- Orta Sütun -->
+                <!-- Middle Column -->
                 <div class="key-col">
-                    <div class="key-row"><span class="key-cap">E</span> <span>Etkileşim</span></div>
-                    <div class="key-row"><span class="key-cap">F</span> <span>Yankı Link</span></div>
-                    <div class="key-row"><span class="key-cap">Q</span> <span>Oto-Pilot</span></div>
-                    <div class="key-row"><span class="key-cap">C</span> <span>Kamera</span></div>
+                    <div class="key-row"><span class="key-cap">E</span> <span
+                            data-i18n="controls.interaction">Interaction</span></div>
+                    <div class="key-row"><span class="key-cap">F</span> <span data-i18n="controls.echoLink">Echo
+                            Link</span></div>
+                    <div class="key-row"><span class="key-cap">Q</span> <span
+                            data-i18n="controls.autoPilot">Auto-Pilot</span></div>
+                    <div class="key-row"><span class="key-cap">C</span> <span data-i18n="controls.camera">Camera</span>
+                    </div>
                 </div>
 
-                <!-- Sağ Sütun -->
+                <!-- Right Column -->
                 <div class="key-col">
-                    <div class="key-row"><span class="key-cap">I</span> <span>Kargo</span></div>
-                    <div class="key-row"><span class="key-cap">M</span> <span>Radar</span></div>
-                    <div class="key-row"><span class="key-cap">H</span> <span>HUD</span></div>
-                    <!-- YENİ: IŞIK ATLAMASI TUŞU (RENK DÜZELTİLDİ) -->
-                    <div class="key-row"><span class="key-cap">J</span> <span>Işık Atla</span></div>
+                    <div class="key-row"><span class="key-cap">I</span> <span data-i18n="controls.cargo">Cargo</span>
+                    </div>
+                    <div class="key-row"><span class="key-cap">M</span> <span data-i18n="controls.radar">Radar</span>
+                    </div>
+                    <div class="key-row"><span class="key-cap">H</span> <span data-i18n="controls.hud">HUD</span></div>
+                    <!-- LIGHT JUMP KEY -->
+                    <div class="key-row"><span class="key-cap">J</span> <span data-i18n="controls.lightJump">Light
+                            Jump</span></div>
                 </div>
 
-                <!-- Alt Sütun -->
+                <!-- Bottom Row -->
                 <div class="key-col"
-                    style="grid-column: span 3; justify-content: center; border-top: 1px dashed rgba(148, 216, 195, 0.3); padding-top: 15px; margin-top: 5px;">
-                    <div class="key-row"><span class="key-cap">ESC</span> <span>Sistem Menüsü</span></div>
+                    style="width: 100%; justify-content: center; border-top: 1px dashed rgba(148, 216, 195, 0.3); padding-top: 15px; margin-top: 5px; align-items: center;">
+                    <div class="key-row"><span class="key-cap">ESC</span> <span data-i18n="controls.systemMenu">System
+                            Menu</span></div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- GELİŞTİRİCİ ALT BİLGİSİ -->
+    <!-- DEVELOPER FOOTER -->
     <div class="dev-footer">
         <a href="https://github.com/tugracoskun" target="_blank" class="dev-info-item link-hover"
-            title="Geliştirici Profilini Görüntüle"
-            style="text-decoration: none; display: flex; flex-direction: column;">
+            title="View Developer Profile" style="text-decoration: none; display: flex; flex-direction: column;">
             <span class="dev-label">DEVELOPER</span>
             <span class="dev-name">@tugracoskun</span>
         </a>
 
         <div style="width: 1px; height: 25px; background: var(--hud-color-dim);"></div>
 
-        <a href="https://github.com/tugracoskun/void-ray" target="_blank" class="github-link-btn" title="GitHub Deposu"
+        <a href="https://github.com/tugracoskun/void-ray" target="_blank" class="github-link-btn"
+            title="GitHub Repository"
             style="text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 1.5px;">
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -199,11 +221,11 @@
             <span>SOURCE</span>
         </a>
 
-        <!-- YENİ: DESTEK BUTONU -->
+        <!-- SUPPORT BUTTON -->
         <div style="width: 1px; height: 25px; background: var(--hud-color-dim);"></div>
 
         <a href="https://github.com/tugracoskun/void-ray/issues" target="_blank" class="github-link-btn"
-            title="Sorun Bildir / İletişim"
+            data-i18n-title="menu.reportIssue" title="Report Issue / Contact"
             style="text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 1.5px;">
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -211,18 +233,18 @@
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <span>DESTEK</span>
+            <span data-i18n="menu.support">SUPPORT</span>
         </a>
 
-        <!-- YENİ: GÜNCELLEME VAKTİ VE DETAYI -->
+        <!-- UPDATE TIME AND DETAILS -->
         <div id="update-separator" style="width: 1px; height: 25px; background: var(--hud-color-dim); display:none;">
         </div>
 
         <a href="https://github.com/tugracoskun/void-ray/commits" target="_blank" id="update-container"
-            class="dev-info-item link-hover" title="Son Değişiklikler"
+            class="dev-info-item link-hover" data-i18n-title="menu.latestChanges" title="Latest Changes"
             style="text-decoration: none; display: none; flex-direction: column; align-items: flex-end; max-width: 250px;">
             <div style="display:flex; gap:6px; align-items:center;">
-                <span class="dev-label">GÜNCELLEME</span>
+                <span class="dev-label" data-i18n="menu.update">UPDATE</span>
                 <span id="commit-sha"
                     style="font-size: 0.55rem; color: var(--hud-color); opacity: 0.8; font-family: monospace; background: rgba(148, 216, 195, 0.1); padding: 1px 4px; border-radius: 2px;"></span>
             </div>
@@ -233,27 +255,30 @@
     </div>
 </div>
 
-<!-- DİĞER MODALLER -->
+<!-- OTHER MODALS -->
 <div id="mobile-warning" class="mobile-warning-overlay" style="display: none;">
     <div class="system-modal warning">
-        <div class="modal-header warning">!!! SİSTEM UYARISI !!!</div>
+        <div class="modal-header warning" data-i18n="mobile.systemWarning">!!! SYSTEM WARNING !!!</div>
         <div class="modal-content">
             <div class="warning-icon">⚠</div>
-            <h2>MOBİL CİHAZ ALGILANDI</h2>
-            <p>Bu simülasyon klavye kontrolleri için tasarlanmıştır.</p>
-            <button id="btn-close-mobile-warning" class="menu-btn small-btn">[ YİNE DE DEVAM ET ]</button>
+            <h2 data-i18n="mobile.detected">MOBILE DEVICE DETECTED</h2>
+            <p data-i18n="mobile.description">This simulation is designed for keyboard controls.</p>
+            <button id="btn-close-mobile-warning" class="menu-btn small-btn" data-i18n="mobile.continueAnyway">[
+                CONTINUE ANYWAY ]</button>
         </div>
     </div>
 </div>
 
-<!-- ÖLÜM EKRANI -->
+<!-- DEATH SCREEN -->
 <div id="death-screen">
     <div class="system-modal danger">
-        <div class="modal-header danger">SİNYAL KAYBI TESPİT EDİLDİ</div>
+        <div class="modal-header danger" data-i18n="death.signalLost">SIGNAL LOSS DETECTED</div>
         <div class="modal-content">
-            <div class="death-title">BAĞLANTI KOPTU</div>
-            <div class="death-sub">GEMİ GÖVDE BÜTÜNLÜĞÜ KRİTİK SEVİYENİN ALTINDA</div>
-            <div class="death-info">> Acil durum protokolü devrede...<br>> Tamir istasyonuna veri aktarılıyor...</div>
+            <div class="death-title" data-i18n="death.disconnected">CONNECTION LOST</div>
+            <div class="death-sub" data-i18n="death.criticalDamage">SHIP HULL INTEGRITY BELOW CRITICAL LEVEL</div>
+            <div class="death-info"><span data-i18n="death.emergencyProtocol">> Emergency protocol
+                    active...</span><br><span data-i18n="death.dataTransfer">> Transferring data to repair
+                    station...</span></div>
             <div class="loading-bar-wrapper">
                 <div class="loading-bar-fill"></div>
             </div>
@@ -264,12 +289,13 @@
 <!-- PAUSE OVERLAY -->
 <div id="pause-overlay">
     <div class="system-modal">
-        <div class="modal-header">SİSTEM DURAKLATILDI</div>
+        <div class="modal-header" data-i18n="pause.systemPaused">SYSTEM PAUSED</div>
         <div class="modal-content">
-            <div class="pause-title">BEKLEME MODU</div>
+            <div class="pause-title" data-i18n="pause.waitingMode">WAITING MODE</div>
             <div class="pause-menu-grid">
-                <button id="btn-resume-game" class="pause-btn">[ SİMÜLASYONA DÖN ]</button>
-                <button id="btn-quit-game" class="pause-btn danger">[ BAĞLANTIYI KES ]</button>
+                <button id="btn-resume-game" class="pause-btn" data-i18n="pause.resume">[ RETURN TO SIMULATION
+                    ]</button>
+                <button id="btn-quit-game" class="pause-btn danger" data-i18n="pause.quit">[ DISCONNECT ]</button>
             </div>
         </div>
     </div>

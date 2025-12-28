@@ -5,13 +5,13 @@
 
 export const SaveManager = {
     SAVE_KEY: 'void_ray_save_v1',
-    AUTO_SAVE_INTERVAL: 30000, // 30 Saniye
+    AUTO_SAVE_INTERVAL: 30000, // 30 Seconds
     CURRENT_VERSION: 1.1,
 
     saveIntervalId: null,
 
     init: function () {
-        console.log("SaveManager başlatılıyor...");
+        console.log("SaveManager initializing...");
         this.load();
 
         if (this.saveIntervalId) clearInterval(this.saveIntervalId);
@@ -43,15 +43,16 @@ export const SaveManager = {
 
             const data = JSON.parse(json);
 
-            // Oyun süresini hesapla
+            // Calculate game time
             const gameTime = data.meta?.gameTime || 0;
             const hours = Math.floor(gameTime / 3600000);
             const minutes = Math.floor((gameTime % 3600000) / 60000);
 
-            // Son kayıt zamanı
+            // Last save time
             const saveDate = data.meta?.timestamp ? new Date(data.meta.timestamp) : null;
-            const timeSinceSave = saveDate ? Math.floor((Date.now() - saveDate.getTime()) / 60000) : 0; // dakika cinsinden
+            const timeSinceSave = saveDate ? Math.floor((Date.now() - saveDate.getTime()) / 60000) : 0; // in minutes
 
+            const t = window.t || ((key) => key.split('.').pop());
             return {
                 level: data.player?.level || 1,
                 xp: data.player?.xp || 0,
@@ -69,21 +70,21 @@ export const SaveManager = {
                 gameTime: {
                     hours,
                     minutes,
-                    formatted: `${hours}s ${minutes}dk`
+                    formatted: `${hours}${t('time.hours')} ${minutes}${t('time.minutes')}`
                 },
                 lastSave: {
                     date: saveDate,
                     minutesAgo: timeSinceSave,
                     formatted: timeSinceSave < 60
-                        ? `${timeSinceSave} dakika önce`
+                        ? `${timeSinceSave} ${t('time.minutesAgo')}`
                         : timeSinceSave < 1440
-                            ? `${Math.floor(timeSinceSave / 60)} saat önce`
-                            : `${Math.floor(timeSinceSave / 1440)} gün önce`
+                            ? `${Math.floor(timeSinceSave / 60)} ${t('time.hoursAgo')}`
+                            : `${Math.floor(timeSinceSave / 1440)} ${t('time.daysAgo')}`
                 },
                 version: data.meta?.version || '1.0'
             };
         } catch (e) {
-            console.error("Kayıt bilgisi okunamadı:", e);
+            console.error("Could not read save info:", e);
             return null;
         }
     },
@@ -116,10 +117,10 @@ export const SaveManager = {
                 y: Math.round(echoRay.y)
             } : { active: false },
 
-            // BAŞARIMLARI KAYDET
+            // SAVE ACHIEVEMENTS
             achievements: (typeof AchievementManager !== 'undefined') ? AchievementManager.getUnlockedIds() : [],
 
-            // REHBER KAYDI (YENİ)
+            // TUTORIAL SAVE (NEW)
             tutorial: (typeof TutorialManager !== 'undefined') ? TutorialManager.getExportData() : []
         };
 
@@ -133,13 +134,15 @@ export const SaveManager = {
 
             localStorage.setItem(this.SAVE_KEY, encoded);
 
-            if (!silent) showNotification({ name: "İLERLEME KAYDEDİLDİ", type: { color: '#10b981' } }, "");
-            else console.log(`[AutoSave] Veri boyutu: ${(encoded.length / 1024).toFixed(2)} KB`);
+            const t = window.t || ((key) => key.split('.').pop());
+            if (!silent) showNotification({ name: t('saveNotif.progressSaved'), type: { color: '#10b981' } }, "");
+            else console.log(`[AutoSave] Data size: ${(encoded.length / 1024).toFixed(2)} KB`);
 
         } catch (e) {
-            console.error("Kayıt başarısız:", e);
+            console.error("Save failed:", e);
+            const t = window.t || ((key) => key.split('.').pop());
             if (e.name === 'QuotaExceededError') {
-                showNotification({ name: "KAYIT HATASI", type: { color: '#ef4444' } }, "Disk alanı dolu!");
+                showNotification({ name: t('saveNotif.saveError'), type: { color: '#ef4444' } }, t('saveNotif.diskFull'));
             }
         }
     },
@@ -202,14 +205,17 @@ export const SaveManager = {
                     echoRay.lootBag = data.echo.lootBag || [];
                     echoRay.mode = (data.echo.mode === 'return' || data.echo.mode === 'deposit_storage') ? 'roam' : data.echo.mode;
                 }
+            } else if (player.level >= 3 && !echoRay) {
+                // If level is high enough but no echo in save (or inactive), give a new one
+                spawnEcho(player.x, player.y + 150);
             }
 
-            // BAŞARIMLARI YÜKLE
+            // LOAD ACHIEVEMENTS
             if (data.achievements && typeof AchievementManager !== 'undefined') {
                 AchievementManager.loadUnlockedIds(data.achievements);
             }
 
-            // REHBER YÜKLE (YENİ)
+            // LOAD TUTORIAL (NEW)
             if (data.tutorial && typeof TutorialManager !== 'undefined') {
                 TutorialManager.loadProgress(data.tutorial);
             }
@@ -218,39 +224,43 @@ export const SaveManager = {
             updateInventoryCount();
             if (typeof updateEchoDropdownUI === 'function') updateEchoDropdownUI();
 
-            console.log("Kayıt başarıyla yüklendi.");
+            const t = window.t || ((key) => key.split('.').pop());
+            console.log(t('saveNotif.saveLoaded'));
             return true;
 
         } catch (e) {
-            console.error("Kayıt dosyası bozuk veya uyumsuz:", e);
-            showNotification({ name: "KAYIT BOZUK", type: { color: '#ef4444' } }, "Veri kurtarılamadı.");
+            const t = window.t || ((key) => key.split('.').pop());
+            console.error(t('saveNotif.saveCorruptError'), e);
+            showNotification({ name: t('saveNotif.saveCorrupt'), type: { color: '#ef4444' } }, t('saveNotif.dataNotRecovered'));
             return false;
         }
     },
 
     resetSave: function () {
         localStorage.removeItem(this.SAVE_KEY);
-        // localStorage.removeItem('void_ray_tutorial'); // Eski varsa sil
+        // localStorage.removeItem('void_ray_tutorial'); // Delete if old exists
         if (typeof TutorialManager !== 'undefined') TutorialManager.reset();
-        console.log("Kayıt silindi.");
+        const t = window.t || ((key) => key.split('.').pop());
+        console.log(t('saveNotif.saveDeleted'));
     },
 
     exportSave: function () {
         this.save(true);
         const data = localStorage.getItem(this.SAVE_KEY);
-        if (!data) return "Kayıt bulunamadı.";
+        const t = window.t || ((key) => key.split('.').pop());
+        if (!data) return t('saveNotif.saveNotFound');
 
         navigator.clipboard.writeText(data).then(() => {
-            showNotification({ name: "KAYIT KOPYALANDI", type: { color: '#38bdf8' } }, "Panoya yapıştırabilirsin.");
+            showNotification({ name: t('saveNotif.saveCopied'), type: { color: '#38bdf8' } }, t('saveNotif.copyToClipboard'));
         }).catch(err => {
-            console.log("Kayıt Kodu:", data);
-            showNotification({ name: "KONSOLA BAKIN", type: { color: '#fbbf24' } }, "Kodu oradan kopyalayın.");
+            console.log(t('saveNotif.saveCode'), data);
+            showNotification({ name: t('saveNotif.checkConsole'), type: { color: '#fbbf24' } }, t('saveNotif.copyFromConsole'));
         });
-        return "Kayıt kodu panoya kopyalandı (veya konsola yazıldı).";
+        return t('saveNotif.saveCodeCopied');
     },
 
     importSave: function (encodedString) {
-        if (!encodedString) return "Lütfen kayıt kodunu parametre olarak girin: importSave('kod')";
+        if (!encodedString) return "Please provide save code as parameter: importSave('code')";
 
         try {
             const testJson = decodeURIComponent(atob(encodedString).split('').map(function (c) {
@@ -258,12 +268,13 @@ export const SaveManager = {
             }).join(''));
             JSON.parse(testJson);
 
+            const t = window.t || ((key) => key.split('.').pop());
             localStorage.setItem(this.SAVE_KEY, encodedString);
-            showNotification({ name: "KAYIT İÇE AKTARILDI", type: { color: '#10b981' } }, "Sayfa yenileniyor...");
+            showNotification({ name: t('saveNotif.saveImported'), type: { color: '#10b981' } }, t('saveNotif.pageRefreshing'));
             setTimeout(() => location.reload(), 1500);
-            return "Başarılı.";
+            return "Success.";
         } catch (e) {
-            return "HATA: Geçersiz kayıt kodu.";
+            return "ERROR: Invalid save code.";
         }
     }
 };

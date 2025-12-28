@@ -5,14 +5,14 @@
 // Window state
 export let statsOpen = false;
 
-// DOM Elemanlarını saklamak için önbellek
+// Cache for storing DOM elements
 let statsCache = {
     initialized: false,
     elements: {}
 };
 
 /**
- * İstatistik penceresini açar ve verileri günceller.
+ * Opens the statistics window and updates the data.
  */
 function openStats() {
     statsOpen = true;
@@ -20,15 +20,15 @@ function openStats() {
     const overlay = document.getElementById('stats-overlay');
     if (overlay) overlay.classList.add('open');
 
-    // Butonu aktif yap
+    // Make button active
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-stats-icon', true);
 
-    // İlk render çağrısı (Yapıyı kurmak için)
+    // First render call (to establish structure)
     renderStats();
 }
 
 /**
- * İstatistik penceresini kapatır.
+ * Closes the statistics window.
  */
 function closeStats() {
     statsOpen = false;
@@ -36,12 +36,12 @@ function closeStats() {
     const overlay = document.getElementById('stats-overlay');
     if (overlay) overlay.classList.remove('open');
 
-    // Buton aktifliğini kaldır
+    // Remove button activity
     if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-stats-icon', false);
 }
 
 /**
- * İstatistik penceresini açar/kapatır (Toggle).
+ * Toggles the statistics window open/closed.
  */
 function toggleStats() {
     if (statsOpen) {
@@ -52,54 +52,54 @@ function toggleStats() {
 }
 
 /**
- * İstatistik yapısını oluşturur ve elementleri önbelleğe alır.
+ * Creates the statistics structure and caches the elements.
  */
 function initStatsDOM(windowEl) {
-    // Sınıf ismini 'stats-header' olarak düzelttik (Core CSS uyumu için)
+    // Fallback if t() function is missing
+    const t = window.t || ((key) => key.split('.').pop());
+
+    // Corrected class name to 'stats-header' (for Core CSS compatibility)
     let htmlContent = `
         <div class="stats-header" style="cursor: move;">
             <div class="stats-icon-box">≣</div>
             <div class="stats-title-group">
-                <div class="stats-main-title">VERİ GÜNLÜĞÜ</div>
-                <div class="stats-sub-title">UÇUŞ KAYITLARI VE METRİKLER</div>
+                <div class="stats-main-title">${t('stats.title')}</div>
+                <div class="stats-sub-title">${t('stats.subtitle')}</div>
             </div>
             <div class="ui-close-btn" id="btn-close-stats-dynamic">✕</div>
         </div>
         
         <div class="stats-wireframe-content">
-            <!-- GRUP 1: ZAMAN VE KEŞİF -->
+            <!-- GROUP 1: TIME AND EXPLORATION -->
             <div class="stats-group">
-                <div class="stats-group-title">ZAMAN & KEŞİF</div>
-                <div class="stats-row"><span class="stats-label">EVREN SÜRESİ</span><span id="stat-game-time" class="stats-value">00:00:00</span></div>
-                <div class="stats-row"><span class="stats-label">HAREKET HALİNDE</span><span id="stat-move-time" class="stats-value">00:00:00</span></div>
-                <div class="stats-row"><span class="stats-label">BEKLEME SÜRESİ</span><span id="stat-idle-time" class="stats-value">00:00:00</span></div>
-                <div class="stats-row"><span class="stats-label">TOPLAM MESAFE</span><span id="stat-distance" class="stats-value highlight">0 km</span></div>
+                <div class="stats-group-title">${t('stats.timeExploration')}</div>
+                <div class="stats-row"><span class="stats-label">${t('stats.universeTime')}</span><span id="stat-game-time" class="stats-value">00:00:00</span></div>
+                <div class="stats-row"><span class="stats-label">${t('stats.movingTime')}</span><span id="stat-move-time" class="stats-value">00:00:00</span></div>
+                <div class="stats-row"><span class="stats-label">${t('stats.idleTime')}</span><span id="stat-idle-time" class="stats-value">00:00:00</span></div>
+                <div class="stats-row"><span class="stats-label">${t('profile.distance')}</span><span id="stat-distance" class="stats-value highlight">0 km</span></div>
             </div>
 
-            <!-- GRUP 2: EKONOMİ VE DEPO -->
+            <!-- GROUP 2: ECONOMY AND STORAGE -->
             <div class="stats-group">
-                <div class="stats-group-title">ENVANTER & EKONOMİ</div>
-                <div class="stats-row"><span class="stats-label">TOPLANAN KAYNAK</span><span id="stat-resources" class="stats-value">0 ADET</span></div>
-                <div class="stats-row"><span class="stats-label">KAZANILAN KRİSTAL</span><span id="stat-stardust" class="stats-value gold">0 ◆</span></div>
-                <div class="stats-row"><span class="stats-label">HARCANAN KRİSTAL</span><span id="stat-spent" class="stats-value" style="opacity:0.7;">0 ◆</span></div>
-                <div class="stats-row"><span class="stats-label">GEMİ DEPOSU</span><span id="stat-inventory" class="stats-value">0 / 0</span></div>
-                <div class="stats-row"><span class="stats-label">MERKEZ DEPO</span><span id="stat-storage" class="stats-value">0 EŞYA</span></div>
+                <div class="stats-group-title">${t('stats.inventoryEconomy')}</div>
+                <div class="stats-row"><span class="stats-label">${t('stats.earnedCrystal')}</span><span id="stat-stardust" class="stats-value gold">0 ◆</span></div>
+                <div class="stats-row"><span class="stats-label">${t('stats.spentCrystal')}</span><span id="stat-spent" class="stats-value" style="opacity:0.7;">0 ◆</span></div>
+                <div class="stats-row"><span class="stats-label">${t('stats.shipStorage')}</span><span id="stat-inventory" class="stats-value">0 / 0</span></div>
+                <div class="stats-row"><span class="stats-label">${t('stats.centralStorage')}</span><span id="stat-storage" class="stats-value">0 ${t('stats.items')}</span></div>
             </div>
 
-            <!-- GRUP 3: PERFORMANS -->
+            <!-- GROUP 3: PERFORMANCE -->
             <div class="stats-group">
-                <div class="stats-group-title">MOTOR PERFORMANSI</div>
-                <div class="stats-row"><span class="stats-label">VATOZ MAX HIZ</span><span id="stat-speed-player" class="stats-value highlight">0 KM/S</span></div>
-                <div class="stats-row"><span class="stats-label">YANKI MAX HIZ</span><span id="stat-speed-echo" class="stats-value highlight">0 KM/S</span></div>
-                <div class="stats-row"><span class="stats-label">TOPLAM ENERJİ TÜKETİMİ</span><span id="stat-energy" class="stats-value">0 BİRİM</span></div>
-                <div class="stats-row"><span class="stats-label">OTOPİLOT KULLANIMI</span><span id="stat-ai-time" class="stats-value">00:00:00</span></div>
+                <div class="stats-group-title">${t('profile.shipStatus')}</div>
+                <div class="stats-row"><span class="stats-label">${t('stats.totalEnergy')}</span><span id="stat-energy" class="stats-value">0 ${t('stats.unit')}</span></div>
+                <div class="stats-row"><span class="stats-label">${t('stats.autoPilotUsage')}</span><span id="stat-ai-time" class="stats-value">00:00:00</span></div>
             </div>
         </div>
     `;
 
     windowEl.innerHTML = htmlContent;
 
-    // Event Listener Ekle (DOM oluşturulduktan sonra)
+    // Add Event Listener (after DOM is created)
     const closeBtn = windowEl.querySelector('#btn-close-stats-dynamic');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -107,11 +107,11 @@ function initStatsDOM(windowEl) {
         });
     }
 
-    // Elementleri önbelleğe al (Cache lookup)
+    // Cache the elements (Cache lookup)
     const ids = [
         'stat-game-time', 'stat-move-time', 'stat-idle-time', 'stat-distance',
-        'stat-resources', 'stat-stardust', 'stat-spent', 'stat-inventory', 'stat-storage',
-        'stat-speed-player', 'stat-speed-echo', 'stat-energy', 'stat-ai-time'
+        'stat-stardust', 'stat-spent', 'stat-inventory', 'stat-storage',
+        'stat-energy', 'stat-ai-time'
     ];
 
     ids.forEach(id => {
@@ -120,7 +120,7 @@ function initStatsDOM(windowEl) {
 
     statsCache.initialized = true;
 
-    // YENİ: İçerik dinamik oluşturulduğu için sürükleme özelliğini (re)attach et
+    // NEW: Re-attach draggable feature since content is dynamically created
     if (typeof makeElementDraggable === 'function') {
         const header = windowEl.querySelector('.stats-header');
         if (header) {
@@ -130,7 +130,7 @@ function initStatsDOM(windowEl) {
 }
 
 /**
- * İstatistik verilerini günceller.
+ * Updates the statistics data.
  */
 function renderStats() {
     if (!statsOpen) return;
@@ -138,38 +138,38 @@ function renderStats() {
     const windowEl = document.querySelector('#stats-overlay .stats-window');
     if (!windowEl) return;
 
-    // 1. YAPI KONTROLÜ (Eğer içerik henüz oluşturulmadıysa oluştur)
+    // 1. STRUCTURE CHECK (Create content if it hasn't been created yet)
     if (!statsCache.initialized) {
         initStatsDOM(windowEl);
     }
 
-    // 2. VERİ HESAPLAMA
+    // Fallback if t() function is missing
+    const t = window.t || ((key) => key.split('.').pop());
+
+    // 2. DATA CALCULATION
     const now = Date.now();
     const gameTime = now - (window.gameStartTime || now);
 
-    // 3. HIZLI GÜNCELLEME (Cache kullanarak)
+    // 3. FAST UPDATE (Using cache)
     updateCachedVal('stat-game-time', formatTime(gameTime));
     updateCachedVal('stat-move-time', formatTime(playerData.stats.timeMoving));
     updateCachedVal('stat-idle-time', formatTime(playerData.stats.timeIdle));
     updateCachedVal('stat-distance', Math.floor(playerData.stats.distance / 100) + " km");
 
-    updateCachedVal('stat-resources', playerData.stats.totalResources + " ADET");
     updateCachedVal('stat-stardust', playerData.stats.totalStardust + " ◆");
     updateCachedVal('stat-spent', playerData.stats.totalSpentStardust + " ◆");
     updateCachedVal('stat-inventory', `${collectedItems.length} / ${GameRules.getPlayerCapacity()}`);
-    updateCachedVal('stat-storage', centralStorage.length + " EŞYA");
+    updateCachedVal('stat-storage', centralStorage.length + " " + t('stats.items'));
 
-    updateCachedVal('stat-speed-player', Math.floor(playerData.stats.maxSpeed * 10) + " KM/S");
-    updateCachedVal('stat-speed-echo', Math.floor(playerData.stats.echoMaxSpeed * 10) + " KM/S");
-    updateCachedVal('stat-energy', Math.floor(playerData.stats.totalEnergySpent) + " BİRİM");
+    updateCachedVal('stat-energy', Math.floor(playerData.stats.totalEnergySpent) + " " + t('stats.unit'));
     updateCachedVal('stat-ai-time', formatTime(playerData.stats.timeAI));
 }
 
-// Yardımcı Fonksiyon: Önbellekten güncelleme
+// Helper Function: Update from cache
 function updateCachedVal(id, val) {
     const el = statsCache.elements[id];
     if (el) {
-        // Gereksiz DOM yazımlarını önlemek için sadece değer değiştiyse güncelle
+        // Update only if value has changed to prevent unnecessary DOM writes
         if (el.innerText !== val) {
             el.innerText = val;
         }

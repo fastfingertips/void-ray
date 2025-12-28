@@ -37,27 +37,34 @@
 }
 
 .title-main {
-    font-size: 5rem;
+    position: fixed;
+    top: 30px;
+    left: 40px;
+    font-size: 4rem;
+    /* Slightly smaller to fit corner */
     font-weight: 400;
-    letter-spacing: 1.5rem;
+    letter-spacing: 1rem;
     color: var(--hud-color);
     text-shadow: 0 0 20px rgba(148, 216, 195, 0.4);
-    margin-bottom: 20px;
-    text-align: center;
-    border-bottom: 1px solid var(--hud-color-dim);
-    padding-bottom: 20px;
-    width: 100%;
-    position: relative;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    border-bottom: none;
+    z-index: 200;
+    width: auto;
 }
 
 .title-main::after {
     content: "SYSTEM_READY // V.1.2";
     display: block;
-    font-size: 0.8rem;
-    letter-spacing: 5px;
+    font-size: 0.6rem;
+    letter-spacing: 4px;
     color: var(--hud-text-dim);
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-left: 5px;
+    /* Align with text */
     opacity: 0.7;
+    text-align: left;
 }
 
 .void-symbol-center {
@@ -399,4 +406,149 @@
     font-size: 1.2rem;
     font-weight: bold;
     letter-spacing: 1px;
+}
+
+/* --- DİL SEÇİCİ BUTONLARI --- */
+.menu-lang-btn,
+.lang-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(10, 12, 14, 0.6);
+    border: 1px solid rgba(148, 216, 195, 0.15);
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--hud-text-dim);
+    font-family: 'Courier New', Courier, monospace;
+    position: relative;
+    overflow: visible;
+}
+
+/* Köşe işaretleri */
+.menu-lang-btn::before,
+.lang-option-btn::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 6px;
+    height: 6px;
+    border-top: 2px solid var(--hud-color-dim);
+    border-left: 2px solid var(--hud-color-dim);
+    transition: all 0.2s;
+}
+
+.menu-lang-btn::after,
+.lang-option-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 6px;
+    height: 6px;
+    border-bottom: 2px solid var(--hud-color-dim);
+    border-right: 2px solid var(--hud-color-dim);
+    transition: all 0.2s;
+}
+
+/* Bayrak container */
+.menu-lang-btn span:first-child,
+.lang-option-btn span:first-child {
+    font-size: 1.1rem;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+}
+
+/* Dil kodu */
+.menu-lang-btn span:last-child,
+.lang-option-btn span:last-child {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    font-weight: bold;
+    opacity: 0.8;
+}
+
+/* Hover efekti */
+.menu-lang-btn:hover,
+.lang-option-btn:hover {
+    background: rgba(148, 216, 195, 0.1);
+    border-color: var(--hud-color-dim);
+    color: var(--hud-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(148, 216, 195, 0.1);
+}
+
+.menu-lang-btn:hover::before,
+.lang-option-btn:hover::before {
+    border-color: var(--hud-color);
+    width: 10px;
+    height: 10px;
+}
+
+.menu-lang-btn:hover::after,
+.lang-option-btn:hover::after {
+    border-color: var(--hud-color);
+    width: 10px;
+    height: 10px;
+}
+
+/* Active (tıklama) efekti */
+.menu-lang-btn:active,
+.lang-option-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+}
+
+/* Aktif dil butonu */
+.menu-lang-btn.active,
+.lang-option-btn.active {
+    background: rgba(148, 216, 195, 0.15);
+    border-color: var(--hud-color);
+    color: var(--hud-color);
+    box-shadow: 0 0 15px rgba(148, 216, 195, 0.2), inset 0 0 10px rgba(148, 216, 195, 0.05);
+}
+
+.menu-lang-btn.active::before,
+.lang-option-btn.active::before,
+.menu-lang-btn.active::after,
+.lang-option-btn.active::after {
+    border-color: var(--hud-color);
+    width: 8px;
+    height: 8px;
+}
+
+.menu-lang-btn.active span:last-child,
+.lang-option-btn.active span:last-child {
+    opacity: 1;
+    text-shadow: 0 0 5px var(--hud-color);
+}
+
+/* Menü dil seçici container */
+#menu-language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+    animation: fadeInLang 0.6s ease-out 0.5s both;
+}
+
+/* Ayarlar paneli dil seçici */
+#language-options {
+    display: flex;
+    gap: 10px;
+}
+
+@keyframes fadeInLang {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

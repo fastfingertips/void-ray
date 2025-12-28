@@ -11,15 +11,15 @@ class Nexus {
         this.y = GameRules.LOCATIONS.NEXUS.y;
         this.radius = 300;
         this.rotation = 0;
-        this.corePulse = 0; // Çekirdek animasyonu için
+        this.corePulse = 0; // For core animation
     }
 
     update() {
-        this.rotation += 0.003; // Ağır ve teknik dönüş
+        this.rotation += 0.003; // Slow and technical rotation
         this.corePulse += 0.05;
     }
 
-    // Yardımcı: Çokgen Çizici (Wireframe estetiği için)
+    // Helper: Polygon Drawer (For wireframe aesthetic)
     drawPoly(ctx, x, y, radius, sides) {
         if (sides < 3) return;
         ctx.beginPath();
@@ -32,7 +32,7 @@ class Nexus {
     }
 
     draw(ctx) {
-        // TEMA RENGİNİ AL
+        // GET THEME COLOR
         let themeColor = "#38bdf8";
         let glowColor = "rgba(56, 189, 248, 0.8)";
         let dimColor = "rgba(56, 189, 248, 0.2)";
@@ -40,7 +40,7 @@ class Nexus {
         if (window.gameSettings && window.gameSettings.themeColor) {
             themeColor = window.gameSettings.themeColor;
 
-            // Renk varyasyonlarını oluştur
+            // Create color variations
             if (typeof Utils !== 'undefined' && Utils.hexToRgba) {
                 glowColor = Utils.hexToRgba(themeColor, 0.8);
                 dimColor = Utils.hexToRgba(themeColor, 0.2);
@@ -50,8 +50,8 @@ class Nexus {
         ctx.save();
         ctx.translate(this.x, this.y);
 
-        // 1. EN DIŞ SABİT ÇEMBER (Radar/Sınır Çizgisi)
-        // İnce, kesikli çizgi - Wireframe estetiği
+        // 1. OUTER FIXED RING (Radar/Border Line)
+        // Thin, dashed line - Wireframe aesthetic
         ctx.strokeStyle = dimColor;
         ctx.lineWidth = 1;
         ctx.setLineDash([20, 15]);
@@ -60,7 +60,7 @@ class Nexus {
         ctx.stroke();
         ctx.setLineDash([]); // Reset
 
-        // 2. DIŞ DÖNEN ALTIGEN KATMANI (Ana İstasyon Gövdesi)
+        // 2. OUTER ROTATING HEXAGON LAYER (Main Station Body)
         ctx.save();
         ctx.rotate(this.rotation);
 
@@ -69,48 +69,48 @@ class Nexus {
         ctx.shadowBlur = 10;
         ctx.shadowColor = themeColor;
 
-        // Ana Altıgen
+        // Main Hexagon
         this.drawPoly(ctx, 0, 0, 180, 6);
 
-        // İç Detay Altıgeni (Daha ince)
+        // Inner Detail Hexagon (Thinner)
         ctx.strokeStyle = dimColor;
         ctx.lineWidth = 1;
         ctx.shadowBlur = 0;
         this.drawPoly(ctx, 0, 0, 160, 6);
 
-        // Köşe Bağlantıları (Tech Lines)
+        // Corner Connections (Tech Lines)
         for (let i = 0; i < 6; i++) {
             ctx.save();
             ctx.rotate((Math.PI / 3) * i);
             ctx.strokeStyle = glowColor;
             ctx.lineWidth = 2;
 
-            // İç-Dış bağlantı çizgileri
+            // Inner-Outer connection lines
             ctx.beginPath();
             ctx.moveTo(160, 0);
             ctx.lineTo(180, 0);
             ctx.stroke();
 
-            // Dışa uzanan iskele/panel (Dolu dikdörtgen yerine boş)
+            // Outward extending scaffold/panel (Empty rect instead of filled)
             ctx.fillStyle = dimColor;
             ctx.fillRect(180, -4, 15, 8);
             ctx.restore();
         }
         ctx.restore();
 
-        // 3. İÇ TERS DÖNEN KARE KATMANI (Enerji Reaktörü)
+        // 3. INNER COUNTER-ROTATING SQUARE LAYER (Energy Reactor)
         ctx.save();
-        ctx.rotate(-this.rotation * 1.5); // Ters yöne ve biraz daha hızlı döner
+        ctx.rotate(-this.rotation * 1.5); // Rotates in opposite direction and slightly faster
 
         ctx.strokeStyle = glowColor;
         ctx.lineWidth = 3;
         ctx.shadowBlur = 15;
         ctx.shadowColor = themeColor;
 
-        // Ana Kare (Elmas duruşu)
+        // Main Square (Diamond stance)
         this.drawPoly(ctx, 0, 0, 100, 4);
 
-        // Kare Köşelerine Noktalar
+        // Dots on Square Corners
         ctx.fillStyle = themeColor;
         for (let i = 0; i < 4; i++) {
             ctx.beginPath();
@@ -120,39 +120,39 @@ class Nexus {
 
         ctx.restore();
 
-        // 4. MERKEZ ÇEKİRDEK (Pulsating Core)
+        // 4. CENTER CORE (Pulsating Core)
         const pulseScale = 1 + Math.sin(this.corePulse) * 0.05;
 
         ctx.save();
         ctx.scale(pulseScale, pulseScale);
 
-        // Çekirdek Arka Planı (Siyah, arkadaki çizgileri maskelemek için)
+        // Core Background (Black, to mask lines behind)
         ctx.fillStyle = "#000";
         ctx.beginPath();
         ctx.arc(0, 0, 40, 0, Math.PI * 2);
         ctx.fill();
 
-        // Çekirdek Çerçevesi (Teknik Daire)
+        // Core Frame (Technical Circle)
         ctx.strokeStyle = themeColor;
         ctx.lineWidth = 4;
         ctx.shadowBlur = 30;
         ctx.shadowColor = themeColor;
         ctx.stroke();
 
-        // İç Işık Kaynağı
-        ctx.fillStyle = "#e0f2fe"; // Merkez her zaman parlak beyaz/mavi
+        // Inner Light Source
+        ctx.fillStyle = "#e0f2fe"; // Center is always bright white/blue
         ctx.beginPath();
         ctx.arc(0, 0, 15, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();
 
-        // 5. DEKORATİF ÇAPRAZ ÇİZGİLER (HUD Hissiyatı)
+        // 5. DECORATIVE CROSS LINES (HUD Feel)
         ctx.strokeStyle = dimColor;
         ctx.lineWidth = 1;
         ctx.setLineDash([5, 5]);
         ctx.beginPath();
-        // 4 Yöne uzanan ince nişangah çizgileri
+        // Thin crosshair lines extending in 4 directions
         ctx.moveTo(-220, 0); ctx.lineTo(-195, 0);
         ctx.moveTo(220, 0); ctx.lineTo(195, 0);
         ctx.moveTo(0, -220); ctx.lineTo(0, -195);

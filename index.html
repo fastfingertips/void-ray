@@ -1,17 +1,17 @@
 <!-- Path: index.html -->
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rüya Bahçesi: Void Ray</title>
+    <title>Void Ray</title>
 
-    <!-- STİL KÜTÜPHANELERİ -->
+    <!-- STYLE LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
 
-    <!-- MODÜLER CSS BAĞLANTILARI -->
+    <!-- MODULAR CSS LINKS -->
     <link rel="stylesheet" href="css/core.css">
     <link rel="stylesheet" href="css/buttons.css">
     <link rel="stylesheet" href="css/tabs.css">
@@ -29,7 +29,7 @@
 
 <body>
 
-    <!-- PARÇALARIN YÜKLENECEĞİ ALANLAR -->
+    <!-- PARTIAL LOAD AREAS -->
     <div id="ui-core"></div>
     <div id="ui-menus"></div>
     <div id="ui-hud"></div>
@@ -37,15 +37,20 @@
     <div id="ui-windows"></div>
     <div id="ui-settings"></div>
 
-    <!-- OYUN CANVAS -->
+    <!-- GAME CANVAS -->
     <canvas id="gameCanvas"></canvas>
 
-    <!-- JS YÜKLEYİCİ VE BAŞLATICILAR -->
+    <!-- JS LOADER AND INITIALIZERS -->
     <script>
         window.onUILoaded = function () {
             console.log("UI Loaded. Initializing systems...");
 
-            // 1. Arka Plan Hazırlıkları
+            // 0. Language System
+            if (typeof window.i18n !== 'undefined' && typeof window.i18n.initI18n === 'function') {
+                window.i18n.initI18n();
+            }
+
+            // 1. Background Preparations
             if (typeof initControls === 'function') initControls();
             if (typeof initChatSystem === 'function') initChatSystem();
             if (typeof initSettings === 'function') initSettings();
@@ -54,10 +59,10 @@
             // UI Event Listeners
             if (typeof initUIListeners === 'function') initUIListeners();
 
-            // 2. Ana Menü Mantığını (Save Kontrolü) Başlat
+            // 2. Initialize Main Menu Logic (Save Check)
             if (typeof initMainMenu === 'function') initMainMenu();
 
-            // 3. Boot Sürecini Başlat
+            // 3. Start Boot Process
             if (typeof SystemBoot !== 'undefined') {
                 const boot = new SystemBoot();
                 boot.start();
@@ -73,17 +78,18 @@
         };
     </script>
 
-    <!-- SCRIPTS (ES6 Modüller) -->
+    <!-- SCRIPTS (ES6 Modules) -->
     <script type="module" src="js/EventBus.js"></script>
+    <script type="module" src="js/i18n.js"></script>
     <script type="module" src="js/boot.js"></script>
     <script type="module" src="js/loader.js"></script>
 
-    <!-- VERİ VE MANTIK (ES6 Modüller) -->
+    <!-- DATA AND LOGIC (ES6 Modules) -->
     <script type="module" src="js/data.js"></script>
     <script type="module" src="js/audio.js"></script>
     <script type="module" src="js/game-rules.js"></script>
 
-    <!-- ES6 MODÜLLER -->
+    <!-- ES6 MODULES -->
     <script type="module" src="js/utils.js"></script>
     <script type="module" src="js/TutorialSystem.js"></script>
     <script type="module" src="js/maps.js"></script>
@@ -94,12 +100,12 @@
     <script type="module" src="js/entities/Wormhole.js"></script>
     <script type="module" src="js/EntityManager.js"></script>
 
-    <!-- VARLIKLAR (ES6 Modüller) -->
+    <!-- ENTITIES (ES6 Modules) -->
     <script type="module" src="js/entities/StorageCenter.js"></script>
     <script type="module" src="js/entities/Planet.js"></script>
     <script type="module" src="js/entities/Particle.js"></script>
 
-    <!-- PERFORMANS VE YÖNETİCİLER (ES6 Modüller) -->
+    <!-- PERFORMANCE AND MANAGERS (ES6 Modules) -->
     <script type="module" src="js/ObjectPool.js"></script>
     <script type="module" src="js/SpatialHash.js"></script>
 
@@ -107,7 +113,7 @@
     <script type="module" src="js/managers/achievement_manager.js"></script>
     <script type="module" src="js/managers/ai_manager.js"></script>
 
-    <!-- UI ve PENCERELER (ES6 Modüller) -->
+    <!-- UI AND WINDOWS (ES6 Modules) -->
     <script type="module" src="js/ui.js"></script>
     <script type="module" src="js/windows/inventory.js"></script>
     <script type="module" src="js/windows/equipment.js"></script>
@@ -125,7 +131,7 @@
     <script type="module" src="js/windows/achievements.js"></script>
     <script type="module" src="js/windows/profile.js"></script>
 
-    <!-- SİSTEMLER (ES6 Modüller) -->
+    <!-- SYSTEMS (ES6 Modules) -->
     <script type="module" src="js/ParticleSystem.js"></script>
     <script type="module" src="js/controls.js"></script>
     <script type="module" src="js/game.js"></script>

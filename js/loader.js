@@ -9,17 +9,17 @@ export async function loadPartials() {
         { id: 'ui-menus', url: 'partials/ui-menus.html' },
         { id: 'ui-hud', url: 'partials/ui-hud.html' },
         { id: 'ui-panels', url: 'partials/ui-panels.html' },
-        { id: 'ui-windows', url: 'partials/ui-windows.html' }, // Yeni windows parçası
+        { id: 'ui-windows', url: 'partials/ui-windows.html' }, // New windows partial
         { id: 'ui-settings', url: 'partials/ui-settings.html' }
     ];
 
-    console.log("Arayüz parçaları yükleniyor...");
+    console.log("Loading UI partials...");
 
-    // Tüm parçaları paralel olarak çek
+    // Fetch all partials in parallel
     const promises = partials.map(p =>
         fetch(p.url)
             .then(response => {
-                if (!response.ok) throw new Error(`Dosya yüklenemedi: ${p.url}`);
+                if (!response.ok) throw new Error(`Failed to load file: ${p.url}`);
                 return response.text();
             })
             .then(html => {
@@ -32,16 +32,16 @@ export async function loadPartials() {
 
     try {
         await Promise.all(promises);
-        console.log("Tüm arayüz yüklendi.");
+        console.log("All UI loaded.");
 
-        // Parçalar yüklendikten sonra oyunu başlatmaya hazırız.
-        // Eğer bir başlatma fonksiyonu varsa tetikleyebiliriz.
+        // After partials are loaded, we're ready to start the game.
+        // If there's an initialization function, we can trigger it.
         if (window.onUILoaded) {
             window.onUILoaded();
         }
     } catch (error) {
-        console.error("Arayüz yükleme hatası:", error);
-        alert("Oyun arayüzü yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.");
+        console.error("UI loading error:", error);
+        alert("An error occurred while loading the game interface. Please refresh the page.");
     }
 }
 

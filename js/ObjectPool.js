@@ -5,17 +5,17 @@
 
 export class ObjectPool {
     /**
-     * @param {Function} factory - Yeni nesne üreten fonksiyon
-     * @param {number} initialSize - Başlangıç havuz boyutu
-     * @param {number} maxSize - Maksimum havuz boyutu (0 = sınırsız)
+     * @param {Function} factory - Function that creates new objects
+     * @param {number} initialSize - Initial pool size
+     * @param {number} maxSize - Maximum pool size (0 = unlimited)
      */
     constructor(factory, initialSize = 50, maxSize = 500) {
         this.factory = factory;
         this.maxSize = maxSize;
-        this.available = []; // Kullanıma hazır nesneler
-        this.inUse = new Set(); // Aktif kullanımda olan nesneler
+        this.available = []; // Objects ready for use
+        this.inUse = new Set(); // Objects currently in active use
 
-        // İstatistikler (Debugging için)
+        // Statistics (for debugging)
         this.stats = {
             created: 0,
             reused: 0,
@@ -23,27 +23,27 @@ export class ObjectPool {
             expanded: 0
         };
 
-        // Başlangıç havuzunu oluştur
+        // Create initial pool
         for (let i = 0; i < initialSize; i++) {
             this.available.push(this.factory());
             this.stats.created++;
         }
 
-        console.log(`ObjectPool oluşturuldu: ${initialSize} başlangıç nesnesi`);
+        console.log(`ObjectPool created: ${initialSize} initial objects`);
     }
 
     /**
-     * Havuzdan bir nesne al (veya yeni oluştur)
+     * Get an object from pool (or create new)
      */
     acquire() {
         let obj;
 
         if (this.available.length > 0) {
-            // Mevcut havuzdan al
+            // Get from existing pool
             obj = this.available.pop();
             this.stats.reused++;
         } else {
-            // Havuz boş, yeni nesne oluştur
+            // Pool is empty, create new object
             obj = this.factory();
             this.stats.created++;
             this.stats.expanded++;
@@ -54,49 +54,49 @@ export class ObjectPool {
     }
 
     /**
-     * Nesneyi havuza geri koy
+     * Return object to pool
      */
     release(obj) {
         if (!obj) return;
 
-        // Aktif listeden çıkar
+        // Remove from active list
         if (!this.inUse.delete(obj)) {
-            // Havuzdan alınmamış olsa bile listeye eklemek yerine uyarı verebiliriz
-            // veya sessizce yok sayabiliriz. Performans için kontrolü basit tutuyoruz.
+            // If not taken from pool, we can warn or silently ignore.
+            // Keeping check simple for performance.
             return;
         }
 
-        // Reset metodunu çağır (varsa)
+        // Call reset method (if exists)
         if (typeof obj.reset === 'function') {
             obj.reset();
         }
 
-        // Havuza geri koy (maksimum boyut kontrolü)
+        // Return to pool (max size check)
         if (this.maxSize === 0 || this.available.length < this.maxSize) {
             this.available.push(obj);
             this.stats.released++;
         }
-        // Maksimum boyut aşıldıysa nesneyi garbage collector'a bırak
+        // If max size exceeded, leave object to garbage collector
     }
 
     /**
-     * Toplu geri alma (Batch release)
+     * Batch release
      */
     releaseAll(objects) {
         objects.forEach(obj => this.release(obj));
     }
 
     /**
-     * Havuzu temizle
+     * Clear the pool
      */
     clear() {
         this.available = [];
         this.inUse.clear();
-        console.log('ObjectPool temizlendi.');
+        console.log('ObjectPool cleared.');
     }
 
     /**
-     * Havuz bilgilerini al
+     * Get pool info
      */
     getInfo() {
         return {

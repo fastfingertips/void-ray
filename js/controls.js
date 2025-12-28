@@ -10,15 +10,15 @@ export const keys = { w: false, a: false, s: false, d: false, " ": false, f: fal
 export const mouse = { x: 0, y: 0 };
 
 export function initControls() {
-    console.log("Kontroller başlatılıyor...");
+    console.log("Controls initializing...");
 
-    // --- FARE HAREKETİ TAKİBİ ---
+    // --- MOUSE MOVEMENT TRACKING ---
     window.addEventListener('mousemove', e => {
         mouse.x = e.clientX;
         mouse.y = e.clientY;
     });
 
-    // --- KLAVYE GİRDİLERİ ---
+    // --- KEYBOARD INPUTS ---
     window.addEventListener('keydown', e => {
         const chatInput = document.getElementById('chat-input');
         if (chatInput && document.activeElement === chatInput) {
@@ -33,29 +33,31 @@ export function initControls() {
         else if (e.code === "Space") keys[" "] = true;
         else if (keys.hasOwnProperty(e.code)) keys[e.code] = true;
 
-        // --- IŞIK ATLAMASI (J TUŞU) ---
-        // GÜNCELLEME: Toggle mekaniği. Eğer şarj varsa iptal et, yoksa başlat.
+        // --- LIGHT JUMP (J KEY) ---
+        // UPDATE: Toggle mechanic. If charging cancel, else start.
         if (e.key.toLowerCase() === 'j') {
             if (typeof player !== 'undefined') {
                 if (player.isChargingJump) {
-                    player.cancelLightJump("Manuel İptal");
+                    player.cancelLightJump("Manual Cancel");
                 } else {
                     player.attemptLightJump();
                 }
             }
-            keys.j = false; // Tek tetikleme
+            keys.j = false; // Single trigger
         }
 
-        // --- KAMERA DEĞİŞTİRME (C TUŞU) ---
+        // --- CAMERA SWITCH (C KEY) ---
         if (e.key.toLowerCase() === 'c') {
+            const t = window.t || ((key) => key.split('.').pop()); // i18n helper
+
             if (typeof echoRay !== 'undefined' && echoRay && !echoRay.attached) {
-                // Utils güncellemesi:
+                // Utils update:
                 const dist = Utils.distEntity(player, echoRay);
                 const maxRange = player.radarRadius;
 
                 if (dist > maxRange) {
-                    showNotification({ name: "BAĞLANTI HATASI", type: { color: '#ef4444' } }, "Yankı radar menzili dışında.");
-                    Utils.playSound('playError'); // Güvenli Ses
+                    showNotification({ name: t('echoNotif.connectionError'), type: { color: '#ef4444' } }, t('echoNotif.outOfRadar'));
+                    Utils.playSound('playError'); // Safe Sound
                     return;
                 }
 
@@ -63,22 +65,22 @@ export function initControls() {
 
                 if (window.cameraTarget === player) {
                     window.cameraTarget = echoRay;
-                    showNotification({ name: "GÖRÜŞ: YANKI (ECHO)", type: { color: '#67e8f9' } }, "Kamera Aktarıldı");
+                    showNotification({ name: t('echoNotif.visionEcho'), type: { color: '#67e8f9' } }, t('echoNotif.cameraTransferred'));
                     if (indicator) indicator.classList.add('active');
                 } else {
                     window.cameraTarget = player;
-                    showNotification({ name: "GÖRÜŞ: VATOZ (GEMİ)", type: { color: '#38bdf8' } }, "Kamera Aktarıldı");
+                    showNotification({ name: t('echoNotif.visionShip'), type: { color: '#38bdf8' } }, t('echoNotif.cameraTransferred'));
                     if (indicator) indicator.classList.remove('active');
                 }
             } else if (echoRay && echoRay.attached) {
-                showNotification({ name: "YANKI BAĞLI", type: { color: '#ef4444' } }, "Kamera geçişi için Yankı ayrılmalı.");
+                showNotification({ name: t('echoNotif.echoAttached'), type: { color: '#ef4444' } }, t('echoNotif.detachRequired'));
                 if (window.cameraTarget !== player) {
                     window.cameraTarget = player;
                     const indicator = document.getElementById('echo-vision-indicator');
                     if (indicator) indicator.classList.remove('active');
                 }
             } else {
-                showNotification({ name: "YANKI YOK", type: { color: '#ef4444' } }, "Kamera geçişi yapılamıyor.");
+                showNotification({ name: t('echoNotif.noEcho'), type: { color: '#ef4444' } }, t('echoNotif.cannotSwitch'));
                 window.cameraTarget = player;
                 const indicator = document.getElementById('echo-vision-indicator');
                 if (indicator) indicator.classList.remove('active');
@@ -86,7 +88,7 @@ export function initControls() {
             keys.c = false;
         }
 
-        // --- PROFİL (P TUŞU) ---
+        // --- PROFILE (P KEY) ---
         if (e.key.toLowerCase() === 'p') {
             if (typeof toggleProfile === 'function') {
                 toggleProfile();
@@ -102,17 +104,18 @@ export function initControls() {
         }
 
         if (e.key.toLowerCase() === 'q') {
+            const t = window.t || ((key) => key.split('.').pop());
             if (!autopilot) {
                 autopilot = true;
                 aiMode = 'gather';
-                addChatMessage("Otopilot: Toplama protokolü devreye alındı.", "info", "genel");
+                addChatMessage(t('aiMessages.gatherProtocol'), "info", "general");
             } else if (aiMode === 'gather' || aiMode === 'travel' || aiMode === 'deposit') {
                 aiMode = 'base';
-                addChatMessage("Otopilot: Üsse dönüş rotası hesaplanıyor.", "info", "genel");
+                addChatMessage(t('aiMessages.baseRoute'), "info", "general");
             } else {
                 autopilot = false;
                 manualTarget = null;
-                addChatMessage("Otopilot: Devre dışı. Manuel kontrol aktif.", "system", "genel");
+                addChatMessage(t('aiMessages.disengaged'), "system", "general");
             }
             updateAIButton();
             keys.q = false;
@@ -145,7 +148,7 @@ export function initControls() {
         else if (keys.hasOwnProperty(e.code)) keys[e.code] = false;
     });
 
-    // --- FARE TEKERLEĞİ ---
+    // --- MOUSE WHEEL ---
     window.addEventListener('wheel', e => {
         if (e.target.closest('.chat-content') ||
             e.target.closest('.profile-content') ||
@@ -165,7 +168,7 @@ export function initControls() {
         targetZoom = Math.min(Math.max(MAP_CONFIG.zoom.min, targetZoom), MAP_CONFIG.zoom.max);
     }, { passive: false });
 
-    // --- CANVAS TIKLAMALARI ---
+    // --- CANVAS CLICKS ---
     const canvas = document.getElementById('gameCanvas');
     if (canvas) {
         canvas.addEventListener('mousedown', (e) => {
@@ -185,7 +188,7 @@ export function initControls() {
         });
     }
 
-    // --- ARAYÜZ BUTONLARI VE BAŞLATICILAR ---
+    // --- UI BUTTONS AND INITIALIZERS ---
     const btnStart = document.getElementById('btn-start');
     if (btnStart) {
         btnStart.addEventListener('click', () => {
@@ -204,7 +207,7 @@ export function initControls() {
         });
     }
 
-    // ENVANTER BUTONU (TOGGLE)
+    // INVENTORY BUTTON (TOGGLE)
     const btnInv = document.getElementById('btn-inv-icon');
     if (btnInv) {
         btnInv.addEventListener('click', () => {
@@ -214,7 +217,7 @@ export function initControls() {
         });
     }
 
-    // OTO-PİLOT BUTONU
+    // AUTO-PILOT BUTTON
     const btnAi = document.getElementById('btn-ai-toggle');
     if (btnAi) {
         btnAi.addEventListener('click', () => {
@@ -229,7 +232,7 @@ export function initControls() {
         });
     }
 
-    // İSTATİSTİK BUTONU (TOGGLE)
+    // STATS BUTTON (TOGGLE)
     const btnStats = document.getElementById('btn-stats-icon');
     if (btnStats) {
         btnStats.addEventListener('click', () => {
@@ -239,10 +242,10 @@ export function initControls() {
         });
     }
 
-    // PROFİL BUTONU (GÜNCELLENDİ: addEventListener kullanılarak daha sağlam yapıldı)
+    // PROFILE BUTTON (UPDATED: made more robust using addEventListener)
     const btnProfile = document.getElementById('btn-profile-icon');
     if (btnProfile) {
-        // Eski onclick varsa temizle (Çakışmayı önlemek için)
+        // Clear old onclick (To prevent conflict)
         btnProfile.onclick = null;
 
         btnProfile.addEventListener('click', function (e) {
@@ -250,7 +253,7 @@ export function initControls() {
             if (typeof window.toggleProfile === 'function') {
                 window.toggleProfile();
             } else if (typeof window.openProfile === 'function') {
-                // Fallback (Toggle yoksa manuel kontrol)
+                // Fallback (Manual control if no toggle)
                 if (typeof profileOpen !== 'undefined' && profileOpen) {
                     window.closeProfile();
                 } else {
@@ -443,24 +446,24 @@ export function initControls() {
     }
 
     // --- CHAT TAB LISTENERS ---
-    const tabGenel = document.getElementById('tab-genel');
-    if (tabGenel) {
-        tabGenel.addEventListener('click', () => {
-            if (typeof switchChatTab === 'function') switchChatTab('genel');
+    const tabGeneral = document.getElementById('tab-general');
+    if (tabGeneral) {
+        tabGeneral.addEventListener('click', () => {
+            if (typeof switchChatTab === 'function') switchChatTab('general');
         });
     }
 
-    const tabGrup = document.getElementById('tab-grup');
-    if (tabGrup) {
-        tabGrup.addEventListener('click', () => {
-            if (typeof switchChatTab === 'function') switchChatTab('grup');
+    const tabGroup = document.getElementById('tab-group');
+    if (tabGroup) {
+        tabGroup.addEventListener('click', () => {
+            if (typeof switchChatTab === 'function') switchChatTab('group');
         });
     }
 
-    const tabBilgi = document.getElementById('tab-bilgi');
-    if (tabBilgi) {
-        tabBilgi.addEventListener('click', () => {
-            if (typeof switchChatTab === 'function') switchChatTab('bilgi');
+    const tabInfo = document.getElementById('tab-info');
+    if (tabInfo) {
+        tabInfo.addEventListener('click', () => {
+            if (typeof switchChatTab === 'function') switchChatTab('info');
         });
     }
 

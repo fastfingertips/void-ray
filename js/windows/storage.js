@@ -19,7 +19,7 @@ function closeStorage() {
 }
 
 /**
- * Depo arayüzünü (Grid) çizer.
+ * Renders the storage interface (Grid).
  */
 function renderStorageUI() {
     if (!storageOpen) return;
@@ -29,51 +29,53 @@ function renderStorageUI() {
     const shipCap = document.getElementById('storage-ship-cap');
     const centerCount = document.getElementById('storage-center-count');
 
-    // Kapasite bilgilerini güncelle
+    // Update capacity information
     if (shipCap) shipCap.innerText = `${collectedItems.length} / ${GameRules.getPlayerCapacity()}`;
-    if (centerCount) centerCount.innerText = `${centralStorage.length} EŞYA`;
+    const t = window.t || ((key) => key.split('.').pop());
+    if (centerCount) centerCount.innerText = `${centralStorage.length} ${t('stats.items')}`;
 
-    // renderGrid fonksiyonu ui.js içinden gelir
+    // renderGrid function comes from ui.js
     renderGrid(shipListContainer, collectedItems, GameRules.getPlayerCapacity(), (item) => {
         depositItem(item.name);
     });
 
-    // Merkez depo sınırsız olduğu için isUnlimited: true
+    // Since central storage is unlimited, isUnlimited: true
     renderGrid(centerListContainer, centralStorage, 0, (item) => {
         withdrawItem(item.name);
     }, true);
 }
 
 /**
- * Bir dizi eşyayı topluca depoya aktarır.
- * (Hem Otopilot AI hem de manuel butonlar tarafından kullanılır)
+ * Deposits a batch of items into storage.
+ * (Used by both Autopilot AI and manual buttons)
  */
 function depositToStorage(sourceArray, sourceName) {
     if (sourceArray.length === 0) return;
 
     const count = sourceArray.length;
-    // Tardigradlar depolanmaz, gemide kalır veya harcanır. Burada filtreliyoruz.
+    // Tardigrades are not stored; they stay on the ship or get consumed. Filtering here.
     const itemsToStore = sourceArray.filter(i => i.type.id !== 'tardigrade');
 
-    // Eşyaları merkez depoya ekle
+    // Add items to central storage
     itemsToStore.forEach(item => centralStorage.push(item));
 
-    // Kaynak dizisini boşalt (Referans üzerinden çalıştığı için orijinal dizi boşalır)
+    // Empty the source array (operates on the original array since it's passed by reference)
     sourceArray.length = 0;
 
-    // Güvenli Ses Çağrısı
+    // Safe Sound Call
     Utils.playSound('playCash');
 
-    showNotification({ name: `${sourceName}: ${count} EŞYA DEPOYA AKTARILDI`, type: { color: '#a855f7' } }, "");
+    const t = window.t || ((key) => key.split('.').pop());
+    showNotification({ name: `${sourceName}: ${count} ${t('storageNotif.itemsDeposited')}`, type: { color: '#a855f7' } }, "");
 
-    // İlgili tüm UI'ları güncelle
+    // Update all relevant UIs
     updateInventoryCount();
     if (typeof inventoryOpen !== 'undefined' && inventoryOpen) renderInventory();
     if (typeof echoInvOpen !== 'undefined' && echoInvOpen) renderEchoInventory();
     if (storageOpen) renderStorageUI();
 }
 
-// --- GLOBAL UI AKSİYONLARI (Pencere içindeki butonlar için) ---
+// --- GLOBAL UI ACTIONS (For buttons inside the window) ---
 
 window.depositItem = function (name) {
     const index = collectedItems.findIndex(i => i.name === name);
@@ -86,13 +88,14 @@ window.depositItem = function (name) {
 };
 
 window.depositAllToStorage = function () {
-    depositToStorage(collectedItems, "VATOZ");
+    depositToStorage(collectedItems, "VOID RAY");
 };
 
 window.withdrawItem = function (name) {
     if (collectedItems.length >= GameRules.getPlayerCapacity()) {
-        showNotification({ name: "GEMİ DEPOSU DOLU!", type: { color: '#ef4444' } }, "");
-        Utils.playSound('playError'); // Güvenli Ses
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('storageNotif.shipFull'), type: { color: '#ef4444' } }, "");
+        Utils.playSound('playError'); // Safe Sound
         return;
     }
     const index = centralStorage.findIndex(i => i.name === name);
@@ -108,16 +111,17 @@ window.withdrawAllFromStorage = function () {
     const cap = GameRules.getPlayerCapacity();
     let moved = 0;
 
-    // Kapasite dolana kadar veya depo bitene kadar çek
+    // Withdraw until capacity is full or storage is empty
     while (centralStorage.length > 0 && collectedItems.length < cap) {
         collectedItems.push(centralStorage.pop());
         moved++;
     }
 
-    if (moved > 0) showNotification({ name: `${moved} EŞYA GEMİYE ALINDI`, type: { color: '#38bdf8' } }, "");
+    const t = window.t || ((key) => key.split('.').pop());
+    if (moved > 0) showNotification({ name: `${moved} ${t('storageNotif.itemsToShip')}`, type: { color: '#38bdf8' } }, "");
     else if (centralStorage.length > 0) {
-        showNotification({ name: "GEMİ DEPOSU DOLU!", type: { color: '#ef4444' } }, "");
-        Utils.playSound('playError'); // Güvenli Ses
+        showNotification({ name: t('storageNotif.shipFull'), type: { color: '#ef4444' } }, "");
+        Utils.playSound('playError'); // Safe Sound
     }
 
     renderStorageUI();

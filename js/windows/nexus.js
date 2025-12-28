@@ -5,26 +5,27 @@
 export let nexusOpen = false;
 
 /**
- * Oyuncunun Nexus ile etkileşime girebilecek mesafede olup olmadığını kontrol eder.
- * @returns {boolean} Menzil içindeyse true
+ * Checks if player is within interaction range of Nexus.
+ * @returns {boolean} True if in range
  */
 function isNearNexus() {
     if (typeof player === 'undefined' || typeof nexus === 'undefined') return false;
 
-    // Nexus yarıçapı (varsayılan 300) + Etkileşim tamponu (200)
+    // Nexus radius (default 300) + Interaction buffer (200)
     const interactionRange = (nexus.radius || 300) + 200;
-    // Utils güncellemesi:
+    // Utils update:
     const dist = Utils.distEntity(player, nexus);
 
     return dist <= interactionRange;
 }
 
 function enterNexus() {
-    // --- GÜVENLİK KONTROLÜ ---
-    // Profil penceresinden veya dışarıdan çağrıldığında mesafe kontrolü yap
+    // --- SECURITY CHECK ---
+    // Check distance when called from profile window or externally
     if (!isNearNexus()) {
-        showNotification({ name: "ERİŞİM REDDEDİLDİ", type: { color: '#ef4444' } }, "Nexus menzili dışındasınız.");
-        Utils.playSound('playError'); // Güvenli Ses
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('nexusNotif.accessDenied'), type: { color: '#ef4444' } }, t('nexusNotif.outOfRange'));
+        Utils.playSound('playError'); // Safe Sound
         return;
     }
 
@@ -65,12 +66,13 @@ function switchNexusTab(tabName) {
 }
 
 function renderMarket() {
+    const t = window.t || ((key) => key.split('.').pop());
     const grid = document.getElementById('market-grid');
     if (!grid) return;
     grid.innerHTML = '';
 
     if (collectedItems.length === 0) {
-        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 mt-10">Satılacak eşya yok.</div>';
+        grid.innerHTML = `<div class="col-span-full text-center text-gray-500 mt-10">${t('panels.noItemsToSell')}</div>`;
         return;
     }
 
@@ -84,13 +86,14 @@ function renderMarket() {
         if (item.type.value > 0) {
             const totalVal = item.count * item.type.value;
             const div = document.createElement('div'); div.className = 'market-card';
-            div.innerHTML = `<div class="text-2xl" style="color:${item.type.color}">●</div><div class="font-bold text-white">${item.name}</div><div class="text-sm text-gray-400">x${item.count}</div><div class="text-white font-mono text-lg opacity-80">${totalVal} <span class="text-xs">KRİSTAL</span></div><button class="sell-btn" data-name="${item.name}" data-value="${item.type.value}" data-count="${item.count}">SAT</button>`;
+            div.innerHTML = `<div class="text-2xl" style="color:${item.type.color}">●</div><div class="font-bold text-white">${item.name}</div><div class="text-sm text-gray-400">x${item.count}</div><div class="text-white font-mono text-lg opacity-80">${totalVal} <span class="text-xs">${t('resources.crystal')}</span></div><button class="sell-btn" data-name="${item.name}" data-value="${item.type.value}" data-count="${item.count}">${t('panels.sell')}</button>`;
             grid.appendChild(div);
         }
     });
 }
 
 function renderUpgrades() {
+    const t = window.t || ((key) => key.split('.').pop());
     const pList = document.getElementById('upg-player-list');
     const eList = document.getElementById('upg-echo-list');
     if (pList) pList.innerHTML = '';
@@ -102,17 +105,17 @@ function renderUpgrades() {
         const isMax = currentLvl >= data.max;
 
         let isDisabled = isMax || playerData.stardust < cost;
-        let btnText = isMax ? 'MAX' : 'GELİŞTİR';
+        let btnText = isMax ? 'MAX' : t('panels.upgrade');
         let btnClass = 'buy-btn';
 
         if (isEcho) {
             if (!echoRay) {
                 isDisabled = true;
-                btnText = 'YANKI YOK';
+                btnText = t('nexusNotif.echoNotAvailable');
                 btnClass += ' disabled-echo';
             } else if (!echoRay.attached) {
                 isDisabled = true;
-                btnText = 'BAĞLI DEĞİL';
+                btnText = t('nexusNotif.echoNotLinked');
                 btnClass += ' disabled-echo';
             }
         }
@@ -127,7 +130,7 @@ function renderUpgrades() {
                 <div class="upg-level">${pips}</div>
             </div>
             <button class="${btnClass}" ${isDisabled ? 'disabled' : ''} data-upgrade-key="${key}">
-                ${btnText} ${(!isMax && btnText !== 'YANKI YOK' && btnText !== 'BAĞLI DEĞİL') ? `<span class="cost-text">${cost} ◆</span>` : ''}
+                ${btnText} ${(!isMax && btnText !== t('nexusNotif.echoNotAvailable') && btnText !== t('nexusNotif.echoNotLinked')) ? `<span class="cost-text">${cost} ◆</span>` : ''}
             </button>
         </div>`;
     };
@@ -136,25 +139,27 @@ function renderUpgrades() {
     if (eList) ['echoSpeed', 'echoRange', 'echoDurability', 'echoCapacity'].forEach(k => eList.innerHTML += createCard(k, UPGRADES[k], true));
 }
 
-// --- GLOBAL UI AKSİYONLARI ---
+// --- GLOBAL UI ACTIONS ---
 
 window.buyUpgrade = function (key) {
-    // --- GÜVENLİK KONTROLÜ ---
+    // --- SECURITY CHECK ---
     if (!isNearNexus()) {
-        showNotification({ name: "BAĞLANTI KOPTU", type: { color: '#ef4444' } }, "İşlem sırasında uzaklaştınız.");
-        exitNexus(); // Pencereyi zorla kapat
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('nexusNotif.connectionLost'), type: { color: '#ef4444' } }, t('nexusNotif.movedAway'));
+        exitNexus();
         return;
     }
 
+    const t = window.t || ((key) => key.split('.').pop());
     if (key.startsWith('echo')) {
         if (!echoRay) {
-            showNotification({ name: "YANKI MEVCUT DEĞİL!", type: { color: '#ef4444' } }, "");
-            Utils.playSound('playError'); // Güvenli Ses
+            showNotification({ name: t('nexusNotif.echoNotAvailable'), type: { color: '#ef4444' } }, "");
+            Utils.playSound('playError');
             return;
         }
         if (!echoRay.attached) {
-            showNotification({ name: "YANKI BAĞLI DEĞİL!", type: { color: '#ef4444' } }, "Yükseltme için birleşin.");
-            Utils.playSound('playError'); // Güvenli Ses
+            showNotification({ name: t('nexusNotif.echoNotLinked'), type: { color: '#ef4444' } }, t('nexusNotif.linkToUpgrade'));
+            Utils.playSound('playError');
             return;
         }
     }
@@ -166,22 +171,22 @@ window.buyUpgrade = function (key) {
         playerData.stardust -= cost;
         playerData.upgrades[key]++;
         playerData.stats.totalSpentStardust += cost;
-        Utils.playSound('playCash'); // Güvenli Ses
+        Utils.playSound('playCash'); // Safe Sound
         player.updateUI();
         renderUpgrades();
         updateEchoDropdownUI();
         updateInventoryCount();
     } else {
-        // Para yetersiz
-        showNotification({ name: "YETERSİZ KRİSTAL!", type: { color: '#ef4444' } }, "");
-        Utils.playSound('playError'); // Güvenli Ses
+        showNotification({ name: t('nexusNotif.insufficientCrystal'), type: { color: '#ef4444' } }, "");
+        Utils.playSound('playError');
     }
 };
 
 window.sellItem = function (name, unitPrice, count) {
-    // --- GÜVENLİK KONTROLÜ ---
+    // --- SECURITY CHECK ---
     if (!isNearNexus()) {
-        showNotification({ name: "BAĞLANTI KOPTU", type: { color: '#ef4444' } }, "İşlem sırasında uzaklaştınız.");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('nexusNotif.connectionLost'), type: { color: '#ef4444' } }, t('nexusNotif.movedAway'));
         exitNexus();
         return;
     }
@@ -193,16 +198,17 @@ window.sellItem = function (name, unitPrice, count) {
     const totalEarned = count * unitPrice;
     playerData.stardust += totalEarned;
     playerData.stats.totalStardust += totalEarned;
-    Utils.playSound('playCash'); // Güvenli Ses
+    Utils.playSound('playCash'); // Safe Sound
     player.updateUI();
     updateInventoryCount();
     renderMarket();
 };
 
 window.sellAll = function () {
-    // --- GÜVENLİK KONTROLÜ ---
+    // --- SECURITY CHECK ---
     if (!isNearNexus()) {
-        showNotification({ name: "BAĞLANTI KOPTU", type: { color: '#ef4444' } }, "İşlem sırasında uzaklaştınız.");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('nexusNotif.connectionLost'), type: { color: '#ef4444' } }, t('nexusNotif.movedAway'));
         exitNexus();
         return;
     }
@@ -215,11 +221,12 @@ window.sellAll = function () {
 
         playerData.stardust += total;
         playerData.stats.totalStardust += total;
-        Utils.playSound('playCash'); // Güvenli Ses
+        Utils.playSound('playCash'); // Safe Sound
         player.updateUI();
         updateInventoryCount();
         renderMarket();
-        showNotification({ name: `${total} KRİSTAL KAZANILDI`, type: { color: '#fbbf24' } }, "");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: `${total} ${t('nexusNotif.crystalEarned')}`, type: { color: '#fbbf24' } }, "");
     }
 };
 

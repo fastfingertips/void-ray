@@ -3,32 +3,32 @@
  */
 
 export let chatHistory = {
-    genel: [],
-    bilgi: [],
-    grup: []
+    general: [],
+    info: [],
+    group: []
 };
-export let activeChatTab = 'genel';
+export let activeChatTab = 'general';
 
 // Chat mode: 2=Active, 1=Semi
 let chatState = 1;
 let wasSemiActive = false;
 
 /**
- * Chat modunu değiştirir (Buton tetikler).
- * 2 -> 1 -> 2 döngüsü (Aktif <-> Yarım).
+ * Toggles chat mode (Triggered by button).
+ * Cycle 2 -> 1 -> 2 (Active <-> Semi).
  */
 window.cycleChatMode = function () {
     if (chatState === 2) {
-        chatState = 1; // Aktif -> Yarım
+        chatState = 1; // Active -> Semi
     } else {
-        chatState = 2; // Yarım -> Aktif
+        chatState = 2; // Semi -> Active
     }
-    wasSemiActive = false; // Manuel değişimde hafızayı sıfırla
+    wasSemiActive = false; // Reset memory on manual change
     updateChatUI();
 };
 
 /**
- * Arayüzü mevcut chatState'e göre günceller.
+ * Updates UI based on current chatState.
  */
 function updateChatUI() {
     const panel = document.getElementById('chat-panel');
@@ -37,64 +37,64 @@ function updateChatUI() {
 
     if (!panel || !btn) return;
 
-    // Sınıfları temizle
+    // Clear classes
     panel.classList.remove('chat-mode-semi', 'chat-mode-off');
 
     if (chatState === 2) {
-        // --- AKTİF MOD ---
-        // Opaklık sisteminin bu pencereyi "AÇIK" olarak algılaması için active sınıfı şart
+        // --- ACTIVE MODE ---
+        // 'active' class is required for opacity system to detect this window as OPEN
         panel.classList.add('active');
 
         btn.innerText = "✉";
         btn.style.color = "white";
 
-        // Butonu aktif olarak işaretle
+        // Mark button as active
         if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-chat-mode', true);
 
-        // Input alanını görünür yap
+        // Make input area visible
         if (inputArea) inputArea.style.removeProperty('display');
 
-        // Tam geçmişi geri yükle
+        // Restore full history
         switchChatTab(activeChatTab);
     }
     else {
-        // --- YARIM AKTİF ---
-        // Pencere kapanmış gibi davranması için active sınıfını kaldırıyoruz
-        // (Böylece opaklık ayarı yerine CSS'teki varsayılan şeffaflık devreye giriyor)
+        // --- SEMI ACTIVE ---
+        // Removing 'active' class so it behaves like the window is closed
+        // (This allows default CSS transparency instead of the UI opacity setting)
         panel.classList.remove('active');
 
         btn.innerText = "⋯";
         btn.style.color = "#94a3b8";
         panel.classList.add('chat-mode-semi');
 
-        // Buton aktifliğini kaldır
+        // Deactivate button
         if (typeof setHudButtonActive === 'function') setHudButtonActive('btn-chat-mode', false);
 
-        // Input alanını ZORLA gizle
+        // Force HIDE input area
         if (inputArea) inputArea.style.display = 'none';
 
-        // Yarım moda geçerken eski kalabalığı temizle
+        // Clear old clutter when switching to semi mode
         const chatContent = document.getElementById('chat-content');
         if (chatContent) chatContent.innerHTML = '';
     }
 }
 
 /**
- * Sohbet paneline yeni bir mesaj ekler.
+ * Adds a new message to the chat panel.
  */
-function addChatMessage(text, type = 'system', channel = 'bilgi') {
+function addChatMessage(text, type = 'system', channel = 'info') {
     const now = new Date();
-    const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
     const msgObj = { text, type, time: timeStr };
 
-    // Veriyi her zaman kaydet
+    // Always save the data
     chatHistory[channel].push(msgObj);
-    if (channel !== 'genel') {
-        chatHistory['genel'].push(msgObj);
+    if (channel !== 'general') {
+        chatHistory['general'].push(msgObj);
     }
 
-    // Eğer kanal aktif değilse ekrana çizme (Yarım modda sadece aktif kanaldakiler görünsün)
-    if (activeChatTab !== channel && activeChatTab !== 'genel') return;
+    // If channel is not active, do not draw (In semi mode only active channel is shown)
+    if (activeChatTab !== channel && activeChatTab !== 'general') return;
 
     const chatContent = document.getElementById('chat-content');
     if (!chatContent) return;
@@ -104,16 +104,16 @@ function addChatMessage(text, type = 'system', channel = 'bilgi') {
     div.innerHTML = `<span class="chat-timestamp">[${timeStr}]</span> ${text}`;
 
     if (chatState === 1) {
-        // YARIM MOD: Solarak kaybolma efekti (6sn toplam ömür)
+        // SEMI MODE: Fade out effect (6s total life)
         div.classList.add('fading-msg');
         chatContent.appendChild(div);
 
-        // Animasyon bitince DOM'dan sil (Tarihçede zaten var)
+        // Remove from DOM after animation (Already in history)
         setTimeout(() => {
             if (div.parentNode) div.parentNode.removeChild(div);
         }, 6000);
     } else {
-        // AKTİF MOD: Normal ekle (Silme yok)
+        // ACTIVE MODE: Normal add (No delete)
         chatContent.appendChild(div);
         chatContent.scrollTop = chatContent.scrollHeight;
     }
@@ -128,14 +128,14 @@ function switchChatTab(tab) {
 
     const inputArea = document.getElementById('chat-input-area');
     if (inputArea) {
-        // Sadece AKTİF (2) moddaysa input görünürlüğünü yönet
+        // Only manage input visibility if in ACTIVE (2) mode
         if (chatState === 2) {
-            if (tab === 'bilgi') inputArea.style.display = 'none';
+            if (tab === 'info') inputArea.style.display = 'none';
             else inputArea.style.display = 'flex';
         }
     }
 
-    // Yarım moddaysa tarihçeyi yükleme
+    // Do not load history if in semi mode
     if (chatState === 1) {
         const chatContent = document.getElementById('chat-content');
         if (chatContent) chatContent.innerHTML = '';
@@ -161,49 +161,51 @@ function sendUserMessage() {
 
     const msg = input.value.trim();
     if (msg) {
-        // --- KOMUT SİSTEMİ ENTEGRASYONU ---
+        // --- COMMAND SYSTEM INTEGRATION ---
         if (msg.startsWith('/')) {
             if (typeof ConsoleSystem !== 'undefined') {
                 ConsoleSystem.execute(msg);
                 input.value = '';
-                // Komut sonrası stili temizle
+                // Clear style after command
                 input.classList.remove('command-mode');
             } else {
-                addChatMessage("HATA: Konsol sistemi yüklenemedi.", 'alert', activeChatTab);
+                const t = window.t || ((key) => key.split('.').pop());
+                addChatMessage(t('chatMessages.consoleError'), 'alert', activeChatTab);
             }
         } else {
-            // Normal Chat Mesajı
+            // Normal Chat Message
             addChatMessage(`Pilot: ${msg}`, 'loot', activeChatTab);
             input.value = '';
             setTimeout(() => {
+                const t = window.t || ((key) => key.split('.').pop());
                 if (audio) audio.playError();
-                addChatMessage("Sistem: İletişim kanallarında parazit var. Mesaj iletilemedi (Bakımda).", 'alert', activeChatTab);
+                addChatMessage(t('chatMessages.channelError'), 'alert', activeChatTab);
             }, 200);
         }
     }
 
-    // Mesaj gönderildikten sonra: Eğer Yarım Moddan geldiysek, oraya dön
+    // After message sent: If we came from Semi Mode, return there
     if (wasSemiActive) {
         chatState = 1;
         wasSemiActive = false;
         updateChatUI();
-        // Odağı oyuna geri ver (Tuval)
+        // Return focus to game (Canvas)
         const canvas = document.getElementById('gameCanvas');
         if (canvas) canvas.focus();
     }
 }
 
-// --- BAŞLATMA FONKSİYONU ---
+// --- INIT FUNCTION ---
 function initChatSystem() {
-    console.log("Chat sistemi başlatılıyor...");
-    updateChatUI(); // Başlangıç modunu uygula (1: Yarım)
+    console.log("Chat system initializing...");
+    updateChatUI(); // Apply initial mode (1: Semi)
 
     const sendBtn = document.getElementById('chat-send-btn');
     if (sendBtn) {
         sendBtn.addEventListener('click', sendUserMessage);
     }
 
-    // Input dinleyicisi: Komut modu algılama (Turuncu Renk)
+    // Input listener: Command mode detection (Orange Color)
     const input = document.getElementById('chat-input');
     if (input) {
         input.addEventListener('input', (e) => {
@@ -219,34 +221,34 @@ function initChatSystem() {
         });
     }
 
-    // Global Enter Listener
     window.addEventListener('keydown', (e) => {
+        const input = document.getElementById('chat-input');
+
         if (e.key === 'Enter') {
-            if (chatState === 1 && document.activeElement !== input) {
-                // Eğer yarım moddaysak ve input odaklı değilse -> AKTİF ET
+            if (document.activeElement === input) {
+                // If input focused and Enter pressed -> Send Message
+                sendUserMessage();
+            } else {
+                // If semi mode and input not focused -> ACTIVATE
                 wasSemiActive = true;
-                chatState = 2; // Aktif yap
+                chatState = 2; // Activate
                 updateChatUI();
                 e.preventDefault();
                 setTimeout(() => {
                     if (input) input.focus();
                 }, 50);
             }
-            else if (document.activeElement === input) {
-                // Eğer input odaklıysa ve Enter'a basıldıysa -> Mesajı Gönder
-                sendUserMessage();
-            }
         }
 
-        // ESC ile iptal etme (Eğer input açıksa kapat)
+        // Cancel with ESC (Close if input is open)
         if (e.key === 'Escape') {
             if (chatState === 2 && wasSemiActive) {
                 chatState = 1;
                 wasSemiActive = false;
                 updateChatUI();
                 if (input) {
-                    input.value = ''; // Yazılanı sil
-                    input.classList.remove('command-mode'); // Stili sil
+                    input.value = ''; // Clear typed text
+                    input.classList.remove('command-mode'); // Clear style
                     input.blur();
                 }
             }

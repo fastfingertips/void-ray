@@ -1,6 +1,6 @@
-<!-- HUD KONTEYNERİ (SABİT ARKAPLAN ELEMENTLERİ) -->
+<!-- HUD CONTAINER (FIXED BACKGROUND ELEMENTS) -->
 <div class="hud-container">
-    <!-- FPS GÖSTERGESİ (Detaylı & Sade) -->
+    <!-- FPS DISPLAY (Detailed & Simple) -->
     <div id="debug-fps-panel">
         FPS: <span id="debug-fps-val" class="dbg-val">0</span>
         MS: <span id="debug-ms-val" class="dbg-val">0</span>
@@ -9,73 +9,69 @@
         MEM: <span id="debug-mem-val" class="dbg-val">0</span>
     </div>
 
-    <!-- REHBER / TUTORIAL KUTUSU -->
+    <!-- GUIDE / TUTORIAL BOX -->
     <div id="tutorial-box">
         <div id="tutorial-icon">!</div>
         <div id="tutorial-content">
-            <div class="tut-label">REHBER</div>
-            <div id="tutorial-text">Sistemler başlatılıyor...</div>
+            <div class="tut-label" data-i18n="hud.tutorial">GUIDE</div>
+            <div id="tutorial-text" data-i18n="hud.startingUp">Systems starting up...</div>
         </div>
     </div>
 
-    <!-- YANKI GÖRÜŞ GÖSTERGESİ -->
+    <!-- ECHO VISION INDICATOR -->
     <div id="echo-vision-indicator">
         <div class="scan-line"></div>
-        <div class="vision-text">⚠ UZAKTAN BAĞLANTI: YANKI GÖRÜŞÜ ⚠</div>
-        <div class="vision-sub">SİNYAL GÜCÜ: %100 - GÖRÜNTÜ AKTARILIYOR</div>
+        <div class="vision-text" data-i18n="hud.echoVision">⚠ REMOTE CONNECTION: ECHO VISION ⚠</div>
+        <div class="vision-sub" data-i18n="hud.signalStrength">SIGNAL STRENGTH: 100% - TRANSMITTING IMAGE</div>
     </div>
 
-    <!-- HUD İKONLARI -->
+    <!-- HUD ICONS -->
     <div class="hud-icon-group">
-        <!-- PROFİL BUTONU -->
-        <div id="btn-profile-icon" class="hud-btn" title="Profil (P)"
-            onmouseenter="showInfoTooltip(event, 'PROFİL (P): Evrim seviyesi ve pilot verileri.')"
-            onmouseleave="hideTooltip()">
+        <!-- PROFILE BUTTON -->
+        <div id="btn-profile-icon" class="hud-btn" data-i18n-title="hud.profileTooltip" title="Profile (P)"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.profileTooltip') : '')" onmouseleave="hideTooltip()">
             ⏣
         </div>
 
-        <!-- EKİPMAN BUTONU (YENİ - EMOJI DÜZELTİLDİ) -->
-        <div id="btn-equip-icon" class="hud-btn" title="Ekipman"
-            onmouseenter="showInfoTooltip(event, 'EKİPMAN: Gemi parçaları ve yükseltmeler.')"
-            onmouseleave="hideTooltip()">
+        <!-- EQUIPMENT BUTTON -->
+        <div id="btn-equip-icon" class="hud-btn" data-i18n-title="hud.equipTooltip" title="Equipment"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.equipTooltip') : '')" onmouseleave="hideTooltip()">
             ⛨
         </div>
 
-        <div id="btn-inv-icon" class="hud-btn" title="Envanter (I)"
-            onmouseenter="showInfoTooltip(event, 'ENVANTER (I): Toplanan kaynakları ve kargoyu gösterir.')"
+        <div id="btn-inv-icon" class="hud-btn" data-i18n-title="hud.inventoryTooltip" title="Inventory (I)"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.inventoryTooltip') : '')"
             onmouseleave="hideTooltip()">
             ❖ <span id="inv-total-badge" class="hud-badge" style="display:none;">0</span>
         </div>
 
-        <div id="btn-stats-icon" class="hud-btn" title="İstatistikler"
-            onmouseenter="showInfoTooltip(event, 'İSTATİSTİKLER: Oyun verilerini ve sayaçları gösterir.')"
-            onmouseleave="hideTooltip()">
+        <div id="btn-stats-icon" class="hud-btn" data-i18n-title="hud.statsTooltip" title="Statistics"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.statsTooltip') : '')" onmouseleave="hideTooltip()">
             ≣
         </div>
 
-        <!-- CHAT BUTONU -->
-        <div id="btn-chat-mode" class="hud-btn" title="İletişim Modu"
-            onmouseenter="showInfoTooltip(event, 'İLETİŞİM MODU: Aktif / Yarım')" onmouseleave="hideTooltip()">
+        <!-- CHAT BUTTON -->
+        <div id="btn-chat-mode" class="hud-btn" data-i18n-title="hud.chatTooltip" title="Communication Mode"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.chatTooltip') : '')" onmouseleave="hideTooltip()">
             ✉
         </div>
 
-        <!-- BAĞLAMLAR BUTONU -->
-        <div id="btn-context-icon" class="hud-btn" title="Bağlamlar"
-            onmouseenter="showInfoTooltip(event, 'BAĞLAMLAR: Oyun mekaniklerinin mantıksal dökümü.')"
-            onmouseleave="hideTooltip()">
+        <!-- CONTEXT BUTTON -->
+        <div id="btn-context-icon" class="hud-btn" data-i18n-title="hud.contextTooltip" title="Contexts"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.contextTooltip') : '')" onmouseleave="hideTooltip()">
             ?
         </div>
 
-        <!-- KONTROLLER BUTONU (YENİ) -->
-        <div id="btn-controls-icon" class="hud-btn" title="Kontroller"
-            onmouseenter="showInfoTooltip(event, 'KONTROLLER: Tuş takımı şemasını gösterir.')"
+        <!-- CONTROLS BUTTON -->
+        <div id="btn-controls-icon" class="hud-btn" data-i18n-title="hud.controlsTooltip" title="Controls"
+            onmouseenter="showInfoTooltip(event, window.t ? t('hud.controlsTooltip') : '')"
             onmouseleave="hideTooltip()">
             ⌨
         </div>
 
         <div id="echo-wrapper-el" class="echo-wrapper">
             <div id="btn-echo-icon" class="hud-btn"
-                onmouseenter="showInfoTooltip(event, 'YANKI KONTROL: Yardımcı dron modunu değiştirir.')"
+                onmouseenter="showInfoTooltip(event, window.t ? t('hud.echoTooltip') : '')"
                 onmouseleave="hideTooltip()">
                 ◎ <span id="echo-total-badge" class="hud-badge" style="display:none;">0</span>
             </div>
@@ -83,48 +79,48 @@
                 <div class="echo-profile">
                     <div class="echo-p-icon">◈</div>
                     <div class="echo-p-stats">
-                        <span class="echo-p-name">YANKI V1</span>
-                        <span id="echo-rate-disp" class="echo-p-rate">Toplama Hızı: Normal</span>
+                        <span class="echo-p-name" data-i18n="hud.echoName">ECHO V1</span>
+                        <span id="echo-rate-disp" class="echo-p-rate" data-i18n="hud.collectRate">Collect Rate:
+                            Normal</span>
                     </div>
                 </div>
-                <div id="menu-roam" class="echo-menu-item active-mode">◈ SERBEST</div>
-                <div id="menu-return" class="echo-menu-item">↪ ÇAĞIR</div>
-                <div id="menu-merge" class="echo-menu-item">☌ BİRLEŞ</div>
-                <div id="menu-echo-inv" class="echo-menu-item">❖ ENVANTER</div>
+                <div id="menu-roam" class="echo-menu-item active-mode" data-i18n="hud.echoFree">◈ FREE</div>
+                <div id="menu-return" class="echo-menu-item" data-i18n="hud.echoReturn">↪ CALL</div>
+                <div id="menu-merge" class="echo-menu-item" data-i18n="hud.echoMerge">☌ MERGE</div>
+                <div id="menu-echo-inv" class="echo-menu-item" data-i18n="hud.echoInventory">❖ INVENTORY</div>
             </div>
         </div>
 
         <div class="ai-controls">
-            <div id="btn-ai-toggle" class="hud-btn" title="Oto-Pilot (Q)"
-                onmouseenter="showInfoTooltip(event, 'OTO-PİLOT (Q): Otomatik toplama ve navigasyonu açar/kapatır.')"
+            <div id="btn-ai-toggle" class="hud-btn" data-i18n-title="hud.autoPilotTooltip" title="Auto-Pilot (Q)"
+                onmouseenter="showInfoTooltip(event, window.t ? t('hud.autoPilotTooltip') : '')"
                 onmouseleave="hideTooltip()">◈</div>
-            <div id="ai-mode-btn" class="ai-mode-switch">TOPLA</div>
+            <div id="ai-mode-btn" class="ai-mode-switch" data-i18n="aiMode.collect">COLLECT</div>
         </div>
     </div>
 
-    <!-- HIZ GÖSTERGESİ -->
+    <!-- SPEED DISPLAY -->
     <div id="speedometer">
-        <span class="speed-label">HIZ</span>
+        <span class="speed-label" data-i18n="hud.speed">SPEED</span>
         <div><span id="speed-val" class="speed-val">0</span><span class="speed-unit">KM/S</span></div>
     </div>
 
-    <!-- MİNİ HARİTA VE BARLAR -->
-    <div id="minimap-wrapper"
-        onmouseenter="showInfoTooltip(event, 'RADAR: Yakındaki kaynakları ve tehditleri gösterir.')"
+    <!-- MINIMAP AND BARS -->
+    <div id="minimap-wrapper" onmouseenter="showInfoTooltip(event, window.t ? t('hud.radarTooltip') : '')"
         onmouseleave="hideTooltip()">
         <div id="minimap-container"><canvas id="minimap-canvas"></canvas></div>
-        <div id="energy-bar-container" title="Enerji">
+        <div id="energy-bar-container" data-i18n-title="hud.energy" title="Energy">
             <div id="energy-bar-fill"></div>
         </div>
-        <div id="health-bar-container" title="Gövde Dayanıklılığı">
+        <div id="health-bar-container" data-i18n-title="hud.hull" title="Hull Integrity">
             <div id="health-bar-fill"></div>
         </div>
         <div class="coords" id="coords">0000 : 0000</div>
     </div>
 
-    <!-- AYARLAR BUTONU (Sadece Buton burada kalır) -->
-    <div id="btn-settings" title="Ayarlar">⚙</div>
+    <!-- SETTINGS BUTTON -->
+    <div id="btn-settings" data-i18n-title="settings.title" title="Settings">⚙</div>
 
-</div> <!-- HUD CONTAINER SONU -->
+</div> <!-- HUD CONTAINER END -->
 
 <div id="merge-prompt"></div>

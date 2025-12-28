@@ -6,11 +6,11 @@
 export const ConsoleSystem = {
     commands: {
         'help': {
-            desc: 'Komut listesini gösterir.',
+            desc: 'Shows the list of commands.',
             usage: '/help',
             devOnly: false,
             action: () => {
-                let msg = "MEVCUT KOMUTLAR:<br>";
+                let msg = "AVAILABLE COMMANDS:<br>";
                 Object.keys(ConsoleSystem.commands).forEach(cmd => {
                     const info = ConsoleSystem.commands[cmd];
                     const isDev = info.devOnly;
@@ -21,42 +21,42 @@ export const ConsoleSystem = {
 
                     msg += `<span style="color:${color}">/${cmd}</span>: <span style="color:#94a3b8">${info.desc}</span>${isDev ? " <span style='font-size:0.6em; color:#ef4444'>[DEV]</span>" : ""}<br>`;
                 });
-                addChatMessage(msg, 'system', 'bilgi');
+                addChatMessage(msg, 'system', 'info');
             }
         },
         'god': {
-            desc: 'Ölümsüzlük modunu açar/kapatır.',
+            desc: 'Toggles god mode.',
             usage: '/god',
             devOnly: true,
             action: () => {
                 if (!window.gameSettings) return;
                 window.gameSettings.godMode = !window.gameSettings.godMode;
-                const state = window.gameSettings.godMode ? "AKTİF" : "PASİF";
+                const state = window.gameSettings.godMode ? "ACTIVE" : "INACTIVE";
                 const color = window.gameSettings.godMode ? "#10b981" : "#ef4444";
 
                 const toggle = document.getElementById('toggle-god-mode');
                 if (toggle) toggle.checked = window.gameSettings.godMode;
 
                 showNotification({ name: `GOD MODE: ${state}`, type: { color: color } }, "");
-                addChatMessage(`Sistem: Ölümsüzlük modu ${state}`, 'system', 'genel');
+                addChatMessage(`System: God mode ${state}`, 'system', 'general');
             }
         },
         'heal': {
-            desc: 'Canı ve enerjiyi fuller.',
+            desc: 'Restores health and energy.',
             usage: '/heal',
             devOnly: true,
             action: () => {
                 if (player) {
                     player.health = player.maxHealth;
                     player.energy = player.maxEnergy;
-                    showNotification({ name: "SİSTEMLER ONARILDI", type: { color: '#10b981' } }, "");
+                    showNotification({ name: "SYSTEMS REPAIRED", type: { color: '#10b981' } }, "");
                     Utils.playSound('playChime', { id: 'rare' });
                 }
             }
         },
         'tp': {
-            desc: 'Belirtilen koordinata ışınlar.',
-            usage: '/tp <x> <y> (Örn: /tp 5000 5000)',
+            desc: 'Teleports to specified coordinates.',
+            usage: '/tp <x> <y> (Ex: /tp 5000 5000)',
             devOnly: true,
             action: (args) => {
                 if (args.length < 2) return ConsoleSystem.showUsage('tp');
@@ -74,13 +74,13 @@ export const ConsoleSystem = {
                     if (player.tail) player.tail.forEach(t => { t.x = x; t.y = y; });
                     if (window.cameraFocus) { window.cameraFocus.x = x; window.cameraFocus.y = y; }
 
-                    showNotification({ name: "IŞINLANMA BAŞARILI", type: { color: '#a855f7' } }, `[${Math.floor(x)}:${Math.floor(y)}]`);
+                    showNotification({ name: "TELEPORT SUCCESSFUL", type: { color: '#a855f7' } }, `[${Math.floor(x)}:${Math.floor(y)}]`);
                 }
             }
         },
         'give': {
-            desc: 'Envantere eşya ekler.',
-            usage: '/give <isim> <adet> (Örn: /give Kristal 10)',
+            desc: 'Adds item to inventory.',
+            usage: '/give <name> <count> (Ex: /give Crystal 10)',
             devOnly: true,
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('give');
@@ -108,7 +108,7 @@ export const ConsoleSystem = {
                     if (foundType) break;
                 }
 
-                if (!foundType) return ConsoleSystem.error("Eşya bulunamadı. Tam ismini yazmayı deneyin.");
+                if (!foundType) return ConsoleSystem.error("Item not found. Try typing exact name.");
 
                 for (let i = 0; i < count; i++) {
                     const fakePlanet = { name: foundName, type: foundType };
@@ -117,26 +117,26 @@ export const ConsoleSystem = {
 
                 updateInventoryCount();
                 if (inventoryOpen) renderInventory();
-                addChatMessage(`Konsol: ${count} adet ${foundName} verildi.`, 'loot', 'genel');
+                addChatMessage(`Console: Given ${count}x ${foundName}.`, 'loot', 'general');
             }
         },
         'xp': {
-            desc: 'Oyuncuya XP verir.',
-            usage: '/xp <miktar> (Örn: /xp 500)',
+            desc: 'Gives XP to player.',
+            usage: '/xp <amount> (Ex: /xp 500)',
             devOnly: true,
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('xp');
                 const amount = parseInt(args[0]);
                 if (player && !isNaN(amount)) {
                     player.gainXp(amount);
-                    addChatMessage(`Konsol: +${amount} XP eklendi.`, 'info', 'genel');
+                    addChatMessage(`Console: Added +${amount} XP.`, 'info', 'general');
                 } else {
                     ConsoleSystem.showUsage('xp');
                 }
             }
         },
         'level': {
-            desc: 'Seviye atlatır.',
+            desc: 'Level up.',
             usage: '/level',
             devOnly: true,
             action: () => {
@@ -144,17 +144,17 @@ export const ConsoleSystem = {
             }
         },
         'speed': {
-            desc: 'Hız limitini artırır (Test amaçlı).',
-            usage: '/speed <değer>',
+            desc: 'Increases speed limit (For testing).',
+            usage: '/speed <value>',
             devOnly: true,
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('speed');
-                ConsoleSystem.error("Hız ayarı şu an sadece Nexus üzerinden yapılabilir.");
+                ConsoleSystem.error("Speed setting can only be done via Nexus.");
             }
         },
         'stardust': {
-            desc: 'Kristal (Para) ekler.',
-            usage: '/stardust <miktar>',
+            desc: 'Adds Crystal (Currency).',
+            usage: '/stardust <amount>',
             devOnly: true,
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('stardust');
@@ -165,15 +165,15 @@ export const ConsoleSystem = {
                 playerData.stardust += amount;
                 playerData.stats.totalStardust += amount;
                 player.updateUI();
-                addChatMessage(`Konsol: +${amount} Kristal eklendi.`, 'loot', 'genel');
+                addChatMessage(`Console: Added +${amount} Crystal.`, 'loot', 'general');
             }
         },
         'wormhole': {
-            desc: 'Solucan deliği oluşturur veya bulur.',
+            desc: 'Spawns or finds a wormhole.',
             usage: '/wormhole <spawn|list>',
             devOnly: true,
             action: (args) => {
-                if (!entityManager) return ConsoleSystem.error("Entity Manager yok.");
+                if (!entityManager) return ConsoleSystem.error("Entity Manager missing.");
 
                 if (args[0] === 'spawn') {
                     const dist = 500;
@@ -183,14 +183,14 @@ export const ConsoleSystem = {
                     if (typeof Wormhole !== 'undefined') {
                         const w = new Wormhole(wx, wy);
                         entityManager.wormholes.push(w);
-                        addChatMessage("Konsol: Solucan deliği oluşturuldu.", 'info', 'genel');
-                        showNotification({ name: "YAPAY ANOMALİ", type: { color: '#8b5cf6' } }, "Oluşturuldu");
+                        addChatMessage("Console: Wormhole spawned.", 'info', 'general');
+                        showNotification({ name: "ARTIFICIAL ANOMALY", type: { color: '#8b5cf6' } }, "Created");
                     } else {
-                        ConsoleSystem.error("Wormhole sınıfı bulunamadı.");
+                        ConsoleSystem.error("Wormhole class not found.");
                     }
                 } else if (args[0] === 'list') {
                     const count = entityManager.wormholes.length;
-                    addChatMessage(`Konsol: Haritada ${count} solucan deliği var.`, 'info', 'bilgi');
+                    addChatMessage(`Console: There are ${count} wormholes on map.`, 'info', 'info');
 
                     let nearest = null, minDist = Infinity;
                     entityManager.wormholes.forEach(w => {
@@ -199,9 +199,9 @@ export const ConsoleSystem = {
                     });
 
                     if (nearest) {
-                        addChatMessage(`En yakın: [${Math.floor(nearest.x)}:${Math.floor(nearest.y)}] (${Math.floor(minDist)}m)`, 'info', 'bilgi');
+                        addChatMessage(`Nearest: [${Math.floor(nearest.x)}:${Math.floor(nearest.y)}] (${Math.floor(minDist)}m)`, 'info', 'info');
 
-                        // GLOBAL DEĞİŞKENLERİ GÜNCELLE
+                        // UPDATE GLOBAL VARIABLES
                         window.manualTarget = { x: nearest.x, y: nearest.y };
                         window.autopilot = true;
                         window.aiMode = 'travel';
@@ -211,9 +211,9 @@ export const ConsoleSystem = {
                         if (aiToggle) aiToggle.classList.add('active');
 
                         if (typeof updateAIButton === 'function') updateAIButton();
-                        showNotification({ name: "ROTA OLUŞTURULDU", type: { color: '#fff' } }, "Solucan Deliğine Gidiliyor...");
+                        showNotification({ name: "ROUTE CREATED", type: { color: '#fff' } }, "Traveling to Wormhole...");
                     } else {
-                        addChatMessage("Konsol: Hiç solucan deliği bulunamadı. '/wormhole spawn' ile oluşturun.", 'alert', 'genel');
+                        addChatMessage("Console: No wormholes found. Use '/wormhole spawn'.", 'alert', 'general');
                     }
                 } else {
                     ConsoleSystem.showUsage('wormhole');
@@ -221,39 +221,39 @@ export const ConsoleSystem = {
             }
         },
         'echo': {
-            desc: 'Yankı dronunu yönetir.',
+            desc: 'Manages Echo drone.',
             usage: '/echo <spawn|kill>',
             devOnly: true,
             action: (args) => {
                 if (args.length < 1) return ConsoleSystem.showUsage('echo');
 
                 if (args[0] === 'spawn') {
-                    if (echoRay) return ConsoleSystem.error("Yankı zaten aktif.");
+                    if (echoRay) return ConsoleSystem.error("Echo already active.");
                     spawnEcho(player.x, player.y + 100);
-                    addChatMessage("Konsol: Yankı oluşturuldu.", 'info', 'genel');
+                    addChatMessage("Console: Echo spawned.", 'info', 'general');
                 } else if (args[0] === 'kill') {
-                    if (!echoRay) return ConsoleSystem.error("Yankı yok.");
+                    if (!echoRay) return ConsoleSystem.error("No Echo found.");
                     window.echoRay = null;
                     document.getElementById('echo-wrapper-el').style.display = 'none';
-                    addChatMessage("Konsol: Yankı yok edildi.", 'alert', 'genel');
+                    addChatMessage("Console: Echo destroyed.", 'alert', 'general');
                 } else {
                     ConsoleSystem.showUsage('echo');
                 }
             }
         },
         'save': {
-            desc: 'Oyunu zorla kaydeder.',
+            desc: 'Force saves the game.',
             usage: '/save',
             devOnly: false,
             action: () => {
                 if (typeof SaveManager !== 'undefined') {
                     SaveManager.save();
-                    addChatMessage("Sistem: Oyun zorla kaydedildi.", 'system', 'genel');
+                    addChatMessage("System: Game force saved.", 'system', 'general');
                 }
             }
         },
         'ui': {
-            desc: 'Arayüzü gizler/gösterir.',
+            desc: 'Toggles UI visibility.',
             usage: '/ui',
             devOnly: false,
             action: () => {
@@ -261,22 +261,22 @@ export const ConsoleSystem = {
             }
         },
         'clear': {
-            desc: 'Sohbet geçmişini temizler.',
+            desc: 'Clears chat history.',
             usage: '/clear',
             devOnly: false,
             action: () => {
                 const content = document.getElementById('chat-content');
                 if (content) content.innerHTML = '';
-                chatHistory.genel = [];
-                chatHistory.bilgi = [];
-                chatHistory.grup = [];
+                chatHistory.general = [];
+                chatHistory.info = [];
+                chatHistory.group = [];
             }
         }
     },
 
     execute: function (inputString) {
         if (!window.gameSettings || !window.gameSettings.enableConsole) {
-            this.error("Konsol devre dışı. Ayarlar > Oyun menüsünden 'Konsolu Aktif Et' seçeneğini açın.");
+            this.error("Console disabled. Enable 'Active Console' in Settings > Game menu.");
             return;
         }
 
@@ -292,7 +292,7 @@ export const ConsoleSystem = {
         if (cmd) {
             if (cmd.devOnly) {
                 if (!window.gameSettings || !window.gameSettings.developerMode) {
-                    this.error(`Bu komutu kullanmak için 'Geliştirici Modu'nu açmalısın. (Ayarlar > Oyun)`);
+                    this.error(`You must enable 'Developer Mode' to use this command. (Settings > Game)`);
                     return;
                 }
             }
@@ -301,23 +301,23 @@ export const ConsoleSystem = {
                 cmd.action(args);
             } catch (e) {
                 console.error(e);
-                this.error("Komut çalıştırılırken hata oluştu.");
+                this.error("Error executing command.");
             }
         } else {
-            this.error(`Bilinmeyen komut: ${commandName}. Yardım için /help yazın.`);
+            this.error(`Unknown command: ${commandName}. Type /help for help.`);
         }
     },
 
     error: function (msg) {
-        addChatMessage(`HATA: ${msg}`, 'alert', 'genel');
+        addChatMessage(`ERROR: ${msg}`, 'alert', 'general');
     },
 
     showUsage: function (cmdKey) {
         const cmd = this.commands[cmdKey];
         if (cmd && cmd.usage) {
-            addChatMessage(`KULLANIM: <span style="color:#fbbf24">${cmd.usage}</span>`, 'alert', 'genel');
+            addChatMessage(`USAGE: <span style="color:#fbbf24">${cmd.usage}</span>`, 'alert', 'general');
         } else {
-            this.error("Bu komut için kullanım bilgisi yok.");
+            this.error("No usage info for this command.");
         }
     }
 };

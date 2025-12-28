@@ -6,8 +6,8 @@
 export class SystemBoot {
     constructor() {
         this.tasks = [
-            { id: 'init', label: 'ÇEKİRDEK BAŞLATILIYOR', action: async () => { await this.wait(150); return true; } },
-            { id: 'yaml', label: 'DOSYA SİSTEMİ TARANIYOR', action: this.loadConfiguration.bind(this) }
+            { id: 'init', label: 'INITIALIZING CORE', action: async () => { await this.wait(150); return true; } },
+            { id: 'yaml', label: 'SCANNING FILE SYSTEM', action: this.loadConfiguration.bind(this) }
         ];
 
         this.container = document.getElementById('integrated-boot-container');
@@ -21,7 +21,7 @@ export class SystemBoot {
 
     start() {
         if (!this.container || !this.listContainer) {
-            console.warn("Boot arayüzü bulunamadı.");
+            console.warn("Boot interface not found.");
             this.forceShowMenu();
             return;
         }
@@ -37,7 +37,7 @@ export class SystemBoot {
 
         const task = this.tasks[index];
 
-        // Listeye ekle
+        // Add to list
         const item = document.createElement('div');
         item.className = 'check-item';
         item.innerHTML = `<span class="check-label">${task.label}</span><span class="status-icon pending" id="status-${task.id}">...</span>`;
@@ -46,7 +46,7 @@ export class SystemBoot {
 
         this.updateProgress(index, this.tasks.length);
 
-        // Hızlı akış efekti için mikro bekleme
+        // Micro-wait for fast flow effect
         await this.wait(30);
 
         let result = true;
@@ -55,7 +55,7 @@ export class SystemBoot {
                 result = await task.action();
             }
         } catch (e) {
-            console.error(`Hata (${task.label}):`, e);
+            console.error(`Error (${task.label}):`, e);
             result = false;
         }
 
@@ -75,34 +75,34 @@ export class SystemBoot {
 
     async wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    // --- YAPILANDIRMA VE DOSYA KONTROLÜ ---
+    // --- CONFIGURATION AND FILE CHECK ---
 
     async loadConfiguration() {
         try {
-            // Cache-busting: Dosyayı taze çekmek için zaman damgası ekle
+            // Cache-busting: Add timestamp to fetch fresh file
             const timestamp = Date.now();
             const response = await fetch(`project_structure.yaml?t=${timestamp}`);
 
-            if (!response.ok) throw new Error("Manifest dosyası bulunamadı");
+            if (!response.ok) throw new Error("Manifest file not found");
             const text = await response.text();
 
-            // 1. YAML Ağacını Ayrıştır
+            // 1. Parse YAML Tree
             const tree = this.parseYamlTree(text);
 
-            // 2. Düz Dosya Yollarına Çevir
+            // 2. Convert to Flat File Paths
             this.filePaths = [];
             this.flattenTree(tree, "");
 
-            console.log(`Boot: ${this.filePaths.length} dosya indekslendi.`);
+            console.log(`Boot: ${this.filePaths.length} files indexed.`);
 
-            // 3. Kontrol Görevlerini Oluştur
+            // 3. Create Check Tasks
             this.filePaths.forEach((path, i) => {
                 let label = path.split('/').pop().toUpperCase();
                 if (label.length > 25) label = label.substring(0, 22) + '...';
 
                 this.tasks.push({
                     id: `node_${i}`,
-                    label: `KONTROL: ${label}`,
+                    label: `CHECK: ${label}`,
                     action: async () => {
                         try {
                             const res = await fetch(path, { method: 'HEAD' });
@@ -112,8 +112,8 @@ export class SystemBoot {
                 });
             });
 
-            // 4. Bitiş Görevi
-            this.tasks.push({ id: 'ready', label: 'SİSTEM HAZIR', action: async () => { await this.wait(300); return true; } });
+            // 4. Finish Task
+            this.tasks.push({ id: 'ready', label: 'SYSTEM READY', action: async () => { await this.wait(300); return true; } });
 
             return true;
         } catch (e) {
@@ -122,7 +122,7 @@ export class SystemBoot {
         }
     }
 
-    // Basit Girinti Tabanlı YAML Parser
+    // Simple Indentation Based YAML Parser
     parseYamlTree(text) {
         const lines = text.split('\n');
         const root = {};
@@ -142,7 +142,7 @@ export class SystemBoot {
 
             if (content.endsWith(':')) {
                 const key = content.replace(':', '');
-                const newObj = []; // Klasörler liste olarak başlar
+                const newObj = []; // Folders start as lists
 
                 if (Array.isArray(parent)) {
                     const wrapper = {};
@@ -180,7 +180,7 @@ export class SystemBoot {
     finish() {
         if (this.progressBar) this.progressBar.style.width = '100%';
         if (this.statusText) {
-            this.statusText.innerText = "SİSTEM HAZIR";
+            this.statusText.innerText = "SYSTEM READY";
             this.statusText.style.color = "#10b981";
         }
 

@@ -1,5 +1,5 @@
-<!-- SES -->
-<!-- Base (Nexus) ve Space (Uzay) için iki ayrı ses kanalı -->
+<!-- AUDIO -->
+<!-- Two separate audio channels for Base (Nexus) and Space -->
 <audio id="music-base" loop>
     <source src="assets/base.mp3" type="audio/mpeg">
 </audio>
@@ -9,24 +9,24 @@
 </audio>
 
 <!-- SFX -->
-<!-- Hata Sesi -->
+<!-- Error Sound -->
 <audio id="sfx-error">
     <source src="assets/error.mp3" type="audio/mpeg">
 </audio>
 
-<!-- EFEKT KATMANLARI -->
+<!-- EFFECT LAYERS -->
 <div id="toxic-overlay"></div>
 <div id="radiation-overlay"></div>
 <div id="damage-overlay"></div>
-<!-- YENİ: Glitch (Işınlanma) Efekti -->
+<!-- Glitch (Teleport) Effect -->
 <div id="glitch-overlay"></div>
 
-<!-- YENİ: CRT MONİTÖR EFEKTİ KATMANI -->
+<!-- CRT MONITOR EFFECT LAYER -->
 <div id="crt-overlay"></div>
 
-<!-- UYARILAR -->
+<!-- WARNINGS -->
 <div id="radiation-warning">
     <div class="rad-icon">⚠</div>
-    <div>RADYASYON ALANI</div>
-    <div class="rad-sub">GERİ DÖN YOKSA GEMİ PARÇALANACAK</div>
+    <div data-i18n="warnings.radiationZone">RADIATION ZONE</div>
+    <div class="rad-sub" data-i18n="warnings.radiationDesc">RETURN OR THE SHIP WILL BE DESTROYED</div>
 </div>

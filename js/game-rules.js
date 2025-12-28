@@ -41,8 +41,8 @@ export const GameRules = {
     },
 
     generateRandomDrop: function (rarityType) {
-        // Efsanevi gezegenlerin ekipman atma şansı daha yüksek.
-        let equipmentChance = 0.05; // %5 Taban şans
+        // Legendary planets have higher chance to drop equipment.
+        let equipmentChance = 0.05; // 5% Base chance
 
         if (rarityType.id === 'rare') equipmentChance = 0.15;
         if (rarityType.id === 'epic') equipmentChance = 0.30;
@@ -63,7 +63,7 @@ export const GameRules = {
             name: name,
             type: rarityType,
             count: 1,
-            desc: "İşlenmemiş hammadde."
+            desc: "Raw material."
         };
     },
 
@@ -89,13 +89,13 @@ export const GameRules = {
         else if (rarityType.id === 'legendary') bonusCount = Utils.randomInt(3, 5);
 
         const bonuses = [];
-        // BONUS_TYPES'ı klonla ki orijinal dizi bozulmasın
+        // Clone BONUS_TYPES so original array is not mutated
         const availableBonuses = JSON.parse(JSON.stringify(BONUS_TYPES));
 
         for (let i = 0; i < bonusCount; i++) {
             if (availableBonuses.length === 0) break;
 
-            // Ağırlıklı rastgele seçim (Weight)
+            // Weighted random selection
             let totalWeight = availableBonuses.reduce((sum, b) => sum + b.weight, 0);
             let randomWeight = Math.random() * totalWeight;
             let selectedBonus = null;
@@ -118,7 +118,7 @@ export const GameRules = {
                     unit: selectedBonus.unit,
                     id: selectedBonus.id
                 });
-                // Seçilen bonusu listeden çıkar (Aynı bonus tekrar gelmesin)
+                // Remove selected bonus from list (Prevent duplicate bonus)
                 availableBonuses.splice(selectedIndex, 1);
             }
         }
@@ -132,7 +132,7 @@ export const GameRules = {
             type: rarityType,
             stats: bonuses,
             icon: typeDef.icon,
-            desc: "Efsunlu uzay ekipmanı."
+            desc: "Enchanted space equipment."
         };
     },
 

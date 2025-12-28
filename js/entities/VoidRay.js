@@ -20,7 +20,7 @@ class VoidRay {
 
         this.maxXp = GAME_CONFIG.PLAYER.BASE_XP;
 
-        // Başlangıç değerlerini ata
+        // Assign initial values
         this.energy = GAME_CONFIG.PLAYER.BASE_ENERGY;
         this.maxEnergy = GAME_CONFIG.PLAYER.BASE_ENERGY;
         this.health = GAME_CONFIG.PLAYER.BASE_HEALTH;
@@ -45,49 +45,51 @@ class VoidRay {
 
         this.gravityPull = null;
 
-        // Işık Atlaması Değişkenleri
+        // Light Jump Variables
         this.isChargingJump = false;
-        this.isTraveling = false; // YENİ: Seyahat Modu
+        this.isTraveling = false; // NEW: Travel Mode
         this.jumpChargeTimer = 0;
         this.jumpStartAngle = 0;
         this.currentJumpPhase = 0;
-        this.jumpTarget = null; // Seyahat hedefi
+        this.jumpTarget = null; // Travel destination
     }
 
-    // --- IŞIK ATLAMASI BAŞLATMA ---
+    // --- START LIGHT JUMP ---
     attemptLightJump() {
         if (this.isChargingJump || this.isTraveling) return;
 
-        // 1. Enerji Kontrolü
+        // 1. Energy Check
         if (this.energy < 20) {
-            showNotification({ name: MESSAGES.UI.JUMP_FAIL_ENERGY, type: { color: '#ef4444' } }, "Min. 20 Birim Gerekli");
+            const t = window.t || ((key) => key.split('.').pop());
+            showNotification({ name: MESSAGES.UI.JUMP_FAIL_ENERGY, type: { color: '#ef4444' } }, t('messages.ui.minEnergyRequired'));
             Utils.playSound('playError');
             return;
         }
 
-        // 2. Tahmini Hedef Kontrolü
+        // 2. Estimated Target Check
         const estimatedDist = this.energy * GAME_CONFIG.PLAYER.LIGHT_JUMP_EFFICIENCY;
         const targetX = this.x + Math.cos(this.angle) * estimatedDist;
         const targetY = this.y + Math.sin(this.angle) * estimatedDist;
 
-        // Harita Sınırı Kontrolü
+        // Map Bound Check
         if (targetX < 0 || targetX > WORLD_SIZE || targetY < 0 || targetY > WORLD_SIZE) {
-            showNotification({ name: MESSAGES.UI.JUMP_FAIL_UNPREDICTABLE, type: { color: '#ef4444' } }, "Rotasyon Güvensiz");
+            const t = window.t || ((key) => key.split('.').pop());
+            showNotification({ name: MESSAGES.UI.JUMP_FAIL_UNPREDICTABLE, type: { color: '#ef4444' } }, t('messages.ui.rotationUnsafe'));
             Utils.playSound('playError');
             return;
         }
 
-        // Şarjı Başlat
+        // Start Charging
         this.isChargingJump = true;
-        this.jumpChargeTimer = GAME_CONFIG.PLAYER.LIGHT_JUMP_CHARGE_TIME; // 180 Frame
+        this.jumpChargeTimer = GAME_CONFIG.PLAYER.LIGHT_JUMP_CHARGE_TIME; // 180 Frames
         this.jumpStartAngle = this.angle;
         this.currentJumpPhase = 1;
 
-        // Hızı Kes
+        // Kill Speed
         this.vx *= 0.05;
         this.vy *= 0.05;
 
-        // Başlangıç Sesi
+        // Start Sound
         if (typeof audio !== 'undefined' && audio) audio.playEvolve();
     }
 
@@ -96,16 +98,17 @@ class VoidRay {
         this.isChargingJump = false;
         this.jumpChargeTimer = 0;
         this.currentJumpPhase = 0;
-        showNotification({ name: MESSAGES.UI.JUMP_CANCELLED, type: { color: '#ef4444' } }, reason || "İptal Edildi");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: MESSAGES.UI.JUMP_CANCELLED, type: { color: '#ef4444' } }, reason || t('messages.ui.cancelled'));
     }
 
-    // --- SEYAHAT BAŞLATMA (Şarj Bittiğinde) ---
+    // --- START TRAVEL (When Charging Ends) ---
     executeLightJump() {
         const jumpDistance = this.energy * GAME_CONFIG.PLAYER.LIGHT_JUMP_EFFICIENCY;
         const targetX = this.x + Math.cos(this.jumpStartAngle) * jumpDistance;
         const targetY = this.y + Math.sin(this.jumpStartAngle) * jumpDistance;
 
-        // Son güvenlik kontrolü
+        // Final safety check
         if (targetX < 0 || targetX > WORLD_SIZE || targetY < 0 || targetY > WORLD_SIZE) {
             this.cancelLightJump(MESSAGES.UI.JUMP_FAIL_UNPREDICTABLE);
             return;
@@ -113,43 +116,44 @@ class VoidRay {
 
         if (particleSystem) particleSystem.emit(this.x, this.y, "#38bdf8", 30);
 
-        // Enerjiyi Sıfırla
+        // Reset Energy
         this.energy = 0;
 
-        // YENİ: Seyahat Moduna Geç
+        // NEW: Enter Travel Mode
         this.isChargingJump = false;
         this.isTraveling = true;
         this.jumpTarget = { x: targetX, y: targetY };
 
-        // Seyahat sırasında çarpışma olmasın
+        // No collisions during travel
         this.isGhost = true;
 
-        // Başlangıç Efekti
+        // Start Effect
         if (typeof triggerWormholeEffect === 'function') triggerWormholeEffect();
         if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'legendary' });
 
-        showNotification({ name: "HİPER SÜRÜŞ AKTİF", type: { color: '#38bdf8' } }, `Mesafe: ${Math.floor(jumpDistance / 100)}km`);
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('messages.ui.hyperDriveActive'), type: { color: '#38bdf8' } }, `${t('messages.ui.distance')}: ${Math.floor(jumpDistance / 100)}km`);
 
-        // AI İPTALİ KALDIRILDI: Otopilot açıksa atlama sonrası devam eder
+        // AI CANCELLATION REMOVED: Autopilot continues after jump if active
     }
 
-    // --- SEYAHAT BİTİŞİ (Hedefe Varınca) ---
+    // --- END TRAVEL (On Reaching Destination) ---
     finalizeLightJump() {
         this.isTraveling = false;
         this.jumpTarget = null;
 
-        // Hızı sıfırla (sert duruş)
+        // Reset speed (hard stop)
         this.vx = 0;
         this.vy = 0;
 
-        // Ghost modundan çık (Idle timer yönetir ama manuel de resetleyelim)
+        // Exit ghost mode (Idle timer manages this but manual reset safe)
         this.idleTimer = 0;
         this.isGhost = false;
         this.currentAlpha = 1.0;
 
-        // Varış Efektleri
+        // Arrival Effects
         if (particleSystem) particleSystem.emit(this.x, this.y, "#ffffff", 20);
-        if (typeof triggerWormholeEffect === 'function') triggerWormholeEffect(); // Glitch efekti (tekrar)
+        if (typeof triggerWormholeEffect === 'function') triggerWormholeEffect(); // Glitch effect (again)
         if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'rare' });
     }
 
@@ -187,11 +191,12 @@ class VoidRay {
     takeDamage(amount) {
         if (window.gameSettings && window.gameSettings.godMode) return;
 
-        // Seyahat sırasında hasar alınmaz (Ghost Modu)
+        // No damage taken during travel (Ghost Mode)
         if (this.isTraveling) return;
 
         if (this.isChargingJump) {
-            this.cancelLightJump("Hasar: Sistem Kilitlendi");
+            const t = window.t || ((key) => key.split('.').pop());
+            this.cancelLightJump(t('messages.ui.damageSystemLocked'));
         }
 
         this.health = Math.max(0, this.health - amount);
@@ -217,7 +222,7 @@ class VoidRay {
         this.isGhost = false; this.idleTimer = 0; this.currentAlpha = 1.0;
         this.debugTarget = null;
 
-        // Durumları sıfırla
+        // Reset states
         this.isChargingJump = false;
         this.isTraveling = false;
         this.jumpTarget = null;
@@ -234,7 +239,8 @@ class VoidRay {
         if (radWarn) radWarn.style.display = 'none';
 
         isPaused = false;
-        showNotification({ name: "SİSTEMLER YENİDEN BAŞLATILDI", type: { color: '#10b981' } }, "");
+        const t = window.t || ((key) => key.split('.').pop());
+        showNotification({ name: t('messages.ui.systemsRestarted'), type: { color: '#10b981' } }, "");
     }
 
     updateUI() {
@@ -273,45 +279,46 @@ class VoidRay {
     update(dt = 16) {
         this.updateStats();
 
-        // --- YENİ: SEYAHAT MODU (Görsel Yolculuk) ---
+        // --- NEW: TRAVEL MODE (Visual Journey) ---
         if (this.isTraveling && this.jumpTarget) {
-            // Hedefe doğru açı
+            // Angle towards target
             const angleToTarget = Math.atan2(this.jumpTarget.y - this.y, this.jumpTarget.x - this.x);
 
-            // Hızlı Hareket
-            const travelSpeed = GAME_CONFIG.PLAYER.LIGHT_JUMP_SPEED; // 2000 birim/frame (veya 250)
+            // Rapid Movement
+            const travelSpeed = GAME_CONFIG.PLAYER.LIGHT_JUMP_SPEED; // 2000 units/frame (or 250)
             this.vx = Math.cos(angleToTarget) * travelSpeed;
             this.vy = Math.sin(angleToTarget) * travelSpeed;
 
             this.x += this.vx;
             this.y += this.vy;
 
-            // Kuyruğu güncelle (Arkada iz bırakması için)
+            // Update tail (to leave trail)
             this.tail.push({ x: this.x, y: this.y });
-            if (this.tail.length > 50) this.tail.shift(); // Uzun kuyruk
+            if (this.tail.length > 50) this.tail.shift(); // Long tail
 
-            // Mesafe Kontrolü (Varış)
+            // Distance Check (Arrival)
             const dist = Utils.dist(this.x, this.y, this.jumpTarget.x, this.jumpTarget.y);
 
-            // Eğer hedefe çok yaklaştıysak veya geçip gittiysek
+            // If we are very close to the target or overshot it
             if (dist < travelSpeed * 1.5) {
-                // Konumu tam oturt
+                // Lock position exactly
                 this.x = this.jumpTarget.x;
                 this.y = this.jumpTarget.y;
                 this.finalizeLightJump();
             }
 
-            // Seyahat sırasında başka fizik işlemi yapma
+            // Do not perform other physics during travel
             return;
         }
 
-        // --- 3 AŞAMALI ŞARJ DÖNGÜSÜ ---
+        // --- 3-PHASE CHARGE CYCLE ---
         if (this.isChargingJump) {
             this.jumpChargeTimer--;
             this.energy = Math.max(0, this.energy - GAME_CONFIG.PLAYER.LIGHT_JUMP_CHARGE_DRAIN);
 
             if (this.energy <= 0) {
-                this.cancelLightJump("Enerji Tükendi");
+                const t = window.t || ((key) => key.split('.').pop());
+                this.cancelLightJump(t('messages.ui.energyDepleted'));
                 return;
             }
 
@@ -337,9 +344,10 @@ class VoidRay {
             this.x += (Math.random() - 0.5) * shake;
             this.y += (Math.random() - 0.5) * shake;
 
-            // Manuel hareket iptali
+            // Manual movement cancellation
             if (keys.w || keys.s || keys[" "]) {
-                this.cancelLightJump("Manuel Hareket");
+                const t = window.t || ((key) => key.split('.').pop());
+                this.cancelLightJump(t('messages.ui.manualMovement'));
                 return;
             }
 
@@ -351,7 +359,7 @@ class VoidRay {
             return;
         }
 
-        // Bonuslar
+        // Bonuses
         const bonusSpeedPct = this.getStatBonus('thrust');
         const bonusTurnPct = this.getStatBonus('maneuver');
         const bonusMagnetPct = this.getStatBonus('magnet');
@@ -375,7 +383,7 @@ class VoidRay {
         const MAX_SPEED = (keys[" "] ? 18 : 10) * spdMult;
         const TURN_SPEED = 0.05 * turnMult;
 
-        // --- RADYASYON ---
+        // --- RADIATION ---
         const isOutOfBounds = this.x < 0 || this.x > WORLD_SIZE || this.y < 0 || this.y > WORLD_SIZE;
         if (isOutOfBounds) {
             this.outOfBoundsTimer++;
@@ -405,7 +413,7 @@ class VoidRay {
             if (radWarn) radWarn.style.display = 'none';
         }
 
-        // --- ENERJİ ---
+        // --- ENERGY ---
         const fuelConsumptionMult = Math.max(0.1, 1 - (bonusFuelSavePct / 100));
         if (isBoosting) {
             const cost = GAME_CONFIG.PLAYER.ENERGY_COST.BOOST * fuelConsumptionMult;
@@ -426,7 +434,7 @@ class VoidRay {
         else if (this.energy > 15) lowEnergyWarned = false;
         if (this.energy <= 0 && isBoosting) ACCEL = 0.2;
 
-        // UI Barlar
+        // UI Bars
         const energyBar = document.getElementById('energy-bar-fill');
         if (energyBar) {
             energyBar.style.width = (this.energy / this.maxEnergy * 100) + '%';
@@ -442,22 +450,22 @@ class VoidRay {
             else healthBar.style.background = '#10b981';
         }
 
-        // --- KONTROL MANTIĞI ---
+        // --- CONTROL LOGIC ---
         let targetRoll = 0; let targetWingState = 0;
         const isInputActive = keys.w || keys.a || keys.s || keys.d || keys[" "];
         const currentSpeed = Math.hypot(this.vx, this.vy);
 
-        // --- 1. OTO-PİLOT KONTROLÜ (AIManager) ---
-        // AIManager'ın varlığını kontrol et
+        // --- 1. AUTO-PILOT CONTROL (AIManager) ---
+        // Check for AIManager existence
         if (window.AIManager && window.AIManager.active && !window.cinematicMode) {
-            // Kontrolü tamamen Manager'a devret
+            // Hand over control entirely to Manager
             window.AIManager.update(this, dt);
 
-            // Görsel Debug verilerini al
+            // Get visual debug data
             this.scoutTarget = window.AIManager.scoutTarget;
             this.debugTarget = window.AIManager.debugTarget;
 
-            // AI aktifken buton uyarısı (Eğer oyuncu tuşlara basarsa)
+            // Button warning when AI is active (If player presses keys)
             if (keys.w || keys.a || keys.s || keys.d) {
                 const aiBtn = document.getElementById('btn-ai-toggle');
                 if (aiBtn && !aiBtn.classList.contains('warn-blink')) aiBtn.classList.add('warn-blink');
@@ -466,7 +474,7 @@ class VoidRay {
                 if (aiBtn && aiBtn.classList.contains('warn-blink')) aiBtn.classList.remove('warn-blink');
             }
         }
-        // --- 2. MANUEL KONTROL ---
+        // --- 2. MANUAL CONTROL ---
         else {
             if (window.cinematicMode) {
                 this.vx *= 0.95; this.vy *= 0.95;
@@ -480,15 +488,15 @@ class VoidRay {
                 } else { this.wingPhase += 0.05; }
                 if (keys.s) { this.vx *= 0.92; this.vy *= 0.92; targetWingState = 1.2; }
 
-                // Manuel modda scout target'ı temizle
+                // Clear scout target in manual mode
                 this.scoutTarget = null;
                 this.debugTarget = null;
             }
         }
 
-        // --- IDLE / GHOST MODU ---
+        // --- IDLE / GHOST MODE ---
         let targetAlpha = 1.0;
-        // AIManager kontrolü
+        // AIManager control
         const isAIActive = window.AIManager ? window.AIManager.active : false;
 
         if (!isAIActive && !isInputActive && currentSpeed < 0.5) {
@@ -508,7 +516,7 @@ class VoidRay {
         }
         this.currentAlpha += (targetAlpha - this.currentAlpha) * 0.02;
 
-        // --- YERÇEKİMİ ---
+        // --- GRAVITY ---
         if (entityManager && entityManager.grid) {
             const gravityQueryRange = 3000;
             const nearbyPlanets = entityManager.grid.query(this.x, this.y, gravityQueryRange);
@@ -528,7 +536,7 @@ class VoidRay {
             });
         }
 
-        // --- SOLUCAN DELİĞİ ---
+        // --- WORMHOLE ---
         this.gravityPull = null;
         if (typeof entityManager !== 'undefined' && entityManager.wormholes) {
             const wGravityRadius = (GAME_CONFIG.WORMHOLE && GAME_CONFIG.WORMHOLE.GRAVITY_RADIUS) || 3500;
@@ -549,7 +557,7 @@ class VoidRay {
             });
         }
 
-        // --- FİZİK GÜNCELLEME ---
+        // --- PHYSICS UPDATE ---
         const speed = Math.hypot(this.vx, this.vy);
         const speedEl = document.getElementById('speed-val');
         if (speedEl) speedEl.innerText = Math.floor(speed * 10);
@@ -568,7 +576,7 @@ class VoidRay {
 
         this.roll += (targetRoll - this.roll) * 0.05; this.wingState += (targetWingState - this.wingState) * 0.1;
 
-        // Kuyruk
+        // Tail
         const targetCount = isBoosting ? this.boostTailCount : this.baseTailCount;
         const transitionSpeed = 2;
         if (this.tail.length < targetCount) {
@@ -597,7 +605,7 @@ class VoidRay {
         if (coordsEl) coordsEl.innerText = `${Math.floor(this.x)} : ${Math.floor(this.y)}`;
     }
 
-    // Çizim fonksiyonu
+    // Drawing function
     draw(ctx) {
         ctx.save();
         ctx.globalAlpha = this.currentAlpha;
@@ -614,7 +622,7 @@ class VoidRay {
         const dynamicLight = `hsla(${baseHue}, ${saturation}%, 50%, 1)`;
         const isHidden = window.gameSettings && window.gameSettings.hidePlayer;
 
-        // Şarj Efekti
+        // Charge Effect
         if (this.isChargingJump) {
             ctx.save();
             ctx.translate(this.x, this.y);
@@ -673,7 +681,7 @@ class VoidRay {
             }
             let scaleX = 1 - Math.abs(this.roll) * 0.4; let shiftX = this.roll * 15; let wingTipY = 20 + (this.wingState * 15); let wingTipX = 60 - (this.wingState * 10); let wingFlap = Math.sin(this.wingPhase) * 5;
 
-            // Şarj sırasında gemiyi beyazlat
+            // Whiten the ship during charge
             const fillStyle = this.isChargingJump ? "#fff" : `hsla(${baseHue}, ${saturation * 0.3}%, 10%, 0.95)`;
 
             ctx.fillStyle = fillStyle;

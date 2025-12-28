@@ -162,7 +162,7 @@ class EntityManager {
         }
     }
 
-    // YENİ: Güvenli Işınlanma Noktası Bulucu
+    // NEW: Safe Teleport Location Finder
     findSafeTeleportLocation() {
         const margin = GAME_CONFIG.WORMHOLE.TELEPORT_SAFE_DISTANCE;
         let attempts = 0;
@@ -172,12 +172,12 @@ class EntityManager {
             const rx = Utils.random(margin, WORLD_SIZE - margin);
             const ry = Utils.random(margin, WORLD_SIZE - margin);
 
-            // Bölgedeki tehditleri kontrol et (1500 birim yarıçap)
-            // SpatialHash grid'ini kullanarak o bölgedeki nesneleri sorgula
+            // Check threats in area (1500 unit radius)
+            // Use SpatialHash grid to query objects in that area
             const threats = this.grid.query(rx, ry, 1500);
             const hasToxic = threats.some(p => p.type.id === 'toxic');
 
-            // Eğer zehirli bölge yoksa burası güvenlidir
+            // If no toxic zone, valid safe spot
             if (!hasToxic) {
                 return { x: rx, y: ry };
             }
@@ -185,7 +185,7 @@ class EntityManager {
             attempts++;
         }
 
-        // Eğer güvenli yer bulunamazsa (çok düşük ihtimal), haritanın ortasına güvenli bir mesafeye at
+        // If no safe spot found (very low chance), drop in middle of map with safe distance
         return {
             x: WORLD_SIZE / 2 + Utils.random(-1000, 1000),
             y: WORLD_SIZE / 2 + Utils.random(-1000, 1000)
@@ -197,39 +197,39 @@ class EntityManager {
         if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'legendary' });
         showNotification({ name: MESSAGES.UI.WORMHOLE_ENTER, type: { color: GAME_CONFIG.WORMHOLE.COLOR_CORE } }, MESSAGES.UI.WORMHOLE_DESC);
 
-        // GÜNCELLEME: Rastgele yerine güvenli nokta hesapla
+        // UPDATE: Calculate safe point instead of random
         const newPos = this.findSafeTeleportLocation();
 
-        // Konum Güncelleme
+        // Update Position
         player.x = newPos.x;
         player.y = newPos.y;
 
-        // Hız Sıfırlama: Işınlanma sonrası savrulmayı önler
+        // Reset Velocity: Prevents drift after teleport
         player.vx = 0;
         player.vy = 0;
 
-        // GÜNCELLEME: Kısa süreliğine Ghost Mode (Görünmezlik/Hasar Almama) ver
-        // Bu sayede ani bir çarpışmadan korunur
+        // UPDATE: Give Ghost Mode (Invisibility/Invulnerability) for short duration
+        // Prevents instant collision damage
         player.isGhost = true;
         player.currentAlpha = 0.5;
-        // 3 saniye sonra ghost modu kapatmak için timeout kurabiliriz ama
-        // oyun döngüsü idleTimer ile bunu zaten yönetiyor. 
-        // Ani koruma için manuel olarak alpha'yı düşürmek görsel bir ipucu verir.
+        // Could set a timeout to disable ghost mode after 3 seconds,
+        // but game loop already handles this with idleTimer.
+        // Manually lowering alpha gives a visual cue.
 
-        // Kuyruk ve Kamera Güncelleme
+        // Update Tail and Camera
         player.tail.forEach(t => { t.x = newPos.x; t.y = newPos.y; });
         if (window.cameraFocus) { window.cameraFocus.x = newPos.x; window.cameraFocus.y = newPos.y; }
 
-        // Otopilot ve Görev Yönetimi
+        // Autopilot and Task Management
         if (typeof autopilot !== 'undefined' && autopilot) {
             if (typeof aiMode !== 'undefined' && aiMode === 'travel') {
                 autopilot = false;
                 if (typeof manualTarget !== 'undefined') manualTarget = null;
-                showNotification({ name: "SEYİR İPTAL EDİLDİ", type: { color: '#ef4444' } }, "Konum Değişti");
+                showNotification({ name: "NAVIGATION CANCELLED", type: { color: '#ef4444' } }, "Position Changed");
             }
             else {
                 if (player.scoutTarget) player.scoutTarget = null;
-                showNotification({ name: "SİSTEMLER YENİDEN HESAPLANIYOR", type: { color: '#38bdf8' } }, "Otopilot Devam Ediyor");
+                showNotification({ name: "SYSTEMS RECALCULATING", type: { color: '#38bdf8' } }, "Autopilot Continuing");
             }
 
             if (typeof updateAIButton === 'function') updateAIButton();
@@ -247,12 +247,12 @@ class EntityManager {
                     window.echoDeathLevel = player.level;
                     document.getElementById('echo-wrapper-el').style.display = 'none';
                     if (typeof echoInvOpen !== 'undefined' && echoInvOpen) closeEchoInventory();
-                    showNotification({ name: "YANKI SİSTEMİ ÇÖKTÜ...", type: { color: '#ef4444' } }, "");
+                    showNotification({ name: "ECHO SYSTEM CRASHED...", type: { color: '#ef4444' } }, "");
                 }
             } else {
                 const now = Date.now();
                 if (now - this.lastToxicNotification > 2000) {
-                    showNotification({ name: "KRİTİK VERİ HATASI", type: { color: '#00ff41' } }, "Holografik Hasar!");
+                    showNotification({ name: "CRITICAL DATA ERROR", type: { color: '#00ff41' } }, "Holographic Damage!");
                     this.lastToxicNotification = now;
                 }
                 if (now - this.lastToxicDamage > 500) {
@@ -261,15 +261,15 @@ class EntityManager {
                 }
             }
         } else if (p.type.id === 'lost') {
-            // Kayıp Kargo özeldir, içinden birden fazla şey çıkabilir
+            // Lost Cargo is special, can drop multiple items
             p.collected = true;
             Utils.playSound('playChime', { id: 'legendary' });
-            showNotification({ name: "KAYIP KARGO KURTARILDI!", type: { color: '#a855f7' } }, "");
+            showNotification({ name: "LOST CARGO RECOVERED!", type: { color: '#a855f7' } }, "");
 
-            // İçinden rastgele 2-4 item at
+            // Drop 2-4 random items
             const dropCount = Utils.randomInt(2, 4);
             for (let i = 0; i < dropCount; i++) {
-                // Kayıp kargodan çıkanlar genelde Rare veya Epic olur
+                // Items from lost cargo are usually Rare or Epic
                 const dropRarity = Math.random() < 0.3 ? RARITY.EPIC : RARITY.RARE;
                 const item = GameRules.generateRandomDrop(dropRarity);
                 addItemToInventory(item);
@@ -281,23 +281,23 @@ class EntityManager {
             Utils.playSound('playChime', p.type);
             player.energy = Math.min(player.energy + 50, player.maxEnergy);
             const xp = GameRules.calculatePlanetXp(p.type);
-            showNotification({ name: "TARDİGRAD YENDİ", type: { color: '#C7C0AE' } }, `(+%50 ENERJİ, +${xp} XP)`);
+            showNotification({ name: "TARDIGRADE CONSUMED", type: { color: '#C7C0AE' } }, `(+50% ENERGY, +${xp} XP)`);
             player.gainXp(xp);
         } else {
-            // Normal Gezegen Toplama
+            // Normal Planet Collection
             const lootCount = GameRules.calculateLootCount();
             if (lootCount === 0) {
                 p.collected = true;
                 const xp = GameRules.calculatePlanetXp(p.type);
                 player.gainXp(xp);
-                showNotification({ name: `+${xp} XP`, type: { color: '#94a3b8' } }, "(Veri Analizi)");
+                showNotification({ name: `+${xp} XP`, type: { color: '#94a3b8' } }, "(Data Analysis)");
             } else {
                 let addedCount = 0;
                 let totalXp = 0;
                 let droppedItems = [];
 
                 for (let i = 0; i < lootCount; i++) {
-                    // YENİ: Gezegenden Item Drop üret
+                    // NEW: Generate Item Drop from Planet
                     const item = GameRules.generateRandomDrop(p.type);
 
                     if (addItemToInventory(item)) {
@@ -313,12 +313,12 @@ class EntityManager {
                     p.collected = true;
                     Utils.playSound('playChime', p.type);
 
-                    // Bildirim Mantığı: Eğer ekipman düştüyse onun adını yaz, yoksa genel özet geç
+                    // Notification Logic: If equipment dropped list name, else summary
                     const equipDrop = droppedItems.find(i => i.category === 'equipment');
                     if (equipDrop) {
-                        showNotification({ name: equipDrop.name, type: equipDrop.type }, "(EKİPMAN)");
+                        showNotification({ name: equipDrop.name, type: equipDrop.type }, "(EQUIPMENT)");
                     } else {
-                        // Sadece kaynak
+                        // Only resource
                         const suffix = (addedCount > 1 ? `x${addedCount} ` : "") + `(+${totalXp} XP)`;
                         showNotification(p, suffix);
                     }

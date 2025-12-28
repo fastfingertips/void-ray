@@ -5,16 +5,16 @@
 
 export class ParticleSystem {
     constructor() {
-        // Ekranda aktif olan parçacıkların listesi
+        // List of active particles on screen
         this.activeParticles = [];
 
-        // Nesne Havuzu: 
-        // - factory: Yeni Particle üretir
-        // - initialSize: Başlangıçta 50 tane üret
-        // - maxSize: En fazla 1000 tane stokla (fazlası silinir)
-        // DİKKAT: ObjectPool sınıfının yüklendiğinden emin olunmalı.
+        // Object Pool: 
+        // - factory: Creates new Particle
+        // - initialSize: Create 50 at start
+        // - maxSize: Stock max 1000 (excess will be deleted)
+        // NOTE: Make sure ObjectPool class is loaded.
         if (typeof ObjectPool === 'undefined') {
-            console.error("CRITICAL: ObjectPool sınıfı bulunamadı! js/ObjectPool.js yüklendi mi?");
+            console.error("CRITICAL: ObjectPool class not found! Is js/ObjectPool.js loaded?");
             this.pool = { acquire: () => new Particle(), release: () => { } }; // Fallback
         } else {
             this.pool = new ObjectPool(() => new Particle(), 50, 1000);
@@ -22,49 +22,49 @@ export class ParticleSystem {
     }
 
     /**
-     * Belirtilen konumda yeni parçacıklar oluşturur.
+     * Creates new particles at the specified location.
      */
     emit(x, y, color, count = 1) {
         for (let i = 0; i < count; i++) {
-            // 1. Havuzdan bir tane al (yoksa yeni üretir)
+            // 1. Get one from the pool (creates new if none available)
             const p = this.pool.acquire();
 
-            // 2. Parçacığı verilen koordinat ve renkle başlat (Eğer spawn metodu varsa)
+            // 2. Initialize particle with given coordinates and color (if spawn method exists)
             if (p.spawn) p.spawn(x, y, color);
             else {
-                // Fallback (Eski Particle sınıfı varsa)
+                // Fallback (if old Particle class exists)
                 p.x = x; p.y = y; p.color = color;
                 p.vx = (Math.random() - 0.5) * 3; p.vy = (Math.random() - 0.5) * 3;
                 p.life = 1.0; p.radius = Math.random() * 5 + 3; p.growth = 0.15;
             }
 
-            // 3. Aktif listeye ekle (Update döngüsü için)
+            // 3. Add to active list (for Update loop)
             this.activeParticles.push(p);
         }
     }
 
     /**
-     * Tüm parçacıkların fiziksel durumunu günceller.
-     * Ömrü tükenen parçacıkları havuza iade eder.
+     * Updates the physical state of all particles.
+     * Returns expired particles to the pool.
      */
     update() {
-        // Tersten döngü (splice işlemi diziyi bozmasın diye)
+        // Reverse loop (so splice doesn't mess up the array)
         for (let i = this.activeParticles.length - 1; i >= 0; i--) {
             const p = this.activeParticles[i];
             p.update();
 
             if (p.life <= 0) {
-                // 1. Havuza geri ver (reset metodu otomatik çağrılır)
+                // 1. Return to pool (reset method is called automatically)
                 this.pool.release(p);
 
-                // 2. Aktif listeden çıkar
+                // 2. Remove from active list
                 this.activeParticles.splice(i, 1);
             }
         }
     }
 
     /**
-     * Aktif parçacıkları ekrana çizer.
+     * Draws active particles to screen.
      */
     draw(ctx) {
         for (let i = 0; i < this.activeParticles.length; i++) {
@@ -73,17 +73,17 @@ export class ParticleSystem {
     }
 
     /**
-     * Aktif parçacık sayısını döndürür.
+     * Returns active particle count.
      */
     get count() {
         return this.activeParticles.length;
     }
 
     /**
-     * Sistemi sıfırlar.
+     * Resets the system.
      */
     clear() {
-        // Tüm aktif parçacıkları havuza iade et
+        // Return all active particles to the pool
         if (this.pool && this.pool.releaseAll) {
             this.pool.releaseAll(this.activeParticles);
         }

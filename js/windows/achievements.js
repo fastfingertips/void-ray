@@ -15,8 +15,8 @@ function closeAchievements() {
     }
 }
 
-// renderAchievementsList fonksiyonu artık profile.js içinde 'renderAchievements' olarak tanımlı.
-// Eski kodda doğrudan çağrılma ihtimaline karşı:
+// renderAchievementsList function is now defined as 'renderAchievements' in profile.js.
+// In case it is called directly in old code:
 function renderAchievementsList() {
     console.warn("renderAchievementsList deprecated. Use renderAchievements in profile.js");
     if (typeof renderAchievements === 'function') {

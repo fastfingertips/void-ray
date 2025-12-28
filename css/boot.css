@@ -21,7 +21,7 @@
     gap: 0;
     transition: opacity 0.5s ease-out;
     position: relative;
-    
+
     /* Terminal Çerçevesi */
     border: 1px solid var(--hud-color-dim);
     background: rgba(0, 0, 0, 0.5);
@@ -29,91 +29,158 @@
 }
 
 /* Köşe Vurguları */
-.boot-container-integrated::before, .boot-container-integrated::after {
-    content: ''; position: absolute; width: 10px; height: 10px;
+.boot-container-integrated::before,
+.boot-container-integrated::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
     border: 2px solid var(--hud-color);
     transition: all 0.3s;
 }
-.boot-container-integrated::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-.boot-container-integrated::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+.boot-container-integrated::before {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.boot-container-integrated::after {
+    bottom: -1px;
+    right: -1px;
+    border-left: none;
+    border-top: none;
+}
 
 .boot-status-text {
-    text-align: left; 
-    font-size: 0.7rem; 
-    letter-spacing: 2px; 
-    color: var(--hud-color); 
+    text-align: left;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--hud-color);
     font-family: monospace;
     border-bottom: 1px dashed var(--hud-color-dim);
     padding-bottom: 5px;
     margin-bottom: 5px;
 }
-.boot-status-text::before { content: "> "; color: var(--hud-text-dim); }
+
+.boot-status-text::before {
+    content: "> ";
+    color: var(--hud-text-dim);
+}
 
 .check-list-integrated {
-    display: flex; 
-    flex-direction: column; 
-    gap: 2px; 
-    font-size: 0.65rem; 
-    color: var(--hud-text-dim); 
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.65rem;
+    color: var(--hud-text-dim);
     height: 200px;
-    overflow-y: auto; 
-    font-family: 'Courier New', Courier, monospace; 
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
     padding: 5px;
 }
-.check-list-integrated::-webkit-scrollbar { width: 2px; }
-.check-list-integrated::-webkit-scrollbar-thumb { background: var(--hud-color-dim); }
 
-.check-item { 
-    display: flex; justify-content: space-between; 
-    padding: 2px 0; 
+.check-list-integrated::-webkit-scrollbar {
+    width: 2px;
 }
-.status-icon.pending { color: #f59e0b; } 
-.status-icon.ok { color: var(--hud-color); } 
-.status-icon.error { color: #ef4444; }
+
+.check-list-integrated::-webkit-scrollbar-thumb {
+    background: var(--hud-color-dim);
+}
+
+.check-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+.status-icon.pending {
+    color: #f59e0b;
+}
+
+.status-icon.ok {
+    color: var(--hud-color);
+}
+
+.status-icon.error {
+    color: #ef4444;
+}
 
 /* Progress Bar - İnce Çizgi */
-.progress-wrapper-integrated { 
-    height: 4px; 
-    background: rgba(255,255,255,0.05); 
-    width: 100%; 
+.progress-wrapper-integrated {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
     margin-top: 10px;
     border: 1px solid var(--hud-color-dim);
 }
-.progress-fill-integrated { 
-    height: 100%; 
-    background: var(--hud-color); 
-    width: 0%; 
-    transition: width 0.1s linear; 
-    box-shadow: 0 0 10px var(--hud-color); 
+
+.progress-fill-integrated {
+    height: 100%;
+    background: var(--hud-color);
+    width: 0%;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--hud-color);
 }
 
 /* --- MENÜ KONTROLLERİ VE TUŞ ŞEMASI --- */
-.menu-controls-hidden { opacity: 0; pointer-events: none; transform: translateY(20px); position: absolute; }
-.menu-controls-visible { opacity: 1; pointer-events: auto; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; display: flex; flex-direction: column; align-items: center; width: 100%; }
+.menu-controls-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    position: absolute;
+}
 
-/* --- KLASİK GRID TUŞ TAKIMI (TEKNİK ŞEMA) --- */
+.menu-controls-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* --- VERTICAL CONTROLS SIDEBAR --- */
 .controls-grid-classic {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px 30px;
-    
-    background: rgba(10, 12, 14, 0.8);
+    /* Positioning: Fixed Right Sidebar */
+    position: fixed;
+    right: 40px;
+    top: 55%;
+    transform: translateY(-50%);
+    width: 320px;
+    z-index: 200;
+
+    /* Layout: Vertical Stack */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    /* Styling */
+    background: rgba(10, 12, 14, 0.9);
     border: 1px solid var(--hud-color-dim);
-    
-    /* Izgara Arka Planı */
+    backdrop-filter: blur(5px);
+
+    /* Grid Background */
     background-image: linear-gradient(rgba(148, 216, 195, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 216, 195, 0.05) 1px, transparent 1px);
+        linear-gradient(90deg, rgba(148, 216, 195, 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
 
-    padding: 30px 50px;
-    margin-top: 40px;
-    position: relative;
+    padding: 30px 25px;
+    margin-top: 0;
+
+    /* Transition */
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 /* Şema Başlığı */
 .controls-grid-classic::before {
     content: "FLIGHT_CONTROLS_SCHEMATIC";
-    position: absolute; top: -10px; left: 20px;
+    position: absolute;
+    top: -10px;
+    left: 20px;
     background: #020204;
     padding: 0 10px;
     color: var(--hud-text-dim);
@@ -126,6 +193,7 @@
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
+    width: 100%;
 }
 
 .key-row {
@@ -155,7 +223,9 @@
 }
 
 /* Space Tuşu */
-.key-cap[style*="width"] { border-bottom: 2px solid var(--hud-color-dim); }
+.key-cap[style*="width"] {
+    border-bottom: 2px solid var(--hud-color-dim);
+}
 
 .key-row:hover .key-cap {
     border-color: var(--hud-color);

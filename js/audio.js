@@ -9,20 +9,20 @@ export class ZenAudio {
     constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // Müzik elementlerini al
+        // Get music elements
         this.musicBase = document.getElementById('music-base');
         this.musicSpace = document.getElementById('music-space');
-        this.sfxError = document.getElementById('sfx-error'); // Hata sesi
+        this.sfxError = document.getElementById('sfx-error'); // Error sound
 
-        this.currentTrack = null; // Şu an aktif olan parça
-        this.activeTheme = '';    // 'base' veya 'space'
-        this.fadeInterval = null; // Geçiş animasyonu zamanlayıcısı
+        this.currentTrack = null; // Currently active track
+        this.activeTheme = '';    // 'base' or 'space'
+        this.fadeInterval = null; // Crossfade animation timer
 
-        // Başlangıçta sesleri tamamen kıs (Fade-in için)
+        // Mute sounds initially (for fade-in)
         if (this.musicBase) this.musicBase.volume = 0;
         if (this.musicSpace) this.musicSpace.volume = 0;
 
-        // Hata sesi için başlangıç ayarı (düşük ses)
+        // Initial setting for error sound (low volume)
         if (this.sfxError) this.sfxError.volume = Math.max(0, Math.min(1, volSFX * 0.2));
 
         this.scale = [196.00, 220.00, 261.63, 293.66, 329.63, 392.00];
@@ -32,12 +32,12 @@ export class ZenAudio {
 
     init() {
         if (this.ctx.state === 'suspended') this.ctx.resume();
-        // Oyun başladığında, game.js'den playTheme çağrılacak.
+        // When the game starts, playTheme will be called from game.js.
     }
 
     /**
-     * İki müzik arasında yumuşak, alçalarak/yükselerek geçiş yapar.
-     * @param {string} themeName - 'base' veya 'space'
+     * Smoothly crossfades between two music tracks.
+     * @param {string} themeName - 'base' or 'space'
      */
     playTheme(themeName) {
         if (this.activeTheme === themeName) return;
@@ -46,56 +46,56 @@ export class ZenAudio {
         const targetTrack = themeName === 'base' ? this.musicBase : this.musicSpace;
         const fadeOutTrack = themeName === 'base' ? this.musicSpace : this.musicBase;
 
-        console.log(`♫ Müzik Geçişi Başladı: ${themeName.toUpperCase()} (Soft Fade)`);
+        console.log(`♫ Music Transition Started: ${themeName.toUpperCase()} (Soft Fade)`);
 
-        // Hedef parçayı sessizce başlat (Eğer çalmıyorsa)
+        // Start target track silently (if not playing)
         if (targetTrack.paused) {
             targetTrack.volume = 0;
-            targetTrack.play().catch(e => console.warn("Otomatik oynatma tarayıcı tarafından engellendi:", e));
+            targetTrack.play().catch(e => console.warn("Autoplay blocked by browser:", e));
         }
 
-        // Varsa eski fade işlemini iptal et
+        // Cancel existing fade operation if any
         if (this.fadeInterval) clearInterval(this.fadeInterval);
 
-        // --- SOFT CROSSFADE AYARLARI ---
-        const duration = 3000; // 3 Saniye (Daha yumuşak)
-        const fps = 60; // Saniyedeki güncelleme sayısı
+        // --- SOFT CROSSFADE SETTINGS ---
+        const duration = 3000; // 3 Seconds (Softer)
+        const fps = 60; // Updates per second
         const stepTime = 1000 / fps;
         const steps = duration / stepTime;
         let currentStep = 0;
 
-        // Başlangıç ses seviyelerini kaydet
+        // Record initial volume levels
         const startVolIn = targetTrack.volume;
         const startVolOut = fadeOutTrack ? fadeOutTrack.volume : 0;
 
         this.fadeInterval = setInterval(() => {
             currentStep++;
-            const ratio = currentStep / steps; // 0.0 -> 1.0 ilerleme
+            const ratio = currentStep / steps; // 0.0 -> 1.0 progress
 
-            // Yumuşatma Formülü (Easing): Daha doğal duyulması için
-            // Basit lineer yerine hafif kavisli geçiş
+            // Easing Formula: To make it sound more natural
+            // Slightly curved transition instead of simple linear
             const fadeLevel = ratio;
 
-            // 1. Yeni Müzik Yükseliyor (Fade In)
-            // volMusic (Ayarlardaki max seviye) ile sınırla
+            // 1. New Music Rising (Fade In)
+            // Limit with volMusic (max level in settings)
             targetTrack.volume = Math.min(1, startVolIn + (volMusic - startVolIn) * fadeLevel);
 
-            // 2. Eski Müzik Alçalıyor (Fade Out)
+            // 2. Old Music Falling (Fade Out)
             if (fadeOutTrack && !fadeOutTrack.paused) {
                 fadeOutTrack.volume = Math.max(0, startVolOut * (1 - fadeLevel));
             }
 
-            // Geçiş Tamamlandı
+            // Transition Complete
             if (currentStep >= steps) {
                 clearInterval(this.fadeInterval);
                 this.fadeInterval = null;
 
-                // Emin olmak için son değerleri set et
+                // Set final values to be sure
                 targetTrack.volume = volMusic;
                 if (fadeOutTrack) {
                     fadeOutTrack.volume = 0;
                     fadeOutTrack.pause();
-                    fadeOutTrack.currentTime = 0; // Başa sar
+                    fadeOutTrack.currentTime = 0; // Rewind to beginning
                 }
                 this.currentTrack = targetTrack;
             }
@@ -103,28 +103,28 @@ export class ZenAudio {
     }
 
     /**
-     * Ayarlar panelinden ses değiştirildiğinde anlık güncelleme.
+     * Instant update when volume is changed from settings panel.
      */
     updateMusicVolume(newVolume) {
         volMusic = newVolume;
-        // Şu an çalan parça varsa onun sesini hemen güncelle
+        // If there is a track currently playing, update its volume immediately
         if (this.currentTrack && !this.currentTrack.paused) {
-            // Eğer o an fade işlemi yoksa güncelle
+            // Update if there is no ongoing fade operation
             if (!this.fadeInterval) {
                 this.currentTrack.volume = volMusic;
             }
         }
     }
 
-    // --- EFEKT SESLERİ ---
+    // --- SOUND EFFECTS ---
 
-    // YENİ: Hata Sesi (Çok Kısık - volSFX'in %20'si)
+    // NEW: Error Sound (Very Low - 20% of volSFX)
     playError() {
         if (this.sfxError) {
-            // Rahatsız etmemesi için genel efekt sesinin sadece %20'si kadar ses ver
+            // Give only 20% of the general sfx volume to avoid annoyance
             const quietVolume = Math.max(0, Math.min(1, volSFX * 0.2));
             this.sfxError.volume = quietVolume;
-            this.sfxError.currentTime = 0; // Başa sar
+            this.sfxError.currentTime = 0; // Rewind to beginning
             this.sfxError.play().catch(e => console.warn("Error sfx blocked", e));
         }
     }

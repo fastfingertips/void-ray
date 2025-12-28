@@ -19,7 +19,7 @@ import Utils from './utils.js';
 import { GameRules } from './game-rules.js';
 
 // -------------------------------------------------------------------------
-// GLOBAL DEĞİŞKENLER VE OYUN DURUMU
+// GLOBAL VARIABLES AND GAME STATE
 // -------------------------------------------------------------------------
 
 var player;
@@ -31,21 +31,21 @@ var particleSystem = null;
 var entityManager = null;
 var audio;
 
-// KAMERA HEDEFLERİ
-window.cameraTarget = null; // Mantıksal hedef (Gemi veya Yankı)
-window.cameraFocus = { x: 0, y: 0 }; // Görsel odak noktası (Yumuşak geçiş için)
+// CAMERA TARGETS
+window.cameraTarget = null; // Logical target (Ship or Echo)
+window.cameraFocus = { x: 0, y: 0 }; // Visual focus point (For smooth transition)
 
-// KAMERA GEÇİŞ DURUMU
+// CAMERA TRANSITION STATE
 let lastCameraTarget = null;
 let isCameraTransitioning = false;
 
-// OYUN AYARLARI
+// GAME SETTINGS
 window.gameSettings = Object.assign({}, DEFAULT_GAME_SETTINGS);
 
 let currentRenderOffsetX = 0;
 let currentRenderOffsetY = 0;
 
-// OYUNCU VERİSİ
+// PLAYER DATA
 let playerData = JSON.parse(JSON.stringify(INITIAL_PLAYER_DATA));
 
 // ZOOM
@@ -54,16 +54,16 @@ let targetZoom = GAME_CONFIG.CAMERA.DEFAULT_ZOOM;
 let isPaused = false;
 let animationId = null;
 
-// --- DÜZELTME: Global AI Değişkenleri Proxy Olarak Tanımlandı ---
-// Böylece ui.js ve controls.js değiştirilmeden çalışmaya devam eder.
-// Arka planda AIManager ile senkronize olurlar.
+// --- FIX: Global AI Variables Defined as Proxy ---
+// So ui.js and controls.js continue to work unchanged.
+// Synchronized with AIManager in the background.
 
 Object.defineProperty(window, 'autopilot', {
     get: function () { return window.AIManager ? window.AIManager.active : false; },
     set: function (val) {
-        // Eğer true atanırsa ve aktif değilse toggle et
+        // If set to true and not active, toggle
         if (val && window.AIManager && !window.AIManager.active) window.AIManager.toggle();
-        // Eğer false atanırsa ve aktifse toggle et
+        // If set to false and active, toggle
         else if (!val && window.AIManager && window.AIManager.active) window.AIManager.toggle();
     }
 });
@@ -99,11 +99,12 @@ let collectedItems = [];
 let centralStorage = [];
 
 // -------------------------------------------------------------------------
-// OYUN MEKANİKLERİ VE MANTIK
+// GAME MECHANICS AND LOGIC
 // -------------------------------------------------------------------------
 
 function spawnEcho(x, y) {
     echoRay = new EchoRay(x, y);
+    window.echoRay = echoRay; // EXPLICIT GLOBAL EXPORT
     const wrapper = document.getElementById('echo-wrapper-el');
     if (wrapper) {
         wrapper.style.display = 'flex';
@@ -112,9 +113,9 @@ function spawnEcho(x, y) {
 }
 
 function addItemToInventory(planet) {
-    // MANTIK: GameRules.isInventoryFull
+    // LOGIC: GameRules.isInventoryFull
     if (GameRules.isInventoryFull(collectedItems.length)) {
-        if (!AIManager.active) { // AIManager kontrolü
+        if (!AIManager.active) { // AIManager check
             showNotification({ name: MESSAGES.UI.INVENTORY_FULL, type: { color: '#ef4444' } }, "");
             if (audio) audio.playError();
         }
@@ -148,7 +149,7 @@ function echoManualMerge() {
     if (!echoRay) return;
     const dist = Utils.distEntity(player, echoRay);
 
-    // MANTIK: GameRules.canEchoMerge
+    // LOGIC: GameRules.canEchoMerge
     if (GameRules.canEchoMerge(dist)) {
         if (audio) audio.playEvolve();
         echoRay.attached = true;
@@ -172,22 +173,22 @@ function echoManualMerge() {
 }
 
 /**
- * AI Mod Döngüsü (Artık AIManager'ı kullanıyor)
+ * AI Mode Loop (Now uses AIManager)
  */
 function cycleAIMode() {
     if (!AIManager.active) {
         AIManager.toggle();
     } else {
-        // Basit mod döngüsü: gather -> base -> kapat -> gather
+        // Simple mode loop: gather -> base -> off -> gather
         if (AIManager.mode === 'gather') AIManager.setMode('base');
-        else if (AIManager.mode === 'base') AIManager.toggle(); // Kapat
+        else if (AIManager.mode === 'base') AIManager.toggle(); // Off
         else AIManager.setMode('gather');
     }
     updateAIButton();
 }
 
 // -------------------------------------------------------------------------
-// OYUN DÖNGÜSÜ VE BAŞLATMA
+// GAME LOOP AND INITIALIZATION
 // -------------------------------------------------------------------------
 
 function init() {
@@ -210,7 +211,7 @@ function init() {
     entityManager = new EntityManager();
     audio = new ZenAudio();
 
-    // AIManager zaten global, onu resetleyelim
+    // AIManager is already global, reset it
     if (typeof AIManager !== 'undefined') {
         AIManager.active = false;
         AIManager.manualTarget = null;
@@ -219,7 +220,7 @@ function init() {
     gameStartTime = Date.now();
     lastFrameTime = Date.now();
 
-    // MANTIK: GameRules.isInSafeZone
+    // LOGIC: GameRules.isInSafeZone
     isInSafeZone = GameRules.isInSafeZone(player, nexus);
 
     if (audio) {
@@ -246,12 +247,12 @@ function init() {
     isPaused = false;
     startTipsCycle();
 
-    // HARİTA TIKLAMA ENTEGRASYONU (AIManager ile)
+    // MAP CLICK INTEGRATION (With AIManager)
     if (bmCanvas && typeof initMapListeners === 'function') {
         initMapListeners(bmCanvas, WORLD_SIZE, (worldX, worldY) => {
             if (AIManager) {
                 AIManager.setManualTarget(worldX, worldY);
-                // UI güncellemesi
+                // UI update
                 updateAIButton();
             }
         });
@@ -263,7 +264,7 @@ function init() {
 
     if (typeof INTRO_SEQUENCE !== 'undefined') {
         INTRO_SEQUENCE.forEach(msg => {
-            setTimeout(() => addChatMessage(msg.text, msg.type, "genel"), msg.time);
+            setTimeout(() => addChatMessage(msg.text, msg.type, "general"), msg.time);
         });
     }
 
@@ -280,7 +281,7 @@ function startLoop() {
     loop();
 }
 
-// Statik çizim fonksiyonu (değişmedi)
+// Static drawing function (unchanged)
 function drawStaticNoise(ctx, w, h, intensity) {
     ctx.save();
     const count = 20 * intensity;
@@ -308,13 +309,14 @@ function drawStaticNoise(ctx, w, h, intensity) {
         ctx.textAlign = "center";
         ctx.shadowBlur = 5;
         ctx.shadowColor = "red";
-        ctx.fillText("⚠ SİNYAL ZAYIF ⚠", w / 2, h / 2 - 50);
+        const t = window.t || ((key) => key.split('.').pop());
+        ctx.fillText(t('game.signalWeak'), w / 2, h / 2 - 50);
     }
     ctx.restore();
 }
 
 function loop() {
-    // --- TUŞ KONTROLLERİ (PAUSE MODUNDA DA ÇALIŞMALI) ---
+    // --- KEY CONTROLS (SHOULD WORK IN PAUSE MODE) ---
     if (keys.Escape) {
         if (isPaused) {
             resumeGame();
@@ -444,10 +446,10 @@ function loop() {
         if (typeof TutorialManager !== 'undefined') TutorialManager.update(dt);
         if (entityManager) entityManager.update(dt);
 
-        // --- ARKA PLAN (SİYAH) ---
+        // --- BACKGROUND (BLACK) ---
         ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, width, height);
 
-        // --- ARKA PLAN ÇİZİMİ ---
+        // --- BACKGROUND DRAWING ---
         if (entityManager) {
             entityManager.drawStars(ctx, width, height, window.cameraFocus || window.cameraTarget);
         }
@@ -534,28 +536,29 @@ function loop() {
         particleSystem.update();
         particleSystem.draw(ctx);
 
-        // --- YENİ: ETİKETLİ HALKA ÇİZİM FONKSİYONU ---
+        // --- NEW: LABELED RING DRAWING FUNCTION ---
+        const t = window.t || ((key) => key.split('.').pop());
         const drawLabeledRing = (x, y, radius, color, labelText) => {
             ctx.strokeStyle = color;
             ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.stroke();
 
-            // Etiket Mantığı: Kameranın odak noktasına (merkeze) en yakın noktayı bul
+            // Label Logic: Find point closest to camera focus (center)
             const cx = window.cameraFocus.x;
             const cy = window.cameraFocus.y;
 
-            // Merkezden halka merkezine olan açı
+            // Angle from center to ring center
             const angle = Math.atan2(cy - y, cx - x);
 
-            // Bu açı doğrultusunda, halka yarıçapı kadar ilerle
+            // Move along this angle by ring radius
             const lx = x + Math.cos(angle) * radius;
             const ly = y + Math.sin(angle) * radius;
 
             ctx.save();
 
-            // Metin rengini halkanın ana rengine göre belirle (Daha opak ve net)
+            // Set text color based on main ring color (More opaque and clear)
             let textColor = "#fff";
-            if (color.includes("16, 185, 129")) textColor = "#34d399"; // Yeşil tonu
-            else if (color.includes("245, 158, 11")) textColor = "#fbbf24"; // Turuncu tonu
+            if (color.includes("16, 185, 129")) textColor = "#34d399"; // Green tone
+            else if (color.includes("245, 158, 11")) textColor = "#fbbf24"; // Orange tone
 
             ctx.font = "bold 10px monospace";
             ctx.textAlign = "center";
@@ -565,11 +568,11 @@ function loop() {
             const w = metrics.width + 8;
             const h = 16;
 
-            // Metin arka planı (Okunabilirlik için)
+            // Text background (For readability)
             ctx.fillStyle = "rgba(0,0,0,0.8)";
             ctx.fillRect(lx - w / 2, ly - h / 2, w, h);
 
-            // Metni çiz
+            // Draw text
             ctx.fillStyle = textColor;
             ctx.fillText(labelText, lx, ly);
 
@@ -577,13 +580,13 @@ function loop() {
         };
 
         ctx.lineWidth = 1;
-        // Eski çizimler yerine fonksiyon kullanımı
-        drawLabeledRing(player.x, player.y, player.scanRadius, "rgba(16, 185, 129, 0.2)", "VATOZ TARAMA");
-        drawLabeledRing(player.x, player.y, player.radarRadius, "rgba(245, 158, 11, 0.15)", "VATOZ RADAR");
+        // Function usage instead of old drawings
+        drawLabeledRing(player.x, player.y, player.scanRadius, "rgba(16, 185, 129, 0.2)", t('game.voidrayScan'));
+        drawLabeledRing(player.x, player.y, player.radarRadius, "rgba(245, 158, 11, 0.15)", t('game.voidrayRadar'));
 
         if (echoRay) {
-            drawLabeledRing(echoRay.x, echoRay.y, echoRay.scanRadius, "rgba(16, 185, 129, 0.2)", "YANKI TARAMA");
-            drawLabeledRing(echoRay.x, echoRay.y, echoRay.radarRadius, "rgba(245, 158, 11, 0.15)", "YANKI RADAR");
+            drawLabeledRing(echoRay.x, echoRay.y, echoRay.scanRadius, "rgba(16, 185, 129, 0.2)", t('game.echoScan'));
+            drawLabeledRing(echoRay.x, echoRay.y, echoRay.radarRadius, "rgba(245, 158, 11, 0.15)", t('game.echoRadar'));
 
             if (echoRay.mode === 'return') {
                 const distToEcho = Utils.distEntity(player, echoRay);
@@ -630,14 +633,14 @@ function loop() {
             }
             let activePrompts = [];
             if (showNexusPrompt) {
-                activePrompts.push("[E] NEXUS'A GİRİŞ YAP");
+                activePrompts.push(t('game.promptNexus'));
                 if (keys.e && document.activeElement !== document.getElementById('chat-input')) { enterNexus(); keys.e = false; }
             } else if (showStoragePrompt) {
-                activePrompts.push("[E] DEPO YÖNETİMİ");
+                activePrompts.push(t('game.promptStorage'));
                 if (keys.e && document.activeElement !== document.getElementById('chat-input')) { openStorage(); keys.e = false; }
             }
             if (showEchoMergePrompt) {
-                activePrompts.push("[F] BİRLEŞ");
+                activePrompts.push(t('game.promptMerge'));
                 if (keys.f && document.activeElement !== document.getElementById('chat-input')) { echoManualMerge(); keys.f = false; }
             }
             if (echoRay && echoRay.attached) {
@@ -657,11 +660,11 @@ function loop() {
 
         const navOrigin = window.cameraFocus || window.cameraTarget;
         if (echoRay && !echoRay.attached && window.gameSettings.showEchoArrow && window.cameraTarget !== echoRay) {
-            // YANKI etiketi KALDIRILDI
+            // ECHO label REMOVED
             drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, echoRay, MAP_CONFIG.colors.echo);
         }
         if (window.cameraTarget === echoRay && echoRay && !echoRay.attached) {
-            // VATOZ etiketi KALDIRILDI
+            // RAY label REMOVED
             drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, player, MAP_CONFIG.colors.player);
         }
         if (window.gameSettings.showNexusArrow) drawTargetIndicator(ctx, navOrigin, { width, height, zoom: currentZoom }, nexus, MAP_CONFIG.colors.nexus);

@@ -28,7 +28,7 @@ class EchoRay {
         this.colorLerp = 0;
         this.baseColor = { r: 203, g: 213, b: 225 };
         this.targetColor = { r: 56, g: 189, b: 248 };
-        this.debugTarget = null; // Anlık gidilen hedef
+        this.debugTarget = null; // Current target destination
     }
 
     update() {
@@ -50,16 +50,16 @@ class EchoRay {
         if (this.energyDisplayTimer > 0) this.energyDisplayTimer--;
 
         if (this.energy < 10 && this.mode !== 'recharge' && !this.attached) {
-            const fuelIndex = this.lootBag.findIndex(i => i.name === 'Nebula Özü');
+            const fuelIndex = this.lootBag.findIndex(i => i.name === 'Nebula Essence');
             if (fuelIndex !== -1) {
                 this.lootBag.splice(fuelIndex, 1);
                 this.energy = 100;
-                showNotification({ name: "YANKI: NEBULA ÖZÜ TÜKETTİ (+%100 ENERJİ)", type: { color: '#c084fc' } }, "");
+                showNotification({ name: "ECHO: CONSUMED NEBULA ESSENCE (+100% ENERGY)", type: { color: '#c084fc' } }, "");
                 if (echoInvOpen) renderEchoInventory();
             } else {
                 this.mode = 'recharge';
-                if (isOutOfBounds) showNotification({ name: "YANKI: RADYASYON HASARI ALIYOR! ÜSSE DÖNÜYOR", type: { color: '#ef4444' } }, "");
-                else showNotification({ name: "YANKI: ENERJİ BİTTİ, ÜSSE DÖNÜYOR", type: { color: '#fbbf24' } }, "");
+                if (isOutOfBounds) showNotification({ name: "ECHO: TAKING RADIATION DAMAGE! RETURNING TO BASE", type: { color: '#ef4444' } }, "");
+                else showNotification({ name: "ECHO: OUT OF ENERGY, RETURNING TO BASE", type: { color: '#fbbf24' } }, "");
                 updateEchoDropdownUI();
             }
         }
@@ -75,7 +75,7 @@ class EchoRay {
             badge.style.background = '#ef4444';
             if (this.mode !== 'deposit_storage' && this.mode !== 'recharge' && this.mode !== 'return') {
                 this.mode = 'deposit_storage';
-                showNotification({ name: "YANKI DEPOSU DOLU: BOŞALTMAYA GİDİYOR", type: { color: '#a855f7' } }, "");
+                showNotification({ name: "ECHO STORAGE FULL: GOING TO DEPOSIT", type: { color: '#a855f7' } }, "");
                 updateEchoDropdownUI();
             }
         } else {
@@ -94,7 +94,7 @@ class EchoRay {
                 this.energy = Math.min(100, this.energy + 0.05);
                 if (this.energy >= 100) {
                     this.mode = 'roam';
-                    showNotification({ name: "YANKI: ŞARJ TAMAMLANDI", type: { color: '#67e8f9' } }, "");
+                    showNotification({ name: "ECHO: RECHARGE COMPLETE", type: { color: '#67e8f9' } }, "");
                     updateEchoDropdownUI();
                 }
             }
@@ -103,9 +103,9 @@ class EchoRay {
             this.debugTarget = { x: storageCenter.x, y: storageCenter.y };
             const d = Utils.distEntity(this, storageCenter);
             if (d < 150) {
-                depositToStorage(this.lootBag, "YANKI");
+                depositToStorage(this.lootBag, "ECHO");
                 this.mode = 'roam';
-                showNotification({ name: "YANKI DEPOYU BOŞALTTI", type: { color: '#67e8f9' } }, "");
+                showNotification({ name: "ECHO DEPOSITED STORAGE", type: { color: '#67e8f9' } }, "");
                 updateEchoDropdownUI();
             }
         } else if (this.attached || this.mode === 'return') {
@@ -113,7 +113,7 @@ class EchoRay {
             targetX = target.x; targetY = target.y;
             this.debugTarget = { x: target.x, y: target.y };
         } else {
-            // Roam (Toplama) Modu
+            // Roam (Collection) Mode
             if (this.lootBag.length < echoCap) {
                 let nearest = null, minDist = Infinity;
 

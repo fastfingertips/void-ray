@@ -47,22 +47,23 @@ function renderInventory() {
     const startSlotIndex = (currentInvPage - 1) * SLOTS_PER_PAGE;
     const capColor = count >= totalCapacity ? '#ef4444' : (count >= totalCapacity * 0.9 ? '#f59e0b' : '#94a3b8');
 
+    const t = window.t || ((key) => key.split('.').pop());
     if (invHeader) {
         invHeader.innerHTML = `
             <div class="inv-header-top">
-                <div class="inv-title-main">KARGO</div>
+                <div class="inv-title-main">${t('general.cargo')}</div>
                 <div class="ui-close-btn" id="btn-dyn-close-inv">✕</div>
             </div>
             <div class="inv-info-row">
                 <div class="inv-cap-text"><span style="color:${capColor}; font-weight:bold;">${count}</span> / ${totalCapacity}</div>
                 <div class="inv-currency-box">
-                    <span class="inv-currency-label">KRİSTAL</span>
+                    <span class="inv-currency-label">${t('resources.crystal')}</span>
                     <span class="inv-currency-val">${playerData.stardust}</span>
                 </div>
             </div>
             `;
 
-        // Listener ekle - timeout DOM render için
+        // Add listener - timeout for DOM render
         setTimeout(() => {
             const closeBtn = invHeader.querySelector('#btn-dyn-close-inv');
             if (closeBtn) {
@@ -73,20 +74,20 @@ function renderInventory() {
         }, 0);
     }
 
-    // --- GRID OLUŞTURMA ---
-    // ui.js içerisindeki renderGrid fonksiyonunu kullanıyoruz.
+    // --- GRID GENERATION ---
+    // We use renderGrid function from ui.js.
     renderGrid(gridContainer, collectedItems.slice(startSlotIndex, startSlotIndex + SLOTS_PER_PAGE), SLOTS_PER_PAGE, (item) => {
-        // --- YENİ: EŞYA TIKLAMA MANTIĞI ---
+        // --- NEW: ITEM CLICK LOGIC ---
         if (item.category === 'equipment') {
-            // Eğer eşya bir ekipmansa ve equipItem fonksiyonu varsa çağır
+            // If item is equipment and equipItem exists, call it
             if (typeof equipItem === 'function') {
                 equipItem(item);
             } else {
-                console.error("equipItem fonksiyonu bulunamadı! js/windows/equipment.js yüklü mü?");
+                console.error("equipItem function not found! Is js/windows/equipment.js loaded?");
             }
         } else {
-            // Kaynak ise bilgi ver
-            showNotification({ name: "HAMMADDE", type: { color: '#94a3b8' } }, "Nexus'ta satılabilir.");
+            const t = window.t || ((key) => key.split('.').pop());
+            showNotification({ name: t('invNotif.rawMaterial'), type: { color: '#94a3b8' } }, t('invNotif.sellAtNexus'));
         }
     });
 
@@ -105,7 +106,7 @@ function renderInventory() {
     }
     footer.innerHTML = footerHTML;
 
-    // Listener ekle
+    // Add listeners
     const pageBtns = footer.querySelectorAll('.inv-page-btn');
     pageBtns.forEach(btn => {
         btn.addEventListener('click', () => {

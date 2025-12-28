@@ -5,23 +5,23 @@
 
 export class SpatialHash {
     /**
-     * @param {number} cellSize - Her bir hücrenin boyutu (Örn: 2000 birim)
+     * @param {number} cellSize - Size of each cell (e.g., 2000 units)
      */
     constructor(cellSize) {
         this.cellSize = cellSize;
-        this.cells = new Map(); // "x,y" anahtarı ile nesne dizilerini tutar
+        this.cells = new Map(); // Stores object arrays with "x,y" key
     }
 
     /**
-     * Koordinat anahtarını oluşturur.
+     * Creates the coordinate key.
      */
     getKey(x, y) {
         return `${Math.floor(x / this.cellSize)},${Math.floor(y / this.cellSize)}`;
     }
 
     /**
-     * Bir nesneyi (örn: Gezegen) hash haritasına ekler.
-     * Nesne birden fazla hücreye taşıyorsa hepsine eklenir.
+     * Adds an object (e.g., Planet) to the hash map.
+     * If the object spans multiple cells, it is added to all of them.
      */
     insert(client) {
         const startX = Math.floor((client.x - client.radius) / this.cellSize);
@@ -41,8 +41,8 @@ export class SpatialHash {
     }
 
     /**
-     * Bir nesneyi hash haritasından tamamen siler.
-     * (Toplanan gezegenler için kullanılır)
+     * Completely removes an object from the hash map.
+     * (Used for collected planets)
      */
     remove(client) {
         const startX = Math.floor((client.x - client.radius) / this.cellSize);
@@ -59,7 +59,7 @@ export class SpatialHash {
                     if (index > -1) {
                         cell.splice(index, 1);
                     }
-                    // Hücre boşaldıysa belleği temizle
+                    // Clean up memory if cell is empty
                     if (cell.length === 0) {
                         this.cells.delete(key);
                     }
@@ -69,11 +69,11 @@ export class SpatialHash {
     }
 
     /**
-     * Belirli bir alan içindeki potansiyel nesneleri döndürür.
-     * @param {number} x - Merkez X
-     * @param {number} y - Merkez Y
-     * @param {number} range - Tarama yarıçapı
-     * @returns {Array} Tekil nesneler listesi (Set kullanılarak duplicate önlenir)
+     * Returns potential objects within a specific area.
+     * @param {number} x - Center X
+     * @param {number} y - Center Y
+     * @param {number} range - Scan radius
+     * @returns {Array} Unique object list (duplicates prevented using Set)
      */
     query(x, y, range) {
         const startX = Math.floor((x - range) / this.cellSize);
@@ -99,7 +99,7 @@ export class SpatialHash {
     }
 
     /**
-     * Tüm haritayı temizler.
+     * Clears the entire map.
      */
     clear() {
         this.cells.clear();

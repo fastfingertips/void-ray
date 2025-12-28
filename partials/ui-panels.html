@@ -1,10 +1,10 @@
-<!-- BÜYÜK HARİTA -->
+<!-- BIG MAP -->
 <div id="big-map-overlay">
     <div class="big-map-layout">
         <div class="big-map-container">
             <canvas id="big-map-canvas"></canvas>
 
-            <!-- KOORDİNAT GÖSTERGESİ -->
+            <!-- COORDINATE DISPLAY -->
             <div id="big-map-coords"
                 class="absolute bottom-4 left-4 text-xs font-mono bg-black/50 px-3 py-1 rounded border backdrop-blur-sm pointer-events-none"
                 style="color: var(--hud-color); border-color: var(--hud-color-dim);">
@@ -12,24 +12,24 @@
             </div>
 
             <div class="absolute bottom-4 right-4 flex gap-2">
-                <!-- TAKİP MODU BUTONU -->
+                <!-- TRACK MODE BUTTON -->
                 <button id="btn-map-track"
                     class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
-                    title="Oyuncuyu Takip Et">
+                    data-i18n-title="map.trackPlayer" title="Track Player">
                     ◎
                 </button>
 
-                <!-- HEDEF VEKTÖRLERİ GÖSTER BUTONU -->
+                <!-- TARGET VECTORS BUTTON -->
                 <button id="btn-map-targets"
                     class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
-                    title="Hedef Vektörleri">
+                    data-i18n-title="map.targetVectors" title="Target Vectors">
                     ⇢
                 </button>
 
-                <!-- MERKEZE ODAKLA BUTONU -->
+                <!-- CENTER FOCUS BUTTON -->
                 <button id="btn-map-center"
                     class="bg-white/10 hover:bg-white/20 text-white w-8 h-8 flex items-center justify-center rounded border border-white/10 backdrop-blur-sm transition active:scale-95"
-                    title="Merkeze Odakla">
+                    data-i18n-title="map.centerFocus" title="Center Focus">
                     ⌖
                 </button>
             </div>
@@ -37,49 +37,50 @@
             <div class="radar-info-wrapper">
                 <div class="radar-info-icon">?</div>
                 <div class="radar-info-tooltip">
-                    <h4 class="text-white font-bold mb-2 border-b border-white/20 pb-1 tracking-widest text-sm">RADAR
-                        SİSTEMİ</h4>
+                    <h4 class="text-white font-bold mb-2 border-b border-white/20 pb-1 tracking-widest text-sm"
+                        data-i18n="map.radarSystem">RADAR SYSTEM</h4>
                     <div class="radar-legend-item">
                         <div class="r-dot scan"></div>
-                        <div><span class="r-title text-emerald-400">TARAMA ALANI</span>
-                            <p class="r-desc">Tam Görüş. Kaynakların içeriği net tespit edilir.</p>
+                        <div><span class="r-title text-emerald-400" data-i18n="map.scanArea">SCAN AREA</span>
+                            <p class="r-desc" data-i18n="map.scanDesc">Full Vision. Resource contents are clearly
+                                detected.</p>
                         </div>
                     </div>
                     <div class="radar-legend-item">
                         <div class="r-dot radar"></div>
-                        <div><span class="r-title text-amber-400">RADAR ALANI</span>
-                            <p class="r-desc">Kısmi Görüş. Nesneler sinyal olarak görünür.</p>
+                        <div><span class="r-title text-amber-400" data-i18n="map.radarArea">RADAR AREA</span>
+                            <p class="r-desc" data-i18n="map.radarDesc">Partial Vision. Objects appear as signals.</p>
                         </div>
                     </div>
                     <div class="radar-legend-item">
                         <div class="r-dot unknown"></div>
-                        <div><span class="r-title text-gray-400">BİLİNMEYEN BÖLGE</span>
-                            <p class="r-desc">Kapsama alanı dışı.</p>
+                        <div><span class="r-title text-gray-400" data-i18n="map.unknownZone">UNKNOWN ZONE</span>
+                            <p class="r-desc" data-i18n="map.unknownDesc">Outside coverage area.</p>
                         </div>
                     </div>
-                    <h4 class="text-white font-bold mb-2 mt-4 border-b border-white/20 pb-1 tracking-widest text-sm">
-                        HARİTA KONTROLLERİ</h4>
+                    <h4 class="text-white font-bold mb-2 mt-4 border-b border-white/20 pb-1 tracking-widest text-sm"
+                        data-i18n="map.mapControls">MAP CONTROLS</h4>
                     <div class="radar-legend-item">
                         <div class="r-dot" style="background:transparent; border:1px solid rgba(255,255,255,0.5);">
                         </div>
-                        <div><span class="r-title text-white">OTO-PİLOT</span>
-                            <p class="r-desc">Noktaya tıklayarak rota oluşturun.</p>
+                        <div><span class="r-title text-white" data-i18n="map.autopilot">AUTO-PILOT</span>
+                            <p class="r-desc" data-i18n="map.autopilotDesc">Click on a point to create a route.</p>
                         </div>
                     </div>
                     <div class="radar-legend-item">
                         <div class="r-dot"
                             style="background:transparent; border:1px solid rgba(255,255,255,0.5); border-radius:50%;">
                         </div>
-                        <div><span class="r-title text-white">YAKINLAŞTIRMA</span>
-                            <p class="r-desc">Fare tekerleği ile zoom yapın.</p>
+                        <div><span class="r-title text-white" data-i18n="map.zoom">ZOOM</span>
+                            <p class="r-desc" data-i18n="map.zoomDesc">Zoom with mouse wheel.</p>
                         </div>
                     </div>
                     <div class="radar-legend-item">
                         <div class="r-dot"
                             style="background:transparent; border:1px solid rgba(255,255,255,0.5); border-radius:0;">
                         </div>
-                        <div><span class="r-title text-white">GEZİNME</span>
-                            <p class="r-desc">Sol tık basılı tutarak kaydırın.</p>
+                        <div><span class="r-title text-white" data-i18n="map.pan">PAN</span>
+                            <p class="r-desc" data-i18n="map.panDesc">Hold left click to drag.</p>
                         </div>
                     </div>
                 </div>
@@ -88,78 +89,91 @@
                 id="btn-close-map">✕</div>
         </div>
         <div class="big-map-info-overlay">
-            <h3 class="text-white font-light tracking-widest text-lg mb-4 border-b border-white/10 pb-2">LEJANT</h3>
+            <h3 class="text-white font-light tracking-widest text-lg mb-4 border-b border-white/10 pb-2"
+                data-i18n="map.legend">LEGEND</h3>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--hud-color); border:2px solid var(--hud-color);"></div> SİZ
+                <div class="l-dot" style="background:var(--hud-color); border:2px solid var(--hud-color);"></div> <span
+                    data-i18n="map.you">YOU</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:#fff; border:2px solid #fff;"></div> NEXUS
+                <div class="l-dot" style="background:#fff; border:2px solid #fff;"></div> <span
+                    data-i18n="map.nexus">NEXUS</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--color-success);"></div> TAMİR İSTASYONU
+                <div class="l-dot" style="background:var(--color-success);"></div> <span
+                    data-i18n="map.repairStation">REPAIR STATION</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--color-storage);"></div> DEPO MERKEZİ
+                <div class="l-dot" style="background:var(--color-storage);"></div> <span
+                    data-i18n="map.storageCenter">STORAGE CENTER</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--echo-color);"></div> YANKI
+                <div class="l-dot" style="background:var(--echo-color);"></div> <span data-i18n="map.echo">ECHO</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="border:2px solid #8b5cf6;"></div> SOLUCAN DELİĞİ
+                <div class="l-dot" style="border:2px solid #8b5cf6;"></div> <span
+                    data-i18n="map.wormhole">WORMHOLE</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:rgba(255,255,255,0.5);"></div> Kaynak
+                <div class="l-dot" style="background:rgba(255,255,255,0.5);"></div> <span
+                    data-i18n="map.resource">Resource</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--toxic-color);"></div> Zehirli Bölge
+                <div class="l-dot" style="background:var(--toxic-color);"></div> <span data-i18n="map.toxicZone">Toxic
+                    Zone</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--tardigrad-color);"></div> Tardigrad
+                <div class="l-dot" style="background:var(--tardigrad-color);"></div> <span
+                    data-i18n="map.tardigrade">Tardigrade</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="background:var(--color-storage);"></div> Kayıp Kargo
+                <div class="l-dot" style="background:var(--color-storage);"></div> <span data-i18n="map.lostCargo">Lost
+                    Cargo</span>
             </div>
             <div class="legend-item">
-                <div class="l-dot" style="border:1px dashed var(--color-danger);"></div> Hedef
+                <div class="l-dot" style="border:1px dashed var(--color-danger);"></div> <span
+                    data-i18n="map.target">Target</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- BAĞLAM PENCERESİ -->
+<!-- CONTEXT WINDOW -->
 <div id="context-overlay" class="overlay-base">
     <div class="context-window compact">
         <div class="context-header">
-            <h2 class="text-sm font-bold tracking-widest" style="color: var(--hud-color);">BAĞLAMLAR</h2>
+            <h2 class="text-sm font-bold tracking-widest" style="color: var(--hud-color);" data-i18n="context.title">
+                CONTEXTS</h2>
             <div class="ui-close-btn" id="btn-close-context">✕</div>
         </div>
         <div class="context-content">
             <div class="ctx-grid">
-                <!-- Dinamik arka plan ve kenarlık rengi -->
+                <!-- Dynamic background and border color -->
                 <div class="ctx-item full" style="background: var(--hud-color-dim); border-color: var(--hud-color);">
                     <div class="flex justify-between items-center mb-2 border-b border-white/10 pb-1">
-                        <span class="ctx-lbl" style="color: var(--hud-text);">MAKSİMUM HIZ HESAPLAMASI</span>
+                        <span class="ctx-lbl" style="color: var(--hud-text);" data-i18n="context.maxSpeedCalc">MAXIMUM
+                            SPEED CALCULATION</span>
                         <span id="ctx-speed-val" class="ctx-val text-lg" style="color: #fff;">0 KM/S</span>
                     </div>
                     <div id="ctx-speed-formula" class="font-mono text-xs space-y-1"></div>
                 </div>
                 <div class="ctx-item">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="ctx-lbl">KARGO</span>
+                        <span class="ctx-lbl" data-i18n="context.cargo">CARGO</span>
                         <span id="ctx-cargo-val" class="ctx-val">0 / 0</span>
                     </div>
                     <div id="ctx-cargo-formula" class="ctx-formula">...</div>
                 </div>
                 <div class="ctx-item">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="ctx-lbl">SENSÖR</span>
+                        <span class="ctx-lbl" data-i18n="context.sensor">SENSOR</span>
                         <span id="ctx-sensor-val" class="ctx-val">0 km</span>
                     </div>
                     <div id="ctx-sensor-formula" class="ctx-formula">...</div>
                 </div>
                 <div class="ctx-item full">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="ctx-lbl">ENERJİ AKIŞI</span>
+                        <span class="ctx-lbl" data-i18n="context.energyFlow">ENERGY FLOW</span>
                         <span id="ctx-energy-rate" class="ctx-val">0.0/s</span>
                     </div>
                     <div id="ctx-energy-state" class="ctx-formula text-emerald-400">...</div>
@@ -167,11 +181,11 @@
                 <div class="ctx-item full border-l-2 border-red-500/50 mt-1">
                     <div class="flex justify-between items-center">
                         <div>
-                            <div class="ctx-lbl text-red-300">ÇEVRESEL DURUM</div>
-                            <div id="ctx-env-detail" class="text-[0.6rem] text-gray-500 italic mt-0.5">Analiz
-                                ediliyor...</div>
+                            <div class="ctx-lbl text-red-300" data-i18n="context.envStatus">ENVIRONMENTAL STATUS</div>
+                            <div id="ctx-env-detail" class="text-[0.6rem] text-gray-500 italic mt-0.5"
+                                data-i18n="context.analyzing">Analyzing...</div>
                         </div>
-                        <div id="ctx-env-status" class="ctx-val text-sm">BİLİNMİYOR</div>
+                        <div id="ctx-env-status" class="ctx-val text-sm" data-i18n="context.unknown">UNKNOWN</div>
                     </div>
                 </div>
             </div>
@@ -181,7 +195,7 @@
 
 <div id="stats-overlay" class="overlay-base">
     <div class="stats-window">
-        <!-- JS tarafından dolduruluyor (stats.js) -->
+        <!-- Populated by JS (stats.js) -->
     </div>
 </div>
 
@@ -189,8 +203,9 @@
     <div class="stats-window">
         <div class="stats-header">
             <div>
-                <h2 class="text-2xl font-light tracking-widest text-white">BAŞARIMLAR</h2>
-                <div id="ach-progress-text" class="text-xs text-gray-400 tracking-widest mt-1">0 / 0 TAMAMLANDI</div>
+                <h2 class="text-2xl font-light tracking-widest text-white" data-i18n="profile.achievements">ACHIEVEMENTS
+                </h2>
+                <div id="ach-progress-text" class="text-xs text-gray-400 tracking-widest mt-1">0 / 0</div>
             </div>
             <div class="ui-close-btn" id="btn-close-achievements">✕</div>
         </div>
@@ -204,8 +219,9 @@
     <div class="nexus-window" style="height: 800px;">
         <div class="nexus-header">
             <div>
-                <h1 class="nexus-logo-text" style="font-size: 3rem;">MERKEZ DEPO</h1>
-                <span class="text-xs text-gray-400 tracking-widest">SINIRSIZ SAKLAMA ALANI</span>
+                <h1 class="nexus-logo-text" style="font-size: 3rem;" data-i18n="storage.title">CENTRAL STORAGE</h1>
+                <span class="text-xs text-gray-400 tracking-widest" data-i18n="storage.unlimited">UNLIMITED STORAGE
+                    SPACE</span>
             </div>
             <div class="ui-close-btn" id="btn-close-storage">✕</div>
         </div>
@@ -213,14 +229,16 @@
             <div class="storage-col"
                 style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                    <h3 class="tracking-widest" style="color: var(--hud-color);">GEMİ KARGOSU</h3>
+                    <h3 class="tracking-widest" style="color: var(--hud-color);" data-i18n="storage.shipCargo">SHIP
+                        CARGO</h3>
                     <span id="storage-ship-cap" class="text-xs text-gray-400">0 / 150</span>
                 </div>
                 <div id="storage-ship-list" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
                     <button id="btn-deposit-all"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
-                        style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ DEPOLA</button>
+                        style="color: var(--hud-color); border-color: var(--hud-color-dim);"
+                        data-i18n="storage.depositAll">DEPOSIT ALL</button>
                 </div>
             </div>
             <div class="flex flex-col justify-center items-center text-gray-500">
@@ -229,14 +247,16 @@
             <div class="storage-col"
                 style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                    <h3 class="tracking-widest" style="color: var(--color-storage);">MERKEZ DEPO</h3>
-                    <span id="storage-center-count" class="text-xs text-gray-400">0 EŞYA</span>
+                    <h3 class="tracking-widest" style="color: var(--color-storage);" data-i18n="storage.centerStorage">
+                        CENTRAL STORAGE</h3>
+                    <span id="storage-center-count" class="text-xs text-gray-400">0 </span>
                 </div>
                 <div id="storage-center-list" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
                     <button id="btn-withdraw-all"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
-                        style="color: var(--color-storage); border-color: rgba(168, 85, 247, 0.3);">TÜMÜNÜ AL</button>
+                        style="color: var(--color-storage); border-color: rgba(168, 85, 247, 0.3);"
+                        data-i18n="storage.withdrawAll">WITHDRAW ALL</button>
                 </div>
             </div>
         </div>
@@ -249,7 +269,8 @@
             <div class="inv-content">
                 <div class="inv-header">
                     <div>
-                        <h2 class="text-2xl font-light tracking-[0.2em] text-white">ENVANTER</h2>
+                        <h2 class="text-2xl font-light tracking-[0.2em] text-white" data-i18n="inventory.title">
+                            INVENTORY</h2>
                         <div class="inv-currency">
                             <span style="color: var(--ray-color);">◆</span> <span id="stardust-amount"
                                 class="text-white font-bold">0</span>
@@ -267,8 +288,10 @@
     <div class="nexus-window" style="height: 600px; border-color: var(--echo-color);">
         <div class="nexus-header">
             <div>
-                <h1 class="nexus-logo-text" style="color:var(--echo-color); font-size: 2.5rem;">YANKI ARAYÜZÜ</h1>
-                <span class="text-xs text-cyan-400 tracking-widest">SENKRONİZE DEPO YÖNETİMİ</span>
+                <h1 class="nexus-logo-text" style="color:var(--echo-color); font-size: 2.5rem;"
+                    data-i18n="echoInv.title">ECHO INTERFACE</h1>
+                <span class="text-xs text-cyan-400 tracking-widest" data-i18n="echoInv.syncStorage">SYNCHRONIZED STORAGE
+                    MANAGEMENT</span>
             </div>
             <div class="ui-close-btn" style="color: var(--echo-color);" id="btn-close-echo-inv">✕</div>
         </div>
@@ -276,14 +299,16 @@
             <div class="storage-col"
                 style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                    <h3 class="tracking-widest" style="color: var(--hud-color);">GEMİ KARGOSU</h3>
+                    <h3 class="tracking-widest" style="color: var(--hud-color);" data-i18n="storage.shipCargo">SHIP
+                        CARGO</h3>
                     <span id="echo-player-cap" class="text-xs text-gray-400">0 / 150</span>
                 </div>
                 <div id="echo-player-grid" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
                     <button id="btn-transfer-to-echo"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
-                        style="color: var(--hud-color); border-color: var(--hud-color-dim);">TÜMÜNÜ AKTAR</button>
+                        style="color: var(--hud-color); border-color: var(--hud-color-dim);"
+                        data-i18n="echoInv.transferAll">TRANSFER ALL</button>
                 </div>
             </div>
             <div class="flex flex-col justify-center items-center text-cyan-500">
@@ -292,14 +317,16 @@
             <div class="storage-col"
                 style="flex:1; background:rgba(0,0,0,0.3); border-radius:8px; display:flex; flex-direction:column;">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                    <h3 class="tracking-widest" style="color: var(--echo-color);">YANKI DEPOSU</h3>
+                    <h3 class="tracking-widest" style="color: var(--echo-color);" data-i18n="echoInv.echoStorage">ECHO
+                        STORAGE</h3>
                     <span id="echo-storage-cap" class="text-xs text-gray-400">0 / 0</span>
                 </div>
                 <div id="echo-storage-grid" class="p-4 overflow-y-auto flex-1 space-y-2"></div>
                 <div class="p-4 border-t border-white/10">
                     <button id="btn-transfer-to-player"
                         class="w-full bg-white/5 hover:bg-white/10 border py-2 rounded text-xs tracking-widest transition"
-                        style="color: var(--echo-color); border-color: rgba(103, 232, 249, 0.3);">TÜMÜNÜ AL</button>
+                        style="color: var(--echo-color); border-color: rgba(103, 232, 249, 0.3);"
+                        data-i18n="storage.withdrawAll">WITHDRAW ALL</button>
                 </div>
             </div>
         </div>
@@ -311,32 +338,35 @@
         <div class="nexus-header">
             <div>
                 <h1 class="nexus-logo-text">NEXUS</h1>
-                <span class="text-xs text-gray-400 tracking-widest">TİCARET VE GELİŞTİRME İSTASYONU</span>
+                <span class="text-xs text-gray-400 tracking-widest" data-i18n="nexus.subtitle">TRADE AND DEVELOPMENT
+                    STATION</span>
             </div>
             <div class="nexus-tabs">
-                <div class="nexus-tab active" id="nexus-tab-market">PAZAR</div>
-                <div class="nexus-tab" id="nexus-tab-upgrades">HANGAR</div>
+                <div class="nexus-tab active" id="nexus-tab-market" data-i18n="nexus.market">MARKET</div>
+                <div class="nexus-tab" id="nexus-tab-upgrades" data-i18n="nexus.hangar">HANGAR</div>
             </div>
             <div class="ui-close-btn" id="btn-close-nexus">✕</div>
         </div>
         <div id="tab-market" class="nexus-content active">
             <div class="flex justify-between items-center mb-6">
-                <p class="text-gray-400">Elde edilen materyalleri Yıldız Tozu karşılığında takas et.</p>
+                <p class="text-gray-400" data-i18n="nexus.marketDesc">Trade collected materials for Stardust.</p>
                 <button id="btn-sell-all"
-                    class="bg-white/10 text-white border border-white/20 px-6 py-2 rounded-sm hover:bg-white hover:text-black transition text-sm tracking-widest">TÜMÜNÜ
-                    SAT</button>
+                    class="bg-white/10 text-white border border-white/20 px-6 py-2 rounded-sm hover:bg-white hover:text-black transition text-sm tracking-widest"
+                    data-i18n="nexus.sellAll">SELL ALL</button>
             </div>
             <div id="market-grid" class="market-grid"></div>
         </div>
         <div id="tab-upgrades" class="nexus-content">
             <div class="upgrade-grid">
-                <!-- nexus.js içinde dinamik oluşturuluyor, orada da style="color: var(--hud-color)" yapılacak -->
+                <!-- Dynamically created in nexus.js -->
                 <div>
-                    <div class="upgrade-col-title" style="color: var(--hud-color);">VOID RAY (SİZ)</div>
+                    <div class="upgrade-col-title" style="color: var(--hud-color);" data-i18n="nexus.voidrayYou">VOID
+                        RAY (YOU)</div>
                     <div id="upg-player-list"></div>
                 </div>
                 <div>
-                    <div class="upgrade-col-title" style="color: var(--echo-color);">ECHO RAY (YANKI)</div>
+                    <div class="upgrade-col-title" style="color: var(--echo-color);" data-i18n="nexus.echorayEcho">ECHO
+                        RAY (ECHO)</div>
                     <div id="upg-echo-list"></div>
                 </div>
             </div>

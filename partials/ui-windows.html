@@ -1,4 +1,4 @@
-<!-- PROFİL PENCERESİ -->
+<!-- PROFILE WINDOW -->
 <div id="profile-overlay" class="overlay-base">
     <div class="profile-window rpg-style">
         <div class="profile-rpg-header">
@@ -6,27 +6,31 @@
                 <div class="p-rpg-img" style="color: var(--hud-color);">⏣</div>
             </div>
             <div class="p-rpg-info">
-                <div class="p-rpg-title" style="color: var(--hud-text-dim);">KARAKTER</div>
+                <div class="p-rpg-title" style="color: var(--hud-text-dim);" data-i18n="profile.character">KARAKTER
+                </div>
                 <div class="p-rpg-name" style="color: var(--hud-color);">VOID RAY</div>
-                <div id="profile-rank-text" class="p-rpg-rank" style="color: var(--hud-text-dim);">ACEMİ PİLOT</div>
+                <div id="profile-rank-text" class="p-rpg-rank" style="color: var(--hud-text-dim);"
+                    data-i18n="profile.novicePilot">ACEMİ PİLOT</div>
             </div>
             <div class="ui-close-btn" id="btn-close-profile">✕</div>
         </div>
 
         <div class="profile-content no-padding">
-            <!-- SEKME 1: GENEL BAKIŞ -->
+            <!-- TAB 1: OVERVIEW -->
             <div id="p-tab-summary" class="profile-tab-content active">
                 <div class="p-rpg-level-strip">
                     <div class="p-rpg-lvl-box">
-                        <span class="lbl" style="color: var(--hud-text-dim);">SEVİYE</span>
+                        <span class="lbl" style="color: var(--hud-text-dim);" data-i18n="profile.level">SEVİYE</span>
                         <span id="level-val" class="val" style="color: var(--hud-text);">1</span>
                     </div>
                     <div class="p-rpg-lvl-box">
-                        <span class="lbl" style="color: var(--hud-text-dim);">MEVCUT XP</span>
+                        <span class="lbl" style="color: var(--hud-text-dim);" data-i18n="profile.currentXp">MEVCUT
+                            XP</span>
                         <span id="xp-current" class="val" style="color: var(--hud-text);">0</span>
                     </div>
                     <div class="p-rpg-lvl-box">
-                        <span class="lbl" style="color: var(--hud-text-dim);">GEREKLİ XP</span>
+                        <span class="lbl" style="color: var(--hud-text-dim);" data-i18n="profile.requiredXp">GEREKLİ
+                            XP</span>
                         <span id="xp-max" class="val" style="color: var(--hud-text);">100</span>
                     </div>
                 </div>
@@ -37,31 +41,31 @@
 
                 <div class="p-rpg-main-grid">
                     <div class="p-rpg-col">
-                        <div class="p-rpg-section-title">GEMİ STATÜSÜ</div>
+                        <div class="p-rpg-section-title" data-i18n="profile.shipStatus">GEMİ STATÜSÜ</div>
 
                         <div class="p-rpg-stat-row">
-                            <span class="stat-name">MOTOR</span>
+                            <span class="stat-name" data-i18n="profile.engine">MOTOR</span>
                             <div class="stat-val-group">
                                 <span class="stat-plus">+</span>
                                 <span id="stat-lvl-speed" class="stat-num">1</span>
                             </div>
                         </div>
                         <div class="p-rpg-stat-row">
-                            <span class="stat-name">MANEVRA</span>
+                            <span class="stat-name" data-i18n="profile.maneuver">MANEVRA</span>
                             <div class="stat-val-group">
                                 <span class="stat-plus">+</span>
                                 <span id="stat-lvl-turn" class="stat-num">1</span>
                             </div>
                         </div>
                         <div class="p-rpg-stat-row">
-                            <span class="stat-name">ÇEKİM</span>
+                            <span class="stat-name" data-i18n="profile.magnet">ÇEKİM</span>
                             <div class="stat-val-group">
                                 <span class="stat-plus">+</span>
                                 <span id="stat-lvl-magnet" class="stat-num">1</span>
                             </div>
                         </div>
                         <div class="p-rpg-stat-row">
-                            <span class="stat-name">KARGO</span>
+                            <span class="stat-name" data-i18n="profile.cargo">KARGO</span>
                             <div class="stat-val-group">
                                 <span class="stat-plus">+</span>
                                 <span id="stat-lvl-cap" class="stat-num">1</span>
@@ -70,71 +74,79 @@
                     </div>
 
                     <div class="p-rpg-col">
-                        <div class="p-rpg-section-title">DURUM</div>
+                        <div class="p-rpg-section-title" data-i18n="profile.status">DURUM</div>
 
                         <div class="p-rpg-val-row">
-                            <span class="val-name">GÖVDE</span>
+                            <span class="val-name" data-i18n="profile.hull">GÖVDE</span>
                             <span id="val-hp-text" class="val-num">100/100</span>
                         </div>
                         <div class="p-rpg-val-row">
-                            <span class="val-name">ENERJİ</span>
+                            <span class="val-name" data-i18n="profile.energy">ENERJİ</span>
                             <span id="val-ep-text" class="val-num">100/100</span>
                         </div>
                         <div class="p-rpg-val-row">
-                            <span class="val-name">HASAR</span>
-                            <span class="val-num">YOK</span>
+                            <span class="val-name" data-i18n="profile.damage">HASAR</span>
+                            <span class="val-num" data-i18n="profile.none">YOK</span>
                         </div>
                         <div class="p-rpg-val-row">
-                            <span class="val-name">KALKAN</span>
+                            <span class="val-name" data-i18n="profile.shield">KALKAN</span>
                             <span class="val-num">0</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-rpg-attributes">
-                    <div class="p-rpg-section-title">ÖZELLİKLER</div>
+                    <div class="p-rpg-section-title" data-i18n="profile.attributes">ÖZELLİKLER</div>
                     <div class="p-attr-grid">
-                        <div class="p-attr-item"><span>Hız</span><span id="attr-speed">0</span></div>
-                        <div class="p-attr-item"><span>Yankı Hızı</span><span id="attr-echo-speed">0</span></div>
-                        <div class="p-attr-item"><span>Mesafe</span><span id="p-stat-dist">0 km</span></div>
-                        <div class="p-attr-item"><span>Toplanan</span><span id="p-stat-loot">0</span></div>
-                        <div class="p-attr-item"><span>Kristal</span><span id="p-stat-dust">0</span></div>
-                        <div class="p-attr-item"><span>Oyun Süresi</span><span id="p-stat-time">00:00</span></div>
+                        <div class="p-attr-item"><span data-i18n="profile.speed">Hız</span><span
+                                id="attr-speed">0</span></div>
+                        <div class="p-attr-item"><span data-i18n="profile.echoSpeed">Yankı Hızı</span><span
+                                id="attr-echo-speed">0</span></div>
+                        <div class="p-attr-item"><span data-i18n="profile.distance">Mesafe</span><span
+                                id="p-stat-dist">0 km</span></div>
+                        <div class="p-attr-item"><span data-i18n="profile.collected">Toplanan</span><span
+                                id="p-stat-loot">0</span></div>
+                        <div class="p-attr-item"><span data-i18n="profile.crystal">Kristal</span><span
+                                id="p-stat-dust">0</span></div>
+                        <div class="p-attr-item"><span data-i18n="profile.playTime">Oyun Süresi</span><span
+                                id="p-stat-time">00:00</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- SEKME 2: BAŞARIMLAR -->
+            <!-- TAB 2: ACHIEVEMENTS -->
             <div id="p-tab-achievements" class="profile-tab-content" style="display: none; padding: 15px;">
                 <div class="flex justify-between items-center mb-3 pb-2 border-b border-dashed"
                     style="border-color: var(--hud-color-dim);">
-                    <span class="text-xs tracking-widest font-mono" style="color: var(--hud-text-dim);">GÖREV
+                    <span class="text-xs tracking-widest font-mono" style="color: var(--hud-text-dim);"
+                        data-i18n="profile.missionStatus">GÖREV
                         DURUMU</span>
                     <span id="ach-progress-text" class="text-xs font-mono" style="color: var(--hud-color);">0 / 0</span>
                 </div>
                 <div id="profile-achievements-list" class="space-y-2">
-                    <!-- JS ile doldurulacak -->
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
 
         <div class="profile-tabs-bottom">
-            <div id="p-tab-btn-summary" class="profile-tab-btn active">STATÜ</div>
-            <div id="p-tab-btn-achievements" class="profile-tab-btn">GÖREVLER</div>
+            <div id="p-tab-btn-summary" class="profile-tab-btn active" data-i18n="profile.statusTab">STATÜ</div>
+            <div id="p-tab-btn-achievements" class="profile-tab-btn" data-i18n="profile.missionsTab">GÖREVLER</div>
         </div>
     </div>
+
 </div>
 
-<!-- EKİPMAN PENCERESİ -->
+<!-- EQUIPMENT WINDOW -->
 <div id="equipment-overlay" class="overlay-base">
     <div class="equipment-window">
         <div class="equip-header">
-            <div class="equip-title">DONANIM & MODÜLLER</div>
+            <div class="equip-title" data-i18n="equipment.title">DONANIM & MODÜLLER</div>
             <div class="ui-close-btn" id="btn-close-equipment">✕</div>
         </div>
 
         <div class="equip-content">
-            <!-- GEMİ SİLÜETİ VE SLOTLAR -->
+            <!-- SHIP SILHOUETTE AND SLOTS -->
             <div class="ship-silhouette-container">
                 <svg class="ship-silhouette" viewBox="0 0 100 140" fill="none">
                     <path d="M50 20 C 70 40, 90 70, 80 110 L 50 130 L 20 110 C 10 70, 30 40, 50 20 Z" />
@@ -144,94 +156,105 @@
 
                 <div class="equip-slot-wrapper slot-engine" id="slot-engine">
                     <div class="equip-slot"><span class="slot-icon">🚀</span></div>
-                    <span class="slot-label">MOTOR</span>
+                    <span class="slot-label" data-i18n="equipment.engine">MOTOR</span>
                 </div>
 
                 <div class="equip-slot-wrapper slot-shield" id="slot-shield">
                     <div class="equip-slot"><span class="slot-icon">🛡️</span></div>
-                    <span class="slot-label">KALKAN</span>
+                    <span class="slot-label" data-i18n="equipment.shield">KALKAN</span>
                 </div>
 
                 <div class="equip-slot-wrapper slot-weapon-l" id="slot-weapon_l">
                     <div class="equip-slot"><span class="slot-icon">🔫</span></div>
-                    <span class="slot-label">SİLAH L</span>
+                    <span class="slot-label" data-i18n="equipment.weaponL">SİLAH L</span>
                 </div>
 
                 <div class="equip-slot-wrapper slot-weapon-r" id="slot-weapon_r">
                     <div class="equip-slot"><span class="slot-icon">🔫</span></div>
-                    <span class="slot-label">SİLAH R</span>
+                    <span class="slot-label" data-i18n="equipment.weaponR">SİLAH R</span>
                 </div>
 
                 <div class="equip-slot-wrapper slot-sensor" id="slot-sensor">
                     <div class="equip-slot"><span class="slot-icon">📡</span></div>
-                    <span class="slot-label">RADAR</span>
+                    <span class="slot-label" data-i18n="equipment.radar">RADAR</span>
                 </div>
 
                 <div class="equip-slot-wrapper slot-hull" id="slot-hull">
                     <div class="equip-slot"><span class="slot-icon">⬢</span></div>
-                    <span class="slot-label">GÖVDE</span>
+                    <span class="slot-label" data-i18n="equipment.hull">GÖVDE</span>
                 </div>
             </div>
 
-            <!-- STAT ÖZETİ -->
+            <!-- STAT SUMMARY -->
             <div class="equip-stats-summary">
-                <div class="estat-row"><span class="estat-name">SALDIRI GÜCÜ</span><span id="estat-atk"
-                        class="estat-val">0</span></div>
-                <div class="estat-row"><span class="estat-name">SAVUNMA</span><span id="estat-def"
-                        class="estat-val">0</span></div>
-                <div class="estat-row"><span class="estat-name">HIZ</span>
+                <div class="estat-row"><span class="estat-name" data-i18n="equipment.attackPower">SALDIRI
+                        GÜCÜ</span><span id="estat-atk" class="estat-val">0</span></div>
+                <div class="estat-row"><span class="estat-name" data-i18n="equipment.defense">SAVUNMA</span><span
+                        id="estat-def" class="estat-val">0</span></div>
+                <div class="estat-row"><span class="estat-name" data-i18n="equipment.speed">HIZ</span>
                     <div class="flex items-center"><span id="estat-spd" class="estat-val">0</span><span
                             class="estat-bonus"></span></div>
                 </div>
-                <div class="estat-row"><span class="estat-name">ENERJİ</span><span id="estat-nrg"
-                        class="estat-val">0</span></div>
+                <div class="estat-row"><span class="estat-name" data-i18n="equipment.energy">ENERJİ</span><span
+                        id="estat-nrg" class="estat-val">0</span></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- KONTROLLER PENCERESİ (YENİ) -->
+<!-- CONTROLS WINDOW -->
 <div id="controls-overlay" class="overlay-base">
     <div class="controls-window">
         <div class="controls-header">
-            <div class="controls-title">SİSTEM KONTROLLERİ</div>
+            <div class="controls-title" data-i18n="controlsWindow.title">SİSTEM KONTROLLERİ</div>
             <div class="ui-close-btn" id="btn-close-controls">✕</div>
         </div>
         <div class="controls-content">
             <div class="controls-grid-compact">
-                <!-- Sol Sütun -->
+                <!-- Left Column -->
                 <div class="ctrl-col">
                     <div class="ctrl-row"><span class="ctrl-key">W</span><span class="ctrl-key">A</span><span
-                            class="ctrl-key">S</span><span class="ctrl-key">D</span> <span>Navigasyon</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key wide">SPACE</span> <span>İtici Güç (Boost)</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">Q</span> <span>Oto-Pilot Modu</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">C</span> <span>Kamera (Vatoz/Yankı)</span></div>
+                            class="ctrl-key">S</span><span class="ctrl-key">D</span> <span
+                            data-i18n="controls.navigation">Navigasyon</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key wide">SPACE</span> <span
+                            data-i18n="controls.thrust">İtici Güç (Boost)</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">Q</span> <span data-i18n="controls.autoPilot">Oto-Pilot
+                            Modu</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">C</span> <span data-i18n="controls.camera">Kamera
+                            (Vatoz/Yankı)</span></div>
                 </div>
 
-                <!-- Sağ Sütun -->
+                <!-- Right Column -->
                 <div class="ctrl-col">
-                    <div class="ctrl-row"><span class="ctrl-key">E</span> <span>Etkileşim</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">F</span> <span>Yankı Bağlantı</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">I</span> <span>Kargo / Envanter</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">M</span> <span>Büyük Harita</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">H</span> <span>Arayüz Gizle</span></div>
-                    <div class="ctrl-row"><span class="ctrl-key">P</span> <span>Profil</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">E</span> <span
+                            data-i18n="controls.interaction">Etkileşim</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">F</span> <span data-i18n="controls.echoLink">Yankı
+                            Bağlantı</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">I</span> <span data-i18n="controls.cargo">Kargo /
+                            Envanter</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">M</span> <span data-i18n="controls.radar">Büyük
+                            Harita</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">H</span> <span data-i18n="controls.hud">Arayüz
+                            Gizle</span></div>
+                    <div class="ctrl-row"><span class="ctrl-key">P</span> <span
+                            data-i18n="controls.profile">Profil</span></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- CHAT PANELİ -->
+<!-- CHAT PANEL -->
 <div id="chat-panel">
     <div class="chat-header">
-        <div class="chat-tab active" id="tab-genel">GENEL</div>
-        <div class="chat-tab" id="tab-grup">GRUP</div>
-        <div class="chat-tab" id="tab-bilgi">BİLGİ</div>
+        <div class="chat-tab active" id="tab-general" data-i18n="chat.general">GENERAL</div>
+        <div class="chat-tab" id="tab-group" data-i18n="chat.group">GROUP</div>
+        <div class="chat-tab" id="tab-info" data-i18n="chat.info">INFO</div>
     </div>
     <div id="chat-content" class="chat-content"></div>
     <div id="chat-input-area" class="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Mesaj yaz..." maxlength="64">
+        <input type="text" id="chat-input" data-i18n-placeholder="chat.placeholder" placeholder="Mesaj yaz..."
+            maxlength="64">
         <button id="chat-send-btn">➤</button>
     </div>
 </div>

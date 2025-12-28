@@ -5,7 +5,7 @@
 
 export class Particle {
     constructor() {
-        // Hafızada yer ayrılırken varsayılan değerler atanır.
+        // Default values are assigned when memory is allocated.
         this.x = 0;
         this.y = 0;
         this.color = '#fff';
@@ -17,14 +17,14 @@ export class Particle {
     }
 
     /**
-     * Havuzdan çekildiğinde nesneyi "canlandırmak" için kullanılır.
+     * Used to "respawn" the object when pulled from the pool.
      */
     spawn(x, y, color) {
         this.x = x;
         this.y = y;
         this.color = color;
 
-        // Rastgele hareket vektörleri her seferinde yeniden hesaplanmalı
+        // Random movement vectors must be re-calculated each time
         this.vx = (Math.random() - 0.5) * 3;
         this.vy = (Math.random() - 0.5) * 3;
 
@@ -34,11 +34,11 @@ export class Particle {
     }
 
     /**
-     * ObjectPool.js içindeki release() fonksiyonu tarafından çağrılır.
-     * Nesne havuza geri dönerken temizlik yapar.
+     * Called by the release() function in ObjectPool.js.
+     * Performs cleanup when the object returns to the pool.
      */
     reset() {
-        this.x = -1000; // Ekran dışına al
+        this.x = -1000; // Move off-screen
         this.y = -1000;
         this.life = 0;
         this.vx = 0;

@@ -1,54 +1,52 @@
-<!-- AYARLAR PANELİ -->
+<!-- SETTINGS PANEL -->
 <div id="settings-panel">
     <div id="settings-header" class="flex justify-between items-center mb-2 border-b border-white/10 pb-2 cursor-move">
-        <h3 class="text-sm font-bold tracking-widest pointer-events-none" style="color: var(--hud-text);">AYARLAR</h3>
-        <div class="ui-close-btn" id="btn-close-settings" title="Kapat">✕</div>
+        <h3 class="text-sm font-bold tracking-widest pointer-events-none" style="color: var(--hud-text);"
+            data-i18n="settings.title">SETTINGS</h3>
+        <div class="ui-close-btn" id="btn-close-settings" data-i18n-title="general.close" title="Close">✕</div>
     </div>
 
     <div class="settings-tabs">
-        <div id="tab-btn-game" class="settings-tab active">OYUN</div>
-        <div id="tab-btn-view" class="settings-tab">GÖRÜNÜM</div>
-        <div id="tab-btn-audio" class="settings-tab">SES</div>
-        <div id="tab-btn-save" class="settings-tab">KAYIT</div>
-        <div id="tab-btn-dev" class="settings-tab text-red-400" style="display: none;">DEV</div>
+        <div id="tab-btn-game" class="settings-tab active" data-i18n="settings.tabs.game">GAME</div>
+        <div id="tab-btn-view" class="settings-tab" data-i18n="settings.tabs.view">VIEW</div>
+        <div id="tab-btn-audio" class="settings-tab" data-i18n="settings.tabs.audio">AUDIO</div>
+        <div id="tab-btn-save" class="settings-tab" data-i18n="settings.tabs.save">SAVE</div>
+        <div id="tab-btn-dev" class="settings-tab text-red-400" style="display: none;" data-i18n="settings.tabs.dev">DEV
+        </div>
     </div>
 
-    <!-- SEKME 1: OYUN -->
+    <!-- TAB 1: GAME -->
     <div id="set-tab-game" class="settings-content active">
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);">NAVİGASYON
-            OKLARI</div>
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);"
+            data-i18n="settings.navArrows">NAVIGATION ARROWS</div>
         <div class="mb-4">
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'ÜS OKU: Nexus ana üssünün yönünü gösteren oku açar.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.nexusArrow') : '')"
                 onmouseleave="hideTooltip()">
-                <span>ÜS (NEXUS)</span>
+                <span data-i18n="settings.nexus">BASE (NEXUS)</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-nexus-arrow" checked>
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'TAMİR OKU: Tamir istasyonunun yönünü gösteren oku açar.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.repairArrow') : '')"
                 onmouseleave="hideTooltip()">
-                <span>TAMİR İSTASYONU</span>
+                <span data-i18n="settings.repairStation">REPAIR STATION</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-repair-arrow">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'DEPO OKU: Depolama merkezinin yönünü gösteren oku açar.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.storageArrow') : '')"
                 onmouseleave="hideTooltip()">
-                <span>DEPO MERKEZİ</span>
+                <span data-i18n="settings.storageCenter">STORAGE CENTER</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-storage-arrow">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'YANKI OKU: Yardımcı dronun (Echo) yönünü gösteren oku açar.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.echoArrow') : '')"
                 onmouseleave="hideTooltip()">
-                <span>YANKI (ECHO)</span>
+                <span data-i18n="settings.echo">ECHO</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-echo-arrow" checked>
                     <span class="slider"></span>
@@ -56,55 +54,69 @@
             </div>
         </div>
 
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);">SİSTEM
-        </div>
-        <div class="toggle-row"
-            onmouseenter="showInfoTooltip(event, 'KONSOL: Sohbet penceresinden kod yazmayı (/komut) aktif eder.')"
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);"
+            data-i18n="settings.system">SYSTEM</div>
+        <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.console') : '')"
             onmouseleave="hideTooltip()">
-            <span>KONSOLU AKTİF ET</span>
+            <span data-i18n="settings.enableConsole">ENABLE CONSOLE</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="toggle-console">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <div class="toggle-row"
-            onmouseenter="showInfoTooltip(event, 'GELİŞTİRİCİ MODU: Gelişmiş hata ayıklama seçeneklerini açar.')"
+        <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.devMode') : '')"
             onmouseleave="hideTooltip()">
-            <span>GELİŞTİRİCİ MODU</span>
+            <span data-i18n="settings.devMode">DEVELOPER MODE</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="toggle-dev-mode">
                 <span class="slider"></span>
             </label>
         </div>
+
+        <!-- LANGUAGE OPTION -->
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);"
+            data-i18n="settings.language">LANGUAGE</div>
+        <div id="language-options">
+            <button id="lang-btn-tr" class="lang-option-btn active" onmouseenter="showInfoTooltip(event, 'Türkçe')"
+                onmouseleave="hideTooltip()">
+                <span>🇹🇷</span>
+                <span>TR</span>
+            </button>
+            <button id="lang-btn-en" class="lang-option-btn" onmouseenter="showInfoTooltip(event, 'English')"
+                onmouseleave="hideTooltip()">
+                <span>🇬🇧</span>
+                <span>EN</span>
+            </button>
+        </div>
     </div>
 
-    <!-- SEKME 2: GÖRÜNÜM -->
+    <!-- TAB 2: VIEW -->
     <div id="set-tab-view" class="settings-content">
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);">TEMA RENGİ
-        </div>
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);"
+            data-i18n="settings.themeColor">THEME COLOR</div>
         <div class="flex gap-2 mb-4 justify-between flex-wrap" id="theme-color-options">
             <div class="theme-opt w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md"
                 data-color="#94d8c3" style="background:#94d8c3;"
-                onmouseenter="showInfoTooltip(event, 'Varsayılan Turkuaz')" onmouseleave="hideTooltip()"></div>
+                onmouseenter="showInfoTooltip(event, 'Default Turquoise')" onmouseleave="hideTooltip()"></div>
             <div class="theme-opt w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md"
-                data-color="#38bdf8" style="background:#38bdf8;" onmouseenter="showInfoTooltip(event, 'Gök Mavisi')"
+                data-color="#38bdf8" style="background:#38bdf8;" onmouseenter="showInfoTooltip(event, 'Sky Blue')"
                 onmouseleave="hideTooltip()"></div>
             <div class="theme-opt w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md"
-                data-color="#a855f7" style="background:#a855f7;" onmouseenter="showInfoTooltip(event, 'Neon Mor')"
+                data-color="#a855f7" style="background:#a855f7;" onmouseenter="showInfoTooltip(event, 'Neon Purple')"
                 onmouseleave="hideTooltip()"></div>
             <div class="theme-opt w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md"
-                data-color="#fbbf24" style="background:#fbbf24;" onmouseenter="showInfoTooltip(event, 'Altın Sarısı')"
+                data-color="#fbbf24" style="background:#fbbf24;" onmouseenter="showInfoTooltip(event, 'Golden Yellow')"
                 onmouseleave="hideTooltip()"></div>
             <div class="theme-opt w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md"
-                data-color="#ef4444" style="background:#ef4444;"
-                onmouseenter="showInfoTooltip(event, 'Alarm Kırmızısı')" onmouseleave="hideTooltip()"></div>
+                data-color="#ef4444" style="background:#ef4444;" onmouseenter="showInfoTooltip(event, 'Alert Red')"
+                onmouseleave="hideTooltip()"></div>
             <div class="theme-opt w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md"
-                data-color="#ffffff" style="background:#ffffff;" onmouseenter="showInfoTooltip(event, 'Saf Beyaz')"
+                data-color="#ffffff" style="background:#ffffff;" onmouseenter="showInfoTooltip(event, 'Pure White')"
                 onmouseleave="hideTooltip()"></div>
 
             <div class="relative w-6 h-6 rounded-sm border border-white/20 cursor-pointer hover:scale-110 transition-transform shadow-md overflow-hidden"
-                onmouseenter="showInfoTooltip(event, 'Özel Renk Seç')" onmouseleave="hideTooltip()">
+                onmouseenter="showInfoTooltip(event, 'Custom Color')" onmouseleave="hideTooltip()">
                 <input type="color" id="custom-theme-picker"
                     class="absolute inset-0 w-[150%] h-[150%] -top-[25%] -left-[25%] p-0 border-0 cursor-pointer opacity-0"
                     value="#94d8c3">
@@ -115,58 +127,58 @@
             </div>
         </div>
 
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);">ATMOSFER
-        </div>
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);"
+            data-i18n="settings.atmosphere">ATMOSPHERE</div>
 
-        <div class="toggle-row"
-            onmouseenter="showInfoTooltip(event, 'UZAY IZGARASI: Arka plana derinlik ve hareket hissi katan retro çizgiler ekler.')"
+        <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.spaceGrid') : '')"
             onmouseleave="hideTooltip()">
-            <span>UZAY IZGARASI</span>
+            <span data-i18n="settings.spaceGrid">SPACE GRID</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="toggle-grid">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <div class="mb-2"
-            onmouseenter="showInfoTooltip(event, 'YILDIZ PARLAKLIĞI: Arka plan yıldızlarının görünürlüğünü ayarlar. %0 performans artırır.')"
+        <div class="mb-2" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.starBright') : '')"
             onmouseleave="hideTooltip()">
-            <div class="flex justify-between text-xs text-gray-400 tracking-widest mt-2"><span>YILDIZ
-                    PARLAKLIĞI</span><span id="val-star-bright">100%</span></div>
+            <div class="flex justify-between text-xs text-gray-400 tracking-widest mt-2"><span
+                    data-i18n="settings.starBrightness">STAR BRIGHTNESS</span><span id="val-star-bright">100%</span>
+            </div>
             <input type="range" id="vol-star-bright" class="smart-slider" data-default="100" min="0" max="100"
                 value="100">
         </div>
 
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);">ARAYÜZ VE
-            PENCERELER</div>
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);"
+            data-i18n="settings.interfaceWindows">INTERFACE & WINDOWS</div>
         <div class="mb-4">
             <div class="flex justify-between text-xs text-gray-400 tracking-widest"
-                onmouseenter="showInfoTooltip(event, 'HUD OPAKLIĞI: Kalıcı arayüz elementlerinin (Radar, Bar, İkonlar) şeffaflığı.')"
-                onmouseleave="hideTooltip()"><span>HUD OPAKLIĞI</span><span id="val-hud-opacity">100%</span></div>
+                onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.hudOpacity') : '')"
+                onmouseleave="hideTooltip()"><span data-i18n="settings.hudOpacity">HUD OPACITY</span><span
+                    id="val-hud-opacity">100%</span></div>
             <input type="range" id="vol-hud-opacity" class="smart-slider" data-default="100" min="20" max="100"
                 value="100">
 
             <div class="flex justify-between text-xs text-gray-400 tracking-widest mt-2"
-                onmouseenter="showInfoTooltip(event, 'PENCERE OPAKLIĞI: Açılan pencerelerin (Envanter, Ayarlar, Sohbet) şeffaflığı.')"
-                onmouseleave="hideTooltip()"><span>PENCERE OPAKLIĞI</span><span id="val-window-opacity">100%</span>
+                onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.windowOpacity') : '')"
+                onmouseleave="hideTooltip()"><span data-i18n="settings.windowOpacity">WINDOW OPACITY</span><span
+                    id="val-window-opacity">100%</span>
             </div>
             <input type="range" id="vol-window-opacity" class="smart-slider" data-default="100" min="20" max="100"
                 value="100">
 
             <div class="toggle-row mt-3"
-                onmouseenter="showInfoTooltip(event, 'AKILLI GÖRÜNÜRLÜK: Fare ile üzerine gelindiğinde arayüzü tam netleştirir.')"
+                onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.hoverEffect') : '')"
                 onmouseleave="hideTooltip()">
-                <span>ÜZERİNE GELİNCE %100</span>
+                <span data-i18n="settings.hoverEffect">HOVER TO 100%</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-hud-hover">
                     <span class="slider"></span>
                 </label>
             </div>
 
-            <div class="toggle-row mt-3"
-                onmouseenter="showInfoTooltip(event, 'DURUM ÇUBUKLARI: Geminin üzerinde can ve enerji barlarını gösterir.')"
+            <div class="toggle-row mt-3" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.shipBars') : '')"
                 onmouseleave="hideTooltip()">
-                <span>GEMİ DURUM ÇUBUKLARI</span>
+                <span data-i18n="settings.shipBars">SHIP STATUS BARS</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-ship-bars">
                     <span class="slider"></span>
@@ -174,9 +186,9 @@
             </div>
 
             <div class="toggle-row mt-3"
-                onmouseenter="showInfoTooltip(event, 'SİNEMATİK MOD: Otopilot aktifken ve kullanıcı boşta kaldığında arayüzü otomatik gizler.')"
+                onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.cinematicMode') : '')"
                 onmouseleave="hideTooltip()">
-                <span>SİNEMATİK MOD (AI/BOŞTA GİZLE)</span>
+                <span data-i18n="settings.cinematicMode">CINEMATIC MODE (AI/IDLE HIDE)</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-auto-hide-hud">
                     <span class="slider"></span>
@@ -184,23 +196,21 @@
             </div>
         </div>
 
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);">KAMERA
-            KONUMU</div>
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);"
+            data-i18n="settings.cameraPosition">CAMERA POSITION</div>
 
-        <div class="toggle-row mb-3"
-            onmouseenter="showInfoTooltip(event, 'ADAPTİF MOD: Kamerayı geminin hızına göre otomatik kaydırır.')"
+        <div class="toggle-row mb-3" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.adaptiveMode') : '')"
             onmouseleave="hideTooltip()">
-            <span>ADAPTİF MOD</span>
+            <span data-i18n="settings.adaptiveMode">ADAPTIVE MODE</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="toggle-adaptive-cam">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <div class="toggle-row mb-3"
-            onmouseenter="showInfoTooltip(event, 'YUMUŞAK GEÇİŞ: Karakterler arası kamera geçişini sinematik yapar.')"
+        <div class="toggle-row mb-3" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.smoothCam') : '')"
             onmouseleave="hideTooltip()">
-            <span>YUMUŞAK GEÇİŞ</span>
+            <span data-i18n="settings.smoothTransition">SMOOTH TRANSITION</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="toggle-smooth-cam" checked>
                 <span class="slider"></span>
@@ -208,166 +218,161 @@
         </div>
 
         <div id="manual-camera-controls" style="transition: opacity 0.3s;">
-            <div class="mb-2"
-                onmouseenter="showCamTooltip(event, 'YATAY KONUM: Kamerayı yatay eksende manuel kaydırır.')"
+            <div class="mb-2" onmouseenter="showCamTooltip(event, window.t ? t('tooltips.camX') : '')"
                 onmouseleave="hideTooltip()">
-                <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span>YATAY (X)</span><span
-                        id="val-cam-x">0</span></div>
+                <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span
+                        data-i18n="settings.horizontalX">HORIZONTAL (X)</span><span id="val-cam-x">0</span></div>
                 <input type="range" id="cam-offset-x" class="smart-slider" data-default="0" min="-400" max="400"
                     value="0">
             </div>
-            <div class="mb-4"
-                onmouseenter="showCamTooltip(event, 'DİKEY KONUM: Kamerayı dikey eksende manuel kaydırır.')"
+            <div class="mb-4" onmouseenter="showCamTooltip(event, window.t ? t('tooltips.camY') : '')"
                 onmouseleave="hideTooltip()">
-                <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span>DİKEY (Y)</span><span
-                        id="val-cam-y">0</span></div>
+                <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span
+                        data-i18n="settings.verticalY">VERTICAL (Y)</span><span id="val-cam-y">0</span></div>
                 <input type="range" id="cam-offset-y" class="smart-slider" data-default="0" min="-300" max="300"
                     value="0">
             </div>
         </div>
 
-        <!-- EFEKTLER BÖLÜMÜ -->
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);">EFEKTLER
-        </div>
+        <!-- EFFECTS SECTION -->
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-4" style="color: var(--hud-color);"
+            data-i18n="settings.effects">EFFECTS</div>
 
-        <div class="toggle-row"
-            onmouseenter="showInfoTooltip(event, 'RETRO EFEKT: Ekranı eski bir monitör gibi gösteren tarama çizgileri ekler.')"
+        <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.crtEffect') : '')"
             onmouseleave="hideTooltip()">
-            <span>CRT MONİTÖR EFEKTİ</span>
+            <span data-i18n="settings.crtEffect">CRT MONITOR EFFECT</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="toggle-crt">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <!-- CRT YOĞUNLUK SLIDER'I -->
+        <!-- CRT INTENSITY SLIDER -->
         <div id="crt-intensity-wrapper"
             style="display: none; margin-top: 5px; margin-bottom: 10px; padding-left: 10px; border-left: 2px solid"
             style="border-color: var(--hud-color-dim);">
             <div class="flex justify-between text-xs text-gray-400 tracking-widest"
-                onmouseenter="showInfoTooltip(event, 'YOĞUNLUK: Scanline efektinin opaklığını ayarlar.')"
-                onmouseleave="hideTooltip()"><span>YOĞUNLUK</span><span id="val-crt-intensity">50%</span></div>
+                onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.crtIntensity') : '')"
+                onmouseleave="hideTooltip()"><span data-i18n="settings.intensity">INTENSITY</span><span
+                    id="val-crt-intensity">50%</span></div>
             <input type="range" id="vol-crt-intensity" class="smart-slider" data-default="50" min="10" max="100"
                 value="50">
         </div>
 
-        <div class="mt-4 pt-3 border-t border-white/10 text-[9px] text-gray-500 font-mono text-center tracking-widest">
-            VARSAYILAN DEĞER İÇİN ÇİFT TIKLAYIN
+        <div class="mt-4 pt-3 border-t border-white/10 text-[9px] text-gray-500 font-mono text-center tracking-widest"
+            data-i18n="settings.defaultHint">
+            DOUBLE CLICK FOR DEFAULT VALUE
         </div>
     </div>
 
-    <!-- SEKME 3: SES -->
+    <!-- TAB 3: AUDIO -->
     <div id="set-tab-audio" class="settings-content">
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);">SES DÜZEYİ
-        </div>
-        <div class="mb-4" onmouseenter="showInfoTooltip(event, 'MÜZİK: Arka plan müziklerinin ses şiddetini ayarlar.')"
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);"
+            data-i18n="settings.soundLevel">SOUND LEVEL</div>
+        <div class="mb-4" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.music') : '')"
             onmouseleave="hideTooltip()">
-            <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span>MÜZİK</span><span
-                    id="val-m">20%</span></div>
+            <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span
+                    data-i18n="settings.music">MUSIC</span><span id="val-m">20%</span></div>
             <input type="range" id="vol-music" class="smart-slider" data-default="20" min="0" max="100" value="20">
         </div>
-        <div onmouseenter="showInfoTooltip(event, 'ATMOSFER: Efekt ve çevre seslerinin şiddetini ayarlar.')"
-            onmouseleave="hideTooltip()">
-            <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span>ATMOSFER</span><span
-                    id="val-s">80%</span></div>
+        <div onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.sfx') : '')" onmouseleave="hideTooltip()">
+            <div class="flex justify-between text-xs text-gray-400 tracking-widest"><span
+                    data-i18n="settings.atmosphere2">ATMOSPHERE</span><span id="val-s">80%</span></div>
             <input type="range" id="vol-sfx" class="smart-slider" data-default="80" min="0" max="100" value="80">
         </div>
 
-        <div class="mt-4 pt-3 border-t border-white/10 text-[9px] text-gray-500 font-mono text-center tracking-widest">
-            VARSAYILAN DEĞER İÇİN ÇİFT TIKLAYIN
+        <div class="mt-4 pt-3 border-t border-white/10 text-[9px] text-gray-500 font-mono text-center tracking-widest"
+            data-i18n="settings.defaultHint">
+            DOUBLE CLICK FOR DEFAULT VALUE
         </div>
     </div>
 
-    <!-- SEKME 4: KAYIT -->
+    <!-- TAB 4: SAVE -->
     <div id="set-tab-save" class="settings-content">
-        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);">KAYIT
-            İŞLEMLERİ</div>
-        <p class="text-xs text-gray-400 mb-4">Oyun her 30 saniyede bir otomatik kaydedilir. Kaydınızı yedekleyebilir
-            veya başka bir cihaza taşıyabilirsiniz.</p>
+        <div class="mb-2 text-xs font-bold tracking-widest opacity-80 mt-2" style="color: var(--hud-color);"
+            data-i18n="settings.saveOperations">SAVE OPERATIONS</div>
+        <p class="text-xs text-gray-400 mb-4" data-i18n="settings.saveDesc">The game auto-saves every 30 seconds. You
+            can backup your save or transfer it to another device.</p>
 
         <div class="flex flex-col gap-3">
             <button id="btn-action-export"
                 class="bg-white/5 hover:bg-white/10 border py-2 px-4 rounded text-xs tracking-widest transition flex items-center justify-center gap-2"
                 style="color: var(--hud-color); border-color: var(--hud-color-dim);">
-                <span>DIŞA AKTAR (KOPYALA)</span>
+                <span data-i18n="settings.export">EXPORT (COPY)</span>
             </button>
 
             <button id="btn-action-import"
                 class="bg-white/5 hover:bg-white/10 text-emerald-300 border border-emerald-300/30 py-2 px-4 rounded text-xs tracking-widest transition flex items-center justify-center gap-2">
-                <span>İÇE AKTAR (YAPIŞTIR)</span>
+                <span data-i18n="settings.import">IMPORT (PASTE)</span>
             </button>
 
             <div class="h-px bg-white/10 my-1"></div>
 
             <button id="btn-action-reset"
                 class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 py-2 px-4 rounded text-xs tracking-widest transition flex items-center justify-center gap-2">
-                <span>⚠ TÜM İLERLEMEYİ SİL</span>
+                <span data-i18n="settings.deleteAll">⚠ DELETE ALL PROGRESS</span>
             </button>
         </div>
     </div>
 
-    <!-- SEKME 5: GELİŞTİRİCİ -->
+    <!-- TAB 5: DEVELOPER -->
     <div id="set-tab-dev" class="settings-content">
-        <div class="mb-2 text-xs text-red-400 font-bold tracking-widest opacity-80 mt-2">GÖRSEL HATA AYIKLAMA</div>
+        <div class="mb-2 text-xs text-red-400 font-bold tracking-widest opacity-80 mt-2"
+            data-i18n="settings.visualDebug">VISUAL DEBUGGING</div>
         <div class="mb-4">
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'ÇEKİM ALANLARI: Gezegenlerin etkileşim yarıçaplarını ve değerlerini görselleştirir.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.gravityFields') : '')"
                 onmouseleave="hideTooltip()">
-                <span>ÇEKİM ALANLARI</span>
+                <span data-i18n="settings.gravityFields">GRAVITY FIELDS</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-gravity-debug">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'HİTBOX: Nesnelerin fiziksel çarpışma sınırlarını kırmızı ile gösterir.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.hitboxes') : '')"
                 onmouseleave="hideTooltip()">
-                <span>ÇARPIŞMA SINIRLARI</span>
+                <span data-i18n="settings.hitboxes">COLLISION BOUNDS</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-hitboxes">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row" onmouseenter="showInfoTooltip(event, 'VEKTÖRLER: Hız ve yön oklarını gösterir.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.vectors') : '')"
                 onmouseleave="hideTooltip()">
-                <span>VEKTÖRLERİ GÖSTER</span>
+                <span data-i18n="settings.showVectors">SHOW VECTORS</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-vectors">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'HEDEF VEKTÖRLERİ: Otopilot ve Echo hedeflerine giden çizgiyi gösterir.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.targetVectors') : '')"
                 onmouseleave="hideTooltip()">
-                <span>HEDEF VEKTÖRLERİ</span>
+                <span data-i18n="settings.targetVectors">TARGET VECTORS</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-target-vectors">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'GİZLİ MOD: Oyuncu gemisini ve kuyruğunu tamamen gizler.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.hidePlayer') : '')"
                 onmouseleave="hideTooltip()">
-                <span>VATOZU GİZLE</span>
+                <span data-i18n="settings.hidePlayer">HIDE PLAYER</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-hide-player">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="mb-2 text-xs text-red-400 font-bold tracking-widest opacity-80 mt-4">PERFORMANS VE OYNANIŞ</div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'FPS: Saniyedeki kare sayısını ve obje sayısını gösterir.')"
+            <div class="mb-2 text-xs text-red-400 font-bold tracking-widest opacity-80 mt-4"
+                data-i18n="settings.performanceGameplay">PERFORMANCE & GAMEPLAY</div>
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.fps') : '')"
                 onmouseleave="hideTooltip()">
-                <span>PERFORMANS MONİTÖRÜ</span>
+                <span data-i18n="settings.perfMonitor">PERFORMANCE MONITOR</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-fps-counter">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="toggle-row"
-                onmouseenter="showInfoTooltip(event, 'ÖLÜMSÜZLÜK: Hasar almazsınız ve enerjiniz tükenmez.')"
+            <div class="toggle-row" onmouseenter="showInfoTooltip(event, window.t ? t('tooltips.godMode') : '')"
                 onmouseleave="hideTooltip()">
-                <span>ÖLÜMSÜZLÜK (GOD MODE)</span>
+                <span data-i18n="settings.godMode">GOD MODE</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="toggle-god-mode">
                     <span class="slider"></span>
@@ -376,15 +381,16 @@
 
             <div class="mt-4 flex gap-2">
                 <button id="btn-dev-add-resources"
-                    class="bg-red-900/30 text-red-300 text-[10px] px-2 py-1 rounded border border-red-500/20 hover:bg-red-900/50">+1000
-                    KRİSTAL</button>
+                    class="bg-red-900/30 text-red-300 text-[10px] px-2 py-1 rounded border border-red-500/20 hover:bg-red-900/50"
+                    data-i18n="settings.addCrystal">+1000 CRYSTAL</button>
                 <button id="btn-dev-levelup"
-                    class="bg-red-900/30 text-red-300 text-[10px] px-2 py-1 rounded border border-red-500/20 hover:bg-red-900/50">SEVİYE
-                    ATLA</button>
+                    class="bg-red-900/30 text-red-300 text-[10px] px-2 py-1 rounded border border-red-500/20 hover:bg-red-900/50"
+                    data-i18n="settings.levelUp">LEVEL UP</button>
             </div>
         </div>
-        <div class="p-2 border border-red-900/30 bg-red-900/10 rounded text-xs text-red-300 font-mono mt-4">
-            DİKKAT: Bu seçenekler oyun performansını etkileyebilir.
+        <div class="p-2 border border-red-900/30 bg-red-900/10 rounded text-xs text-red-300 font-mono mt-4"
+            data-i18n="settings.devWarning">
+            WARNING: These options may affect game performance.
         </div>
     </div>
 </div>

@@ -7,59 +7,59 @@ export const AchievementManager = {
     achievements: [
         {
             id: 'first_steps',
-            title: 'İLK ADIM',
-            desc: 'İlk kaynağını topla.',
+            title: 'FIRST STEPS',
+            desc: 'Collect your first resource.',
             target: 1,
             getValue: () => playerData.stats.totalResources,
             unlocked: false
         },
         {
             id: 'traveler',
-            title: 'GEZGİN',
-            desc: '1000 km mesafe kat et.',
-            target: 100000, // 1 birim = 0.01 metre varsayımıyla (oyun içi scale)
+            title: 'TRAVELER',
+            desc: 'Travel 1000 km.',
+            target: 100000, // 1 unit = 0.01 meters (game scale)
             getValue: () => playerData.stats.distance,
-            format: (v) => Math.floor(v / 100) + ' km', // Gösterim formatı
+            format: (v) => Math.floor(v / 100) + ' km', // Display format
             unlocked: false
         },
         {
             id: 'rich',
-            title: 'KRİSTAL AVCISI',
-            desc: 'Toplam 500 kristal kazan.',
+            title: 'CRYSTAL HUNTER',
+            desc: 'Earn 500 total crystals.',
             target: 500,
             getValue: () => playerData.stats.totalStardust,
             unlocked: false
         },
         {
             id: 'speeder',
-            title: 'IŞIK HIZI',
-            desc: '150 km/s hıza ulaş.',
-            target: 15, // Fiziksel hız (HUD'da x10 gösterilir)
+            title: 'LIGHT SPEED',
+            desc: 'Reach 150 km/s speed.',
+            target: 15, // Physical speed (Shown x10 in HUD)
             getValue: () => playerData.stats.maxSpeed,
             format: (v) => Math.floor(v * 10) + ' km/s',
             unlocked: false
         },
         {
             id: 'hoarder',
-            title: 'DEPO MEMURU',
-            desc: 'Merkez depoda 50 eşya biriktir.',
+            title: 'STORAGE CLERK',
+            desc: 'Store 50 items in central storage.',
             target: 50,
             getValue: () => centralStorage.length,
             unlocked: false
         },
         {
             id: 'level_5',
-            title: 'EVRİM',
-            desc: 'Seviye 5\'e ulaş.',
+            title: 'EVOLUTION',
+            desc: 'Reach Level 5.',
             target: 5,
             getValue: () => player.level,
             unlocked: false
         },
         {
             id: 'echo_master',
-            title: 'SÜRÜ LİDERİ',
-            desc: 'Yankı dronun tüm geliştirmelerini tamamla.',
-            target: 20, // 4 özellik * 5 seviye = 20 toplam seviye
+            title: 'SWARM LEADER',
+            desc: 'Complete all Echo drone upgrades.',
+            target: 20, // 4 stats * 5 levels = 20 total levels
             getValue: () => {
                 if (!playerData || !playerData.upgrades) return 0;
                 return Object.keys(playerData.upgrades)
@@ -71,7 +71,7 @@ export const AchievementManager = {
     ],
 
     init: function () {
-        console.log("AchievementManager başlatılıyor...");
+        console.log("AchievementManager initializing...");
         setInterval(() => this.check(), 5000);
     },
 
@@ -93,7 +93,7 @@ export const AchievementManager = {
         if (typeof showAchievementPopup === 'function') {
             showAchievementPopup(ach);
         } else {
-            console.warn("showAchievementPopup fonksiyonu bulunamadı (notifications.js yüklü mü?)");
+            console.warn("showAchievementPopup function not found (is notifications.js loaded?)");
         }
 
         if (typeof audio !== 'undefined' && audio) audio.playChime({ id: 'legendary' });

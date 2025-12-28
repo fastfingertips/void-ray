@@ -22,9 +22,9 @@ export class Planet {
             else this.type = RARITY.COMMON;
             this.lootContent = [];
         }
-        this.name = this.type.id === 'lost' ? "KAYIP KARGO" : LOOT_DB[this.type.id][Math.floor(Math.random() * LOOT_DB[this.type.id].length)];
+        this.name = this.type.id === 'lost' ? "LOST CARGO" : LOOT_DB[this.type.id][Math.floor(Math.random() * LOOT_DB[this.type.id].length)];
 
-        // CONFIG'DEN DEĞERLER AL
+        // GET VALUES FROM CONFIG
         const R = GAME_CONFIG.PLANETS.RADIUS;
         let baseRadius = R.BASE;
 
@@ -36,25 +36,25 @@ export class Planet {
 
         this.radius = baseRadius;
 
-        // --- BULUT / TOXIC YAPILANDIRMASI ---
+        // --- CLOUD / TOXIC CONFIGURATION ---
         if (this.type.id === 'toxic') {
             this.cloudPuffs = [];
-            // Ana yarıçapın içinde rastgele irili ufaklı bulut parçaları oluştur
+            // Create random larger and smaller cloud puff pieces within the main radius
             const puffCount = 12;
             for (let i = 0; i < puffCount; i++) {
                 const angle = Math.random() * Math.PI * 2;
-                const dist = Math.random() * (this.radius * 0.7); // Merkeze yakın dağılım
+                const dist = Math.random() * (this.radius * 0.7); // Distribution close to the center
 
                 this.cloudPuffs.push({
                     xOffset: Math.cos(angle) * dist,
                     yOffset: Math.sin(angle) * dist,
-                    r: (this.radius * 0.3) + Math.random() * (this.radius * 0.4), // Parça büyüklüğü
-                    driftSpeed: (Math.random() - 0.5) * 0.02, // Kendi ekseninde hafif dönme
+                    r: (this.radius * 0.3) + Math.random() * (this.radius * 0.4), // Puff size
+                    driftSpeed: (Math.random() - 0.5) * 0.02, // Slight rotation on its own axis
                     angle: Math.random() * Math.PI * 2,
                     alpha: 0.1 + Math.random() * 0.2
                 });
             }
-            // Tüm bulutun yavaşça dönmesi için
+            // For the entire cloud to slowly rotate
             this.rotation = 0;
             this.rotationSpeed = (Math.random() - 0.5) * 0.002;
         }
@@ -64,11 +64,11 @@ export class Planet {
         if (this.collected) return;
         if (visibility === 0) return;
 
-        // --- GELİŞTİRİCİ MODU: ÇEKİM ALANI VE HİTBOX GÖRSELLEŞTİRME ---
+        // --- DEVELOPER MODE: GRAVITY FIELD AND HITBOX VISUALIZATION ---
         if (window.gameSettings && window.gameSettings.developerMode && this.type.id !== 'toxic') {
             ctx.save();
 
-            // 1. ÇEKİM ALANI (Magenta Kesikli Çember)
+            // 1. GRAVITY FIELD (Magenta Dashed Circle)
             if (window.gameSettings.showGravityFields) {
                 const magnetMult = 1 + (playerData.upgrades.playerMagnet * 0.5);
                 const gravityRadius = this.radius * 4 * magnetMult;
@@ -83,23 +83,23 @@ export class Planet {
                 ctx.fillStyle = "rgba(255, 0, 255, 0.5)";
                 ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI * 2); ctx.fill();
 
-                // Çekim alanı değeri
+                // Gravity field value
                 ctx.fillStyle = "rgba(255, 0, 255, 0.8)";
                 ctx.font = "10px monospace";
                 ctx.textAlign = "center";
                 ctx.fillText(`G: ${Math.round(gravityRadius)}`, this.x, this.y + gravityRadius + 15);
             }
 
-            // 2. HITBOX (Kırmızı Çember)
+            // 2. HITBOX (Red Circle)
             if (window.gameSettings.showHitboxes) {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.strokeStyle = "rgba(255, 0, 0, 0.7)";
                 ctx.lineWidth = 2;
-                ctx.setLineDash([]); // Düz çizgi
+                ctx.setLineDash([]); // Solid line
                 ctx.stroke();
 
-                // Hitbox değeri
+                // Hitbox value
                 ctx.fillStyle = "rgba(255, 0, 0, 0.8)";
                 ctx.font = "10px monospace";
                 ctx.textAlign = "center";
@@ -109,13 +109,13 @@ export class Planet {
             ctx.restore();
         }
 
-        // --- BULUT ALANI (TOXIC) ÖZEL ÇİZİMİ ---
+        // --- CLOUD AREA (TOXIC) SPECIAL DRAWING ---
         if (this.type.id === 'toxic') {
             this.drawToxicCloud(ctx, visibility);
             return;
         }
 
-        // Radar Teması (Kısmi Görüş - Diğerleri İçin)
+        // Radar Theme (Partial View - For Others)
         if (visibility === 1) {
             ctx.shadowBlur = 0;
             ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
@@ -129,7 +129,7 @@ export class Planet {
             return;
         }
 
-        // Normal Görünüm (Tam Görüş)
+        // Normal View (Full View)
         ctx.shadowBlur = 50; ctx.shadowColor = this.type.color;
         const grad = ctx.createRadialGradient(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.1, this.x, this.y, this.radius);
         grad.addColorStop(0, this.type.color); grad.addColorStop(1, "#020617");
@@ -147,11 +147,11 @@ export class Planet {
         ctx.save();
         ctx.translate(this.x, this.y);
 
-        // Ana rotasyon güncellemesi (Yavaşça dönen bir bulut)
+        // Main rotation update (Cloud slowly rotating)
         this.rotation += this.rotationSpeed;
         ctx.rotate(this.rotation);
 
-        // Toxic bulutlar için de hitbox göstermek faydalı olabilir
+        // Showing hitbox for toxic clouds could be useful as well
         if (window.gameSettings && window.gameSettings.developerMode && window.gameSettings.showHitboxes) {
             ctx.save();
             ctx.beginPath();
@@ -160,8 +160,8 @@ export class Planet {
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Hitbox değeri (Toxic için rotasyonu ters çevirerek yazıyoruz ki düz dursun)
-            ctx.rotate(-this.rotation); // Yazıyı düzeltmek için rotasyonu geri al
+            // Hitbox value (We draw with inverse rotation for Toxic so it stays upright)
+            ctx.rotate(-this.rotation); // Undo rotation to correct the text
             ctx.fillStyle = "rgba(255, 0, 0, 0.8)";
             ctx.font = "10px monospace";
             ctx.textAlign = "center";
@@ -171,10 +171,10 @@ export class Planet {
         }
 
         if (visibility === 1) {
-            // Radar görünümü: Sadece basit bir dumanlı daire
+            // Radar view: Just a simple smoky circle
             ctx.beginPath();
             ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(16, 185, 129, 0.1)"; // Soluk yeşil
+            ctx.fillStyle = "rgba(16, 185, 129, 0.1)"; // Faint green
             ctx.fill();
             ctx.strokeStyle = "rgba(16, 185, 129, 0.3)";
             ctx.lineWidth = 1;
@@ -182,9 +182,9 @@ export class Planet {
             ctx.stroke();
         }
         else if (visibility === 2) {
-            // Tam Görüş: Detaylı Bulut Efekti
+            // Full View: Detailed Cloud Effect
 
-            // 1. Dış Halka (Sınırları belli belirsiz yapmak için yumuşak gradient)
+            // 1. Outer Ring (Soft gradient to make the boundaries blurred)
             const outerGrad = ctx.createRadialGradient(0, 0, this.radius * 0.5, 0, 0, this.radius);
             outerGrad.addColorStop(0, "rgba(16, 185, 129, 0.0)");
             outerGrad.addColorStop(0.8, "rgba(16, 185, 129, 0.1)");
@@ -195,15 +195,15 @@ export class Planet {
             ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
             ctx.fill();
 
-            // 2. Bulut Parçacıkları (Puffs)
-            // Her bir parça kendi içinde döner ve birleşerek amorf bir yapı oluşturur
+            // 2. Cloud Puff Particles (Puffs)
+            // Each piece rotates within itself and they merge to form an amorphous structure
             this.cloudPuffs.forEach(puff => {
                 ctx.save();
                 ctx.translate(puff.xOffset, puff.yOffset);
-                ctx.rotate(puff.angle + (Date.now() * 0.0005)); // Parçalar da kendi içinde döner
+                ctx.rotate(puff.angle + (Date.now() * 0.0005)); // Particles also rotate within themselves
 
                 const puffGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, puff.r);
-                puffGrad.addColorStop(0, `rgba(50, 205, 50, ${puff.alpha})`); // Merkez daha yoğun yeşil
+                puffGrad.addColorStop(0, `rgba(50, 205, 50, ${puff.alpha})`); // Center is more intense green
                 puffGrad.addColorStop(0.7, `rgba(16, 185, 129, ${puff.alpha * 0.5})`);
                 puffGrad.addColorStop(1, "rgba(0,0,0,0)");
 
@@ -214,10 +214,10 @@ export class Planet {
                 ctx.restore();
             });
 
-            // 3. Statik Gürültü / Dijital Parazit (İç atmosfer)
-            // Bulutun içinde rastgele yanıp sönen küçük veri parçacıkları
+            // 3. Static Noise / Digital Interference (Inner atmosphere)
+            // Small data particles flashing randomly within the cloud
             if (Math.random() < 0.3) {
-                ctx.fillStyle = "#a7f3d0"; // Çok açık yeşil
+                ctx.fillStyle = "#a7f3d0"; // Very light green
                 const noiseCount = 3;
                 for (let k = 0; k < noiseCount; k++) {
                     const nx = (Math.random() - 0.5) * this.radius * 1.5;
@@ -227,7 +227,7 @@ export class Planet {
                 }
             }
 
-            // 4. İnce Elektrik Arkları (Nadir)
+            // 4. Subtle Electric Arcs (Rare)
             if (Math.random() < 0.05) {
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
                 ctx.lineWidth = 1;
