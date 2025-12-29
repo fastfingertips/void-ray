@@ -702,15 +702,58 @@ class VoidRay {
         }
 
         if (window.gameSettings && window.gameSettings.showShipBars && !isHidden) {
-            ctx.save(); ctx.translate(this.x, this.y);
-            const barW = 60; const barH = 6; const offset = -60;
-            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(-barW / 2, offset, barW, barH * 2 + 2);
+            ctx.save();
+            ctx.translate(this.x, this.y);
+
+            // Bar dimensions - slimmer, more elegant
+            const barW = 44;
+            const barH = 3;
+            const gap = 2;
+            const offsetY = -48;
+            const radius = 1.5;
+
+            // Health bar
             const hpPct = this.health / this.maxHealth;
-            ctx.fillStyle = hpPct > 0.5 ? "#10b981" : (hpPct > 0.2 ? "#f59e0b" : "#ef4444");
-            ctx.fillRect(-barW / 2 + 1, offset + 1, (barW - 2) * hpPct, barH);
+            const hpColor = hpPct > 0.5 ? '#10b981' : (hpPct > 0.2 ? '#f59e0b' : '#ef4444');
+
+            // Background (subtle)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.roundRect(-barW / 2, offsetY, barW, barH, radius);
+            ctx.fill();
+
+            // Health fill with glow
+            if (hpPct > 0) {
+                ctx.shadowColor = hpColor;
+                ctx.shadowBlur = 4;
+                ctx.fillStyle = hpColor;
+                ctx.beginPath();
+                ctx.roundRect(-barW / 2, offsetY, barW * hpPct, barH, radius);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Energy bar
             const epPct = this.energy / this.maxEnergy;
-            ctx.fillStyle = dynamicLight;
-            ctx.fillRect(-barW / 2 + 1, offset + barH + 1, (barW - 2) * epPct, barH);
+            const epColor = dynamicLight;
+
+            // Background
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.roundRect(-barW / 2, offsetY + barH + gap, barW, barH, radius);
+            ctx.fill();
+
+            // Energy fill with glow
+            if (epPct > 0) {
+                ctx.shadowColor = epColor;
+                ctx.shadowBlur = 4;
+                ctx.fillStyle = epColor;
+                ctx.beginPath();
+                ctx.roundRect(-barW / 2, offsetY + barH + gap, barW * epPct, barH, radius);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
             ctx.restore();
         }
 

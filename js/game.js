@@ -489,15 +489,18 @@ function loop() {
         } else {
             const distCam = Utils.distEntity(window.cameraTarget, window.cameraFocus);
             if (distCam > 5000) {
+                // Teleport if too far (e.g., wormhole)
                 window.cameraFocus.x = window.cameraTarget.x;
                 window.cameraFocus.y = window.cameraTarget.y;
                 isCameraTransitioning = false;
             } else if (isCameraTransitioning) {
-                const lerpSpeed = 0.08;
+                // Slow, cinematic transition between entities
+                const lerpSpeed = 0.04;
                 window.cameraFocus.x += (window.cameraTarget.x - window.cameraFocus.x) * lerpSpeed;
                 window.cameraFocus.y += (window.cameraTarget.y - window.cameraFocus.y) * lerpSpeed;
-                if (distCam < 50) isCameraTransitioning = false;
+                if (distCam < 20) isCameraTransitioning = false;
             } else {
+                // Normal follow - fast, no lag
                 const lerpSpeed = 0.9;
                 window.cameraFocus.x += (window.cameraTarget.x - window.cameraFocus.x) * lerpSpeed;
                 window.cameraFocus.y += (window.cameraTarget.y - window.cameraFocus.y) * lerpSpeed;

@@ -30,7 +30,6 @@ export const tr = {
         reportIssue: 'Sorun Bildir / İletişim',
         latestChanges: 'Son Değişiklikler'
     },
-    // -- MOBILE WARNING --
     mobile: {
         systemWarning: '!!! SİSTEM UYARISI !!!',
         detected: 'MOBİL CİHAZ ALGILANDI',
@@ -212,6 +211,15 @@ export const tr = {
     },
     // -- NOTIFICATIONS --
     notifications: {
+        // Genel bildirim ön ekleri
+        collected: 'Toplandı: ',
+        system: 'Sistem: ',
+        warning: 'UYARI: ',
+        discovery: 'Keşif: ',
+        spacetime: 'UZAY-ZAMAN: ',
+        found: ' bulundu!',
+        achievementUnlocked: 'BAŞARIM AÇILDI',
+        // Ayarlar bildirimleri
         themeUpdated: 'TEMA GÜNCELLENDİ',
         consoleActive: 'KONSOL AKTİF',
         consoleActiveDesc: 'Komutları kullanabilirsiniz.',
@@ -372,6 +380,25 @@ export const tr = {
         spaceBoost: 'Space tuşu ile kısa süreli hızlanabilirsiniz (Enerji harcar).',
         inventoryFull: 'Envanteriniz dolarsa Nexus\'ta satış yapın veya kapasiteyi artırın.',
         lightJump: '[J] tuşu ile Işık Atlamasını başlatabilir, tekrar basarak iptal edebilirsiniz.'
+    },
+    // -- EŞYALAR (Loot İsimleri) --
+    items: {
+        hydrogen: 'Hidrojen',
+        carbonDust: 'Karbon Tozu',
+        iron: 'Demir',
+        silica: 'Silika',
+        iceCore: 'Buz Çekirdeği',
+        sapphire: 'Safir',
+        ionizedGas: 'İyonize Gaz',
+        nebulaEssence: 'Bulutsu Özü',
+        starFragment: 'Yıldız Parçası',
+        plasma: 'Plazma',
+        timeCrystal: 'Zaman Kristali',
+        blackHoleRemnant: 'Kara Delik Kalıntısı',
+        staticNoise: 'Statik Gürültü',
+        corruptedSector: 'Bozuk Sektör',
+        tardigrade: 'Tardigrad',
+        lostSignal: 'KAYIP SİNYAL'
     },
     // -- RESOURCES --
     resources: {

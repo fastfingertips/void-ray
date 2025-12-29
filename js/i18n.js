@@ -7,11 +7,11 @@
  * - en.js: English translations
  */
 
-import { tr } from './i18n/tr.js';
-import { en } from './i18n/en.js';
+import { tr } from './i18n/tr.js?v=2';
+import { en } from './i18n/en.js?v=2';
 
-// Current language (default: Turkish)
-export let currentLanguage = 'tr';
+// Current language (default: English)
+export let currentLanguage = 'en';
 
 // Language translations - imported from separate files
 export const translations = { tr, en };
@@ -30,8 +30,8 @@ export function t(keyPath, lang = currentLanguage) {
         if (result && result[key] !== undefined) {
             result = result[key];
         } else {
-            // Fallback to Turkish if key not found
-            let fallback = translations['tr'];
+            // Fallback to English if key not found
+            let fallback = translations['en'];
             for (const k of keys) {
                 if (fallback && fallback[k] !== undefined) {
                     fallback = fallback[k];

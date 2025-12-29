@@ -30,7 +30,6 @@ export const en = {
         reportIssue: 'Report Issue / Contact',
         latestChanges: 'Latest Changes'
     },
-    // -- MOBILE WARNING --
     mobile: {
         systemWarning: '!!! SYSTEM WARNING !!!',
         detected: 'MOBILE DEVICE DETECTED',
@@ -212,6 +211,15 @@ export const en = {
     },
     // -- NOTIFICATIONS --
     notifications: {
+        // General notification prefixes
+        collected: 'Collected: ',
+        system: 'System: ',
+        warning: 'WARNING: ',
+        discovery: 'Discovery: ',
+        spacetime: 'SPACE-TIME: ',
+        found: ' found!',
+        achievementUnlocked: 'ACHIEVEMENT UNLOCKED',
+        // Settings notifications
         themeUpdated: 'THEME UPDATED',
         consoleActive: 'CONSOLE ACTIVE',
         consoleActiveDesc: 'You can use commands.',
@@ -372,6 +380,25 @@ export const en = {
         spaceBoost: 'You can boost briefly with Space key (Consumes Energy).',
         inventoryFull: 'If your inventory is full, sell at Nexus or expand capacity.',
         lightJump: 'Press [J] to start Light Jump, press again to cancel.'
+    },
+    // -- ITEMS (Loot Names) --
+    items: {
+        hydrogen: 'Hydrogen',
+        carbonDust: 'Carbon Dust',
+        iron: 'Iron',
+        silica: 'Silica',
+        iceCore: 'Ice Core',
+        sapphire: 'Sapphire',
+        ionizedGas: 'Ionized Gas',
+        nebulaEssence: 'Nebula Essence',
+        starFragment: 'Star Fragment',
+        plasma: 'Plasma',
+        timeCrystal: 'Time Crystal',
+        blackHoleRemnant: 'Black Hole Remnant',
+        staticNoise: 'Static Noise',
+        corruptedSector: 'Corrupted Sector',
+        tardigrade: 'Tardigrade',
+        lostSignal: 'LOST SIGNAL'
     },
     // -- RESOURCES --
     resources: {

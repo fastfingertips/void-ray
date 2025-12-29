@@ -6,43 +6,50 @@
 /**
  * Text Notifications - Sends info messages to chat panel
  */
+import { t } from './i18n.js';
 export function showNotification(planet, suffix) {
     let msg = "";
     let type = "loot";
     const name = planet.name || "";
 
-    // Category Analysis
-    if (name === "ROUTE CREATED" || name.includes("AUTO")) {
-        msg = `System: ${name}`;
+    // 1. DISCOVERY (Lost Cargo)
+    if (planet.type && planet.type.id === 'lost') {
+        msg = `${t('notifications.discovery')}${name}${t('notifications.found')}`;
         type = "info";
-    } else if (name.includes("EVOLVED")) {
-        msg = `System: ${name}`;
-        type = "info";
-    } else if (name.includes("ECHO SPAWNED") || name.includes("ECHO DETACHED") || name.includes("ECHO: CHARGE") || name.includes("STORAGE") || name.includes("VISION:")) {
-        msg = `System: ${name}`;
-        type = "info";
-    } else if (name.includes("ENERGY") || name.includes("TARDIGRADE")) {
-        msg = `${name} ${suffix}`;
-        type = "info";
-    } else if (name.includes("POISON") || name.includes("DANGER") || name.includes("ECHO POISONED") || name.includes("FULL") || name.includes("INSUFFICIENT") || name.includes("CONNECTION") || name.includes("EMPTY") || name.includes("ACCESS") || name.includes("ERROR") || name.includes("SIGNAL LOSS")) {
-        msg = `WARNING: ${name} ${suffix}`;
-        type = "alert";
-    } else if (name.includes("LOST CARGO")) {
-        msg = `Discovery: ${name} found!`;
-        type = "info";
-    } else if (name.includes("WORMHOLE")) { // NEW
-        msg = `SPACE-TIME: ${name} ${suffix}`;
-        type = "info";
-    } else if (planet.type && (planet.type.id === 'common' || planet.type.id === 'rare' || planet.type.id === 'epic' || planet.type.id === 'legendary')) {
-        msg = `Collected: ${name} ${suffix}`;
+    }
+    // 2. COLLECTED ITEMS (Loot)
+    else if (planet.type && (planet.type.id === 'common' || planet.type.id === 'rare' || planet.type.id === 'epic' || planet.type.id === 'legendary')) {
+        msg = `${t('notifications.collected')}${name} ${suffix}`;
         type = "loot";
-    } else {
-        msg = `${name} ${suffix}`;
+    }
+    // 3. WARNINGS (Based on Color: Red #ef4444 or Orange #fbbf24)
+    else if (planet.type && (planet.type.color === '#ef4444' || planet.type.color === '#fbbf24')) {
+        // Exclude specific Echo warnings that act as info
+        if (name.includes("ECHO") && !name.includes("ERROR") && !name.includes("FULL")) {
+            msg = `${t('notifications.system')}${name} ${suffix}`;
+            type = "info";
+        } else {
+            msg = `${t('notifications.warning')}${name} ${suffix}`;
+            type = "alert";
+        }
+    }
+    // 4. WORMHOLE (Based on Wormhole Color)
+    else if (planet.type && (planet.type.color === '#8b5cf6')) {
+        msg = `${t('notifications.spacetime')}${name} ${suffix}`;
+        type = "info";
+    }
+    // 5. SYSTEM / GENERAL INFO
+    else {
+        // Default to System prefix for standard notifications
+        // Check if name is not empty
+        if (name) {
+            msg = `${name} ${suffix}`; // Removed 'System:' prefix to avoid redundancy with colored chat
+        }
         type = "info";
     }
 
     // Send to Chat System
-    if (typeof addChatMessage === 'function') {
+    if (typeof addChatMessage === 'function' && msg) {
         addChatMessage(msg, type, 'info');
     }
 }
@@ -100,7 +107,7 @@ export function showAchievementPopup(ach) {
     popup.innerHTML = `
         <div class="ach-icon">★</div>
         <div class="ach-content">
-            <div class="ach-title">ACHIEVEMENT UNLOCKED</div>
+            <div class="ach-title">${t('notifications.achievementUnlocked')}</div>
             <div class="ach-name">${ach.title}</div>
             <div class="ach-desc">${ach.desc}</div>
         </div>

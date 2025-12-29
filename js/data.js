@@ -180,16 +180,24 @@ export const RARITY = {
     LOST: { id: 'lost', name: 'Lost Cargo', color: '#a855f7', prob: 0, xp: 0, value: 0 }
 };
 
-// --- LOOT DATABASE ---
-export const LOOT_DB = {
-    common: ["Hydrogen", "Carbon Dust", "Iron", "Silica"],
-    rare: ["Ice Core", "Sapphire", "Ionized Gas"],
-    epic: ["Nebula Essence", "Star Fragment", "Plasma"],
-    legendary: ["Time Crystal", "Black Hole Remnant"],
-    toxic: ["Static Noise", "Corrupted Sector"],
-    tardigrade: ["Tardigrade"],
-    lost: ["LOST SIGNAL"]
+// --- LOOT DATABASE (Dynamic i18n support) ---
+const getLootDB = () => {
+    const t = window.t || ((key) => key.split('.').pop());
+    return {
+        common: [t('items.hydrogen'), t('items.carbonDust'), t('items.iron'), t('items.silica')],
+        rare: [t('items.iceCore'), t('items.sapphire'), t('items.ionizedGas')],
+        epic: [t('items.nebulaEssence'), t('items.starFragment'), t('items.plasma')],
+        legendary: [t('items.timeCrystal'), t('items.blackHoleRemnant')],
+        toxic: [t('items.staticNoise'), t('items.corruptedSector')],
+        tardigrade: [t('items.tardigrade')],
+        lost: [t('items.lostSignal')]
+    };
 };
+export const LOOT_DB = new Proxy({}, {
+    get: (target, prop) => getLootDB()[prop],
+    ownKeys: () => ['common', 'rare', 'epic', 'legendary', 'toxic', 'tardigrade', 'lost'],
+    getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+});
 
 // --- ITEM TYPES (RPG System) ---
 export const ITEM_TYPES = {
